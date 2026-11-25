@@ -854,22 +854,6 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                             ],
                           ],
                         ),
-                                    amHost
-                                        ? (isMuted ? Icons.mic_off_rounded : Icons.mic_rounded)
-                                        : (isLocallyMuted
-                                            ? Icons.volume_off_rounded
-                                            : (isSpeaking ? Icons.graphic_eq_rounded : (isMuted ? Icons.mic_off_rounded : Icons.mic_rounded))),
-                                    size: 13,
-                                    color: amHost
-                                        ? (isMuted ? Colors.redAccent : Colors.greenAccent)
-                                        : (isLocallyMuted
-                                            ? Colors.redAccent
-                                            : (isSpeaking ? Colors.greenAccent : AppTheme.mutedText)),
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
                       ),
                     );
                   },
