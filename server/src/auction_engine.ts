@@ -6,7 +6,7 @@ import {
   PlayerDTO,
   StandingsRecordDTO,
   GameMode,
-} from '../../shared/socket_events';
+} from './shared/socket_events';
 import { CharacterDatabase } from './database/db';
 import { ProfileManager } from './database/profile_manager';
 import {

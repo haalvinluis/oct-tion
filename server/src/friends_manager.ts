@@ -13,7 +13,7 @@ import {
   RoomInvitationDTO,
   RoomPreviewDTO,
   InAppNotificationDTO,
-} from '../../shared/socket_events';
+} from './shared/socket_events';
 
 export class FriendsManager {
   private static instance: FriendsManager;

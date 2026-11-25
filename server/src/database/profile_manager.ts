@@ -14,7 +14,7 @@ import {
   AchievementDefDTO,
   PlayerAchievementDTO,
   CoinTransactionDTO,
-} from '../../../shared/socket_events';
+} from '../shared/socket_events';
 import { DatabasePool } from './pg_pool';
 
 export const PROTECTED_STARTING_BALANCE = 500;

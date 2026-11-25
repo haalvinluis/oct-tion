@@ -1,7 +1,7 @@
 import { Server } from 'socket.io';
 import crypto from 'crypto';
 import { AuctionEngine } from './auction_engine';
-import { RoomStateDTO, GameMode } from '../../shared/socket_events';
+import { RoomStateDTO, GameMode } from './shared/socket_events';
 import { CharacterDatabase } from './database/db';
 
 export const SUPPORTED_TIMER_DURATIONS = [5, 10, 15, 20, 30, 45] as const;

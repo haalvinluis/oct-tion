@@ -1,4 +1,4 @@
-import { AuctionItemDTO } from '../../shared/socket_events';
+import { AuctionItemDTO } from './shared/socket_events';
 
 export const CRICKET_TEST_CATALOG: AuctionItemDTO[] = [
   { id: 'c1', name: 'Virat Kohli', displayName: 'Virat Kohli', categoryId: 'cricket', category: 'Cricket', basePrice: 200, powerPoints: 96, scoringMethod: 'ICC Stats', provenance: 'ICC Records', isActive: true },
