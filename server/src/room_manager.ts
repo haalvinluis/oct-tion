@@ -4,16 +4,20 @@ import { AuctionEngine } from './auction_engine';
 import { RoomStateDTO, GameMode } from './shared/socket_events';
 import { CharacterDatabase } from './database/db';
 
-export const SUPPORTED_TIMER_DURATIONS = [5, 10, 15, 20, 30, 45] as const;
+export const SUPPORTED_TIMER_DURATIONS = [5, 10, 15, 20, 30, 45, 60] as const;
 export type SupportedTimerDuration = (typeof SUPPORTED_TIMER_DURATIONS)[number];
 export const DEFAULT_TIMER_DURATION: SupportedTimerDuration = 15;
 
-export const SUPPORTED_ITEM_COUNTS = [5, 8, 10] as const;
+export const SUPPORTED_ITEM_COUNTS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
 export type SupportedItemCount = (typeof SUPPORTED_ITEM_COUNTS)[number];
 export const DEFAULT_ITEM_COUNT: SupportedItemCount = 10;
 
+export const SUPPORTED_MAX_PLAYERS = [2, 3, 4, 5, 6, 7, 8] as const;
+export type SupportedMaxPlayers = (typeof SUPPORTED_MAX_PLAYERS)[number];
+export const DEFAULT_MAX_PLAYERS: SupportedMaxPlayers = 8;
+
 export function isValidItemCount(count: number): boolean {
-  if (count === 25 || count > 10 || count < 1 || !Number.isInteger(count)) {
+  if (count < 1 || count > 10 || !Number.isInteger(count)) {
     return false;
   }
   return true;
@@ -95,7 +99,8 @@ export class RoomManager {
     itemCount: number = DEFAULT_ITEM_COUNT,
     timerDuration: number = DEFAULT_TIMER_DURATION,
     profileId?: string,
-    topic?: string
+    topic?: string,
+    maxPlayers: number = DEFAULT_MAX_PLAYERS
   ): { roomState: RoomStateDTO; player: Player } {
     const resolvedItemCount =
       itemCount !== undefined && itemCount !== null
@@ -103,10 +108,16 @@ export class RoomManager {
         : DEFAULT_ITEM_COUNT;
 
     if (!isValidItemCount(resolvedItemCount)) {
-      if (resolvedItemCount === 25) {
-        throw new Error('Match size 25 items is not supported. Supported match sizes are 5, 8, and 10 items.');
-      }
-      throw new Error(`Match size must be one of: ${SUPPORTED_ITEM_COUNTS.join(', ')} items.`);
+      throw new Error(`Match size must be an integer between 1 and 10 items.`);
+    }
+
+    const resolvedMaxPlayers =
+      maxPlayers !== undefined && maxPlayers !== null
+        ? Number(maxPlayers)
+        : DEFAULT_MAX_PLAYERS;
+
+    if (!SUPPORTED_MAX_PLAYERS.includes(resolvedMaxPlayers as any)) {
+      throw new Error(`Max players must be between 2 and 8.`);
     }
 
     const effectiveTopic = (topic && topic.trim().length > 0) ? topic.trim() : category;
@@ -148,7 +159,7 @@ export class RoomManager {
       gameMode,
       itemCount: resolvedItemCount,
       timerDuration: resolvedTimer,
-      maxPlayers: 8,
+      maxPlayers: resolvedMaxPlayers,
       hostId: socketId,
       players: [hostPlayer],
     };
@@ -194,7 +205,7 @@ export class RoomManager {
     }
 
     if (room.players.length >= room.maxPlayers) {
-      throw new Error(`Room "${normalizedCode}" is full (Max 8 players).`);
+      throw new Error(`Room "${normalizedCode}" is full (Max ${room.maxPlayers} players).`);
     }
 
     this.leaveAllRooms(socketId);
@@ -373,7 +384,7 @@ export class RoomManager {
   public updateRoomSettings(
     socketId: string,
     roomCode: string,
-    settings: { category?: string; topic?: string; itemCount?: number; timerDuration?: number }
+    settings: { category?: string; topic?: string; itemCount?: number; timerDuration?: number; maxPlayers?: number }
   ): RoomStateDTO {
     const normalizedCode = roomCode.trim().toUpperCase();
     const room = this.rooms.get(normalizedCode);
@@ -397,10 +408,7 @@ export class RoomManager {
     if (settings.itemCount !== undefined && settings.itemCount !== null) {
       const resolvedItemCount = Number(settings.itemCount);
       if (!isValidItemCount(resolvedItemCount)) {
-        if (resolvedItemCount === 25) {
-          throw new Error('Match size 25 items is not supported. Supported match sizes are 5, 8, and 10 items.');
-        }
-        throw new Error(`Match size must be one of: ${SUPPORTED_ITEM_COUNTS.join(', ')} items.`);
+        throw new Error(`Match size must be an integer between 1 and 10 items.`);
       }
       newItemCount = resolvedItemCount;
     }
@@ -414,6 +422,17 @@ export class RoomManager {
       newTimerDuration = resolvedTimer;
     }
 
+    let newMaxPlayers = room.maxPlayers;
+    if (settings.maxPlayers !== undefined && settings.maxPlayers !== null) {
+      const resolvedMax = Number(settings.maxPlayers);
+      if (SUPPORTED_MAX_PLAYERS.includes(resolvedMax as any)) {
+        if (room.players.length > resolvedMax) {
+          throw new Error(`Cannot reduce room capacity to ${resolvedMax} because ${room.players.length} players are already in the room.`);
+        }
+        newMaxPlayers = resolvedMax;
+      }
+    }
+
     if (settings.category !== undefined || settings.topic !== undefined || settings.itemCount !== undefined) {
       CharacterDatabase.getInstance().getCharacterRecords(newTopic, newItemCount);
     }
@@ -422,6 +441,7 @@ export class RoomManager {
     room.topic = newTopic;
     room.itemCount = newItemCount;
     room.timerDuration = newTimerDuration;
+    room.maxPlayers = newMaxPlayers;
 
     return toRoomStateDTO(room);
   }
@@ -486,6 +506,27 @@ export class RoomManager {
     const code = this.socketToRoom.get(socketId);
     if (!code) return undefined;
     return this.rooms.get(code);
+  }
+
+  public findPublicRoom(category?: string): RoomStateDTO | null {
+    // Phase 1: Try exact category match with open slots in lobby
+    for (const room of this.rooms.values()) {
+      const isLobby = !room.auctionEngine || room.auctionEngine.phase === 'LOBBY';
+      const hasSlot = room.players.length < room.maxPlayers;
+      const categoryMatch = !category || category.toLowerCase() === 'all' || room.category.toLowerCase() === category.toLowerCase();
+      if (isLobby && hasSlot && categoryMatch) {
+        return toRoomStateDTO(room);
+      }
+    }
+    // Phase 2: If no exact category match, return any open room in lobby with slots
+    for (const room of this.rooms.values()) {
+      const isLobby = !room.auctionEngine || room.auctionEngine.phase === 'LOBBY';
+      const hasSlot = room.players.length < room.maxPlayers;
+      if (isLobby && hasSlot) {
+        return toRoomStateDTO(room);
+      }
+    }
+    return null;
   }
 
   public getRoomCount(): number {

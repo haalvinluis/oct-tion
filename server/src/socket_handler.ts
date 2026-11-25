@@ -5,6 +5,8 @@ import {
   DEFAULT_TIMER_DURATION,
   SUPPORTED_ITEM_COUNTS,
   isValidItemCount,
+  SUPPORTED_MAX_PLAYERS,
+  DEFAULT_MAX_PLAYERS,
 } from './room_manager';
 import { CharacterDatabase } from './database/db';
 import { ProfileManager } from './database/profile_manager';
@@ -251,7 +253,7 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
           return;
         }
 
-        const { username, category, topic, gameMode, itemCount, timerDuration } = data || {};
+        const { username, category, topic, gameMode, itemCount, timerDuration, maxPlayers } = data || {};
         if (!username || !category || !itemCount) {
           const errResponse = { success: false, error: 'Missing required create parameters.' };
           if (typeof ack === 'function') ack(errResponse);
@@ -259,19 +261,10 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
         }
 
         const parsedItemCount = Number(itemCount);
-        if (parsedItemCount === 25) {
-          const errResponse = {
-            success: false,
-            error: 'Match size 25 items is not supported. Supported match sizes are 5, 8, and 10 items.',
-          };
-          if (typeof ack === 'function') ack(errResponse);
-          return;
-        }
-
         if (!isValidItemCount(parsedItemCount)) {
           const errResponse = {
             success: false,
-            error: `Match size must be one of: ${SUPPORTED_ITEM_COUNTS.join(', ')} items.`,
+            error: `Match size must be an integer between 1 and 10 items.`,
           };
           if (typeof ack === 'function') ack(errResponse);
           return;
@@ -284,6 +277,19 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
             const errResponse = {
               success: false,
               error: `Timer duration must be one of: ${SUPPORTED_TIMER_DURATIONS.join(', ')} seconds.`,
+            };
+            if (typeof ack === 'function') ack(errResponse);
+            return;
+          }
+        }
+
+        let parsedMaxPlayers: number = DEFAULT_MAX_PLAYERS;
+        if (maxPlayers !== undefined && maxPlayers !== null) {
+          parsedMaxPlayers = Number(maxPlayers);
+          if (!SUPPORTED_MAX_PLAYERS.includes(parsedMaxPlayers as any)) {
+            const errResponse = {
+              success: false,
+              error: `Max players must be between 2 and 8.`,
             };
             if (typeof ack === 'function') ack(errResponse);
             return;
@@ -315,7 +321,8 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
           itemCount,
           parsedTimer,
           effectivePlayerId,
-          topic
+          topic,
+          parsedMaxPlayers
         );
 
         await socket.join(roomState.roomCode);
@@ -343,7 +350,7 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
     // Step 7: Update Room Settings (Host only, LOBBY phase only)
     socket.on('update_room_settings', (data, ack) => {
       try {
-        const { roomCode, category, topic, itemCount, timerDuration } = data || {};
+        const { roomCode, category, topic, itemCount, timerDuration, maxPlayers } = data || {};
         if (!roomCode || !SecurityMiddleware.isValidRoomCode(roomCode)) {
           if (typeof ack === 'function') ack({ success: false, error: 'Invalid room code format.' });
           return;
@@ -351,21 +358,11 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
 
         if (itemCount !== undefined && itemCount !== null) {
           const parsedItemCount = Number(itemCount);
-          if (parsedItemCount === 25) {
-            if (typeof ack === 'function') {
-              ack({
-                success: false,
-                error: 'Match size 25 items is not supported. Supported match sizes are 5, 8, and 10 items.',
-              });
-            }
-            return;
-          }
-
           if (!isValidItemCount(parsedItemCount)) {
             if (typeof ack === 'function') {
               ack({
                 success: false,
-                error: `Match size must be one of: ${SUPPORTED_ITEM_COUNTS.join(', ')} items.`,
+                error: `Match size must be an integer between 1 and 10 items.`,
               });
             }
             return;
@@ -385,11 +382,25 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
           }
         }
 
+        if (maxPlayers !== undefined && maxPlayers !== null) {
+          const parsedMax = Number(maxPlayers);
+          if (!SUPPORTED_MAX_PLAYERS.includes(parsedMax as any)) {
+            if (typeof ack === 'function') {
+              ack({
+                success: false,
+                error: `Max players must be between 2 and 8.`,
+              });
+            }
+            return;
+          }
+        }
+
         const roomState = roomManager.updateRoomSettings(socket.id, roomCode, {
           category,
           topic,
           itemCount,
           timerDuration,
+          maxPlayers,
         });
 
         if (typeof ack === 'function') ack({ success: true, roomState });
@@ -397,6 +408,21 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
       } catch (err: any) {
         console.error(`[update_room_settings error]`, err.message);
         if (typeof ack === 'function') ack({ success: false, error: err.message });
+      }
+    });
+
+    // Public matchmaking event
+    socket.on('find_public_room', (data, ack) => {
+      try {
+        const { category } = data || {};
+        const roomState = roomManager.findPublicRoom(category);
+        if (roomState) {
+          if (typeof ack === 'function') ack({ success: true, roomCode: roomState.roomCode, roomState });
+        } else {
+          if (typeof ack === 'function') ack({ success: false, error: 'No active public lobbies found with available slots.' });
+        }
+      } catch (err: any) {
+        if (typeof ack === 'function') ack({ success: false, error: err.message || 'Error searching for public lobby.' });
       }
     });
 
@@ -1349,6 +1375,130 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
         }
       } catch (err: any) {
         if (typeof ack === 'function') ack({ success: false, error: err.message });
+      }
+    });
+
+    // Voice Chat & Microphone Signaling (Phase 4)
+    socket.on('voice_mic_state', (data: any) => {
+      try {
+        const { roomCode, isMuted, isSpeaking } = data || {};
+        if (!roomCode) return;
+        const normalizedCode = SecurityMiddleware.sanitizeString(roomCode, 15).toUpperCase();
+        io.to(normalizedCode).emit('player_mic_state_changed', {
+          socketId: socket.id,
+          playerId: socket.id,
+          isMuted: Boolean(isMuted),
+          isSpeaking: Boolean(isSpeaking),
+        });
+      } catch (err) {
+        // Safe failover for voice signaling
+      }
+    });
+
+    // Host Microphone Moderation: Mute/Unmute Individual Player (Phase 4)
+    socket.on('host_moderate_mic', (data: any, ack?: Function) => {
+      try {
+        const { roomCode, targetPlayerId, isMuted } = data || {};
+        if (!roomCode || !targetPlayerId) {
+          if (typeof ack === 'function') ack({ success: false, error: 'Missing parameters' });
+          return;
+        }
+        const normalizedCode = SecurityMiddleware.sanitizeString(roomCode, 15).toUpperCase();
+        const room = roomManager.getRoom(normalizedCode);
+        if (!room) {
+          if (typeof ack === 'function') ack({ success: false, error: 'Room not found' });
+          return;
+        }
+        // Authoritative verification: caller must be room host
+        const hostPlayer = room.players.find((p) => p.isHost);
+        if (!hostPlayer || hostPlayer.id !== socket.id) {
+          if (typeof ack === 'function') ack({ success: false, error: 'Only the host can moderate microphones' });
+          return;
+        }
+
+        // Broadcast authoritative mute state to whole room
+        io.to(normalizedCode).emit('player_mic_state_changed', {
+          socketId: targetPlayerId,
+          playerId: targetPlayerId,
+          isMuted: Boolean(isMuted),
+          isSpeaking: false,
+          hostMuted: Boolean(isMuted),
+        });
+
+        // Direct notification to target player to enforce local mute hardware cutoff
+        io.to(targetPlayerId).emit('host_moderated_my_mic', {
+          isMuted: Boolean(isMuted),
+          message: isMuted ? 'The host has muted your microphone.' : 'The host has unmuted your microphone.',
+        });
+
+        if (typeof ack === 'function') ack({ success: true });
+      } catch (err: any) {
+        if (typeof ack === 'function') ack({ success: false, error: err.message });
+      }
+    });
+
+    // Host Microphone Moderation: Mute All Players (Phase 4)
+    socket.on('host_moderate_mic_all', (data: any, ack?: Function) => {
+      try {
+        const { roomCode, isMuted } = data || {};
+        if (!roomCode) {
+          if (typeof ack === 'function') ack({ success: false, error: 'Missing roomCode' });
+          return;
+        }
+        const normalizedCode = SecurityMiddleware.sanitizeString(roomCode, 15).toUpperCase();
+        const room = roomManager.getRoom(normalizedCode);
+        if (!room) {
+          if (typeof ack === 'function') ack({ success: false, error: 'Room not found' });
+          return;
+        }
+        const hostPlayer = room.players.find((p) => p.isHost);
+        if (!hostPlayer || hostPlayer.id !== socket.id) {
+          if (typeof ack === 'function') ack({ success: false, error: 'Only the host can moderate microphones' });
+          return;
+        }
+
+        // Apply mute to all non-host players
+        for (const player of room.players) {
+          if (player.id !== socket.id) {
+            io.to(normalizedCode).emit('player_mic_state_changed', {
+              socketId: player.id,
+              playerId: player.id,
+              isMuted: Boolean(isMuted),
+              isSpeaking: false,
+              hostMuted: Boolean(isMuted),
+            });
+            io.to(player.id).emit('host_moderated_my_mic', {
+              isMuted: Boolean(isMuted),
+              message: isMuted ? 'The host has muted all players.' : 'The host has unmuted all players.',
+            });
+          }
+        }
+
+        if (typeof ack === 'function') ack({ success: true });
+      } catch (err: any) {
+        if (typeof ack === 'function') ack({ success: false, error: err.message });
+      }
+    });
+
+    // In-Game Quick Chat Message
+    socket.on('send_room_chat', (data: any) => {
+      try {
+        const { roomCode, message } = data || {};
+        if (!roomCode || !message) return;
+        const normalizedCode = SecurityMiddleware.sanitizeString(roomCode, 15).toUpperCase();
+        const sanitizedMsg = SecurityMiddleware.sanitizeString(message, 100);
+        const room = roomManager.getRoom(normalizedCode);
+        const sender = room?.players.find((p) => p.id === socket.id);
+
+        io.to(normalizedCode).emit('room_chat_message', {
+          id: `${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+          fromPlayerId: socket.id,
+          senderName: sender?.name || 'Player',
+          message: sanitizedMsg,
+          timestamp: Date.now(),
+        });
+      } catch (err) {
+        // Ignore chat broadcast errors
       }
     });
 

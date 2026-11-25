@@ -624,6 +624,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
   // ==================== Left Column: Player Roster & Voice Status ====================
   Widget _buildPlayerRosterPanel(AuctionStateModel? state, String? currentSocketId, String? sessionToken) {
     final players = state?.players ?? [];
+    final amHost = players.any((p) => p.isHost && ((sessionToken != null && p.sessionToken == sessionToken) || p.id == currentSocketId));
 
     return Container(
       padding: const EdgeInsets.all(10),
@@ -647,7 +648,43 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                   color: AppTheme.champagneGold,
                 ),
               ),
-              const Icon(Icons.groups_rounded, color: AppTheme.mutedText, size: 14),
+              if (amHost)
+                GestureDetector(
+                  onTap: () {
+                    VoiceChatService.instance.hostMuteAll(true);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Host muted all players'),
+                        duration: Duration(milliseconds: 900),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: AppTheme.selectedCard,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: AppTheme.surfaceBorder),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.mic_off_rounded, size: 10, color: AppTheme.champagneGold),
+                        SizedBox(width: 3),
+                        Text(
+                          'Mute All',
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.champagneGold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                const Icon(Icons.groups_rounded, color: AppTheme.mutedText, size: 14),
             ],
           ),
           const SizedBox(height: 8),
@@ -667,97 +704,106 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                     final isMuted = voiceState?.isMuted ?? true;
                     final isLocallyMuted = VoiceChatService.instance.isPlayerLocallyMuted(p.id);
 
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 6),
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: isLeadingThisPlayer
-                            ? AppTheme.selectedCard
-                            : (isMe ? AppTheme.mainBackground : AppTheme.secondaryBackground),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
+                    return GestureDetector(
+                      onTap: () => _showPlayerWinningDetailsModal(context, p, amHost, currentSocketId, isMuted),
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: 6),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                        decoration: BoxDecoration(
                           color: isLeadingThisPlayer
-                              ? AppTheme.champagneGold
-                              : (isMe ? AppTheme.goldBorder : AppTheme.surfaceBorder),
-                          width: isLeadingThisPlayer ? 1.5 : 0.8,
+                              ? AppTheme.selectedCard
+                              : (isMe ? AppTheme.mainBackground : AppTheme.secondaryBackground),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: isLeadingThisPlayer
+                                ? AppTheme.champagneGold
+                                : (isMe ? AppTheme.goldBorder : AppTheme.surfaceBorder),
+                            width: isLeadingThisPlayer ? 1.5 : 0.8,
+                          ),
                         ),
-                      ),
-                      child: Row(
-                        children: [
-                          // Small Player Medallion
-                          CircleAvatar(
-                            radius: 12,
-                            backgroundColor: isLeadingThisPlayer ? AppTheme.champagneGold : AppTheme.secondaryBackground,
-                            child: Text(
-                              p.name.isNotEmpty ? p.name[0].toUpperCase() : '?',
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: isLeadingThisPlayer ? AppTheme.mainBackground : AppTheme.warmCream,
+                        child: Row(
+                          children: [
+                            // Small Player Medallion
+                            CircleAvatar(
+                              radius: 12,
+                              backgroundColor: isLeadingThisPlayer ? AppTheme.champagneGold : AppTheme.secondaryBackground,
+                              child: Text(
+                                p.name.isNotEmpty ? p.name[0].toUpperCase() : '?',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: isLeadingThisPlayer ? AppTheme.mainBackground : AppTheme.warmCream,
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 6),
+                            const SizedBox(width: 6),
 
-                          // Name and Budget
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        isMe ? '${p.name} (You)' : p.name,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          fontWeight: isMe || isLeadingThisPlayer ? FontWeight.bold : FontWeight.normal,
-                                          color: isLeadingThisPlayer ? AppTheme.champagneGold : AppTheme.warmCream,
+                            // Name and Budget
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          isMe ? '${p.name} (You)' : p.name,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            fontWeight: isMe || isLeadingThisPlayer ? FontWeight.bold : FontWeight.normal,
+                                            color: isLeadingThisPlayer ? AppTheme.champagneGold : AppTheme.warmCream,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    if (hasPassedThisPlayer)
-                                      const Text(
-                                        'PASS',
-                                        style: TextStyle(color: Colors.redAccent, fontSize: 8, fontWeight: FontWeight.bold),
-                                      ),
-                                  ],
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  '\$${p.budget} • ${p.acquiredItems.length} Won',
-                                  style: const TextStyle(
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppTheme.mutedText,
+                                      if (hasPassedThisPlayer)
+                                        const Text(
+                                          'PASS',
+                                          style: TextStyle(color: Colors.redAccent, fontSize: 8, fontWeight: FontWeight.bold),
+                                        ),
+                                    ],
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          // In-Game Voice Status for this player (Muted/Speaking/Local Mute Toggle)
-                          if (!isMe)
-                            GestureDetector(
-                              onTap: () {
-                                VoiceChatService.instance.toggleMuteOtherPlayer(p.id);
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 4),
-                                child: Icon(
-                                  isLocallyMuted
-                                      ? Icons.volume_off_rounded
-                                      : (isSpeaking ? Icons.graphic_eq_rounded : (isMuted ? Icons.mic_off_rounded : Icons.mic_rounded)),
-                                  size: 13,
-                                  color: isLocallyMuted
-                                      ? Colors.redAccent
-                                      : (isSpeaking ? Colors.greenAccent : AppTheme.mutedText),
-                                ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    '\$${p.budget} • ${p.acquiredItems.length} Won',
+                                    style: const TextStyle(
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppTheme.mutedText,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                        ],
+
+                            // Trophy collection inspector icon
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 3),
+                              child: Icon(Icons.emoji_events_outlined, size: 12, color: AppTheme.champagneGold),
+                            ),
+
+                            // In-Game Voice Status for this player (Muted/Speaking/Local Mute Toggle)
+                            if (!isMe)
+                              GestureDetector(
+                                onTap: () {
+                                  VoiceChatService.instance.toggleMuteOtherPlayer(p.id);
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 4),
+                                  child: Icon(
+                                    isLocallyMuted
+                                        ? Icons.volume_off_rounded
+                                        : (isSpeaking ? Icons.graphic_eq_rounded : (isMuted ? Icons.mic_off_rounded : Icons.mic_rounded)),
+                                    size: 13,
+                                    color: isLocallyMuted
+                                        ? Colors.redAccent
+                                        : (isSpeaking ? Colors.greenAccent : AppTheme.mutedText),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
                     );
                   },
@@ -768,6 +814,248 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
         ],
       ),
     );
+  }
+
+  void _showPlayerWinningDetailsModal(
+    BuildContext context,
+    PlayerModel player,
+    bool amHost,
+    String? myId,
+    bool isPlayerMuted,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppTheme.darkCharcoalBurgundy,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Header: Avatar, Name, and Role
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 20,
+                          backgroundColor: AppTheme.trueChampagneGold,
+                          child: Text(
+                            player.name.isNotEmpty ? player.name[0].toUpperCase() : '?',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.deepBlackBurgundy,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                player.name,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppTheme.warmIvory,
+                                ),
+                              ),
+                              Text(
+                                player.isHost ? 'Room Host • Active Bidder' : 'Player • Active Bidder',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: AppTheme.mutedText,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close_rounded, color: AppTheme.mutedText),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                    const Divider(color: AppTheme.surfaceBorder, height: 1),
+                    const SizedBox(height: 14),
+
+                    // Balance Card
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: AppTheme.deepBlackBurgundy,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppTheme.trueChampagneGold.withValues(alpha: 0.5)),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Remaining Coin Balance',
+                            style: TextStyle(color: AppTheme.mutedText, fontSize: 13),
+                          ),
+                          Text(
+                            '${player.budget} coins',
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.trueChampagneGold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+
+                    // Characters Won Section
+                    Text(
+                      'Characters Won (${player.acquiredItems.length})',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.warmIvory,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    // List of won characters
+                    Flexible(
+                      child: player.purchasedItems.isNotEmpty
+                          ? ListView.separated(
+                              shrinkWrap: true,
+                              itemCount: player.purchasedItems.length,
+                              separatorBuilder: (_, __) => const SizedBox(height: 6),
+                              itemBuilder: (context, idx) {
+                                final item = player.purchasedItems[idx];
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.selectedCard,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: AppTheme.surfaceBorder),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      const Icon(Icons.star_rounded, color: AppTheme.trueChampagneGold, size: 16),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          item.itemName,
+                                          style: const TextStyle(
+                                            color: AppTheme.warmIvory,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        '— ${item.price} coins',
+                                        style: const TextStyle(
+                                          color: AppTheme.trueChampagneGold,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            )
+                          : (player.acquiredItems.isNotEmpty
+                              ? ListView.separated(
+                                  shrinkWrap: true,
+                                  itemCount: player.acquiredItems.length,
+                                  separatorBuilder: (_, __) => const SizedBox(height: 6),
+                                  itemBuilder: (context, idx) {
+                                    final name = player.acquiredItems[idx];
+                                    return Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.selectedCard,
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(color: AppTheme.surfaceBorder),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          const Icon(Icons.star_rounded, color: AppTheme.trueChampagneGold, size: 16),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              name,
+                                              style: const TextStyle(
+                                                color: AppTheme.warmIvory,
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                          ),
+                                          const Text(
+                                            'Won in Match',
+                                            style: TextStyle(
+                                              color: AppTheme.trueChampagneGold,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 11,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                )
+                              : Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  alignment: Alignment.center,
+                                  child: const Text(
+                                    'No characters won yet in this auction match',
+                                    style: TextStyle(color: AppTheme.mutedText, fontSize: 12),
+                                  ),
+                                )),
+                    ),
+
+                    // Host Microphone Moderation Controls
+                    if (amHost && player.id != myId) ...[
+                      const SizedBox(height: 16),
+                      ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: isPlayerMuted ? AppTheme.trueChampagneGold : Colors.redAccent,
+                          foregroundColor: isPlayerMuted ? AppTheme.deepBlackBurgundy : Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                        icon: Icon(isPlayerMuted ? Icons.mic_rounded : Icons.mic_off_rounded, size: 18),
+                        label: Text(
+                          isPlayerMuted ? 'Host: Unmute Player Microphone' : 'Host: Mute Player Microphone',
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                        ),
+                        onPressed: () {
+                          VoiceChatService.instance.hostMutePlayer(player.id, !isPlayerMuted);
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(isPlayerMuted ? 'Unmuted ${player.name}' : 'Muted ${player.name}'),
+                              duration: const Duration(milliseconds: 900),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
   }
 
   // ==================== Center Column: Random Character Reveal ====================

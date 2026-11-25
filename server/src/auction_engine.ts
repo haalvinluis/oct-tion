@@ -586,6 +586,10 @@ export class AuctionEngine {
         isReady: p.isReady,
         budget: p.budget,
         acquiredItems: p.acquiredItems,
+        purchasedItems: p.purchasedItemsDetails.map((item) => ({
+          itemName: item.itemName,
+          price: item.price,
+        })),
       })),
       auctionQueue: this.items.map((item) => this.toClientItem(item)!),
     };

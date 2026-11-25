@@ -43,6 +43,7 @@ class VoiceChatService {
 
   // Real-time notifiers
   final ValueNotifier<bool> isMicMutedNotifier = ValueNotifier<bool>(true);
+  final ValueNotifier<bool> isHostMutedNotifier = ValueNotifier<bool>(false);
   final ValueNotifier<bool> isConnectedNotifier = ValueNotifier<bool>(false);
   final ValueNotifier<bool> permissionDeniedNotifier = ValueNotifier<bool>(false);
   final ValueNotifier<Map<String, PlayerVoiceState>> playerStatesNotifier =
@@ -61,6 +62,7 @@ class VoiceChatService {
     _activeRoomCode = roomCode.toUpperCase();
     isConnectedNotifier.value = true;
     isMicMutedNotifier.value = true; // Always start muted by default for privacy
+    isHostMutedNotifier.value = false;
     permissionDeniedNotifier.value = false;
     playerStatesNotifier.value = {};
     chatMessagesNotifier.value = [];
@@ -77,6 +79,7 @@ class VoiceChatService {
     if (socket == null) return;
 
     socket.off('player_mic_state_changed');
+    socket.off('host_moderated_my_mic');
     socket.off('room_chat_message');
 
     socket.on('player_mic_state_changed', (data) {
@@ -95,6 +98,16 @@ class VoiceChatService {
         updatedAt: DateTime.now(),
       );
       playerStatesNotifier.value = current;
+    });
+
+    socket.on('host_moderated_my_mic', (data) {
+      if (data == null || data is! Map) return;
+      final isMuted = data['isMuted'] == true;
+      isHostMutedNotifier.value = isMuted;
+      if (isMuted) {
+        isMicMutedNotifier.value = true;
+        _broadcastMicState(isMuted: true, isSpeaking: false);
+      }
     });
 
     socket.on('room_chat_message', (data) {
@@ -118,21 +131,42 @@ class VoiceChatService {
 
   /// Toggle local user microphone state
   Future<bool> toggleMic() async {
+    // If host has muted us, prevent local bypass
+    if (isHostMutedNotifier.value) {
+      return false;
+    }
+
     final currentlyMuted = isMicMutedNotifier.value;
 
     if (currentlyMuted) {
-      // User wants to unmute: simulate mic activation after consent
-      // Real-world permission request handling
       isMicMutedNotifier.value = false;
       permissionDeniedNotifier.value = false;
       _broadcastMicState(isMuted: false, isSpeaking: true);
       return true;
     } else {
-      // User wants to mute
       isMicMutedNotifier.value = true;
       _broadcastMicState(isMuted: true, isSpeaking: false);
       return false;
     }
+  }
+
+  /// Host moderation: mute/unmute a specific player
+  Future<void> hostMutePlayer(String targetPlayerId, bool isMuted) async {
+    if (_activeRoomCode == null) return;
+    SocketService.instance.socket?.emit('host_moderate_mic', {
+      'roomCode': _activeRoomCode,
+      'targetPlayerId': targetPlayerId,
+      'isMuted': isMuted,
+    });
+  }
+
+  /// Host moderation: mute/unmute all players
+  Future<void> hostMuteAll(bool isMuted) async {
+    if (_activeRoomCode == null) return;
+    SocketService.instance.socket?.emit('host_moderate_mic_all', {
+      'roomCode': _activeRoomCode,
+      'isMuted': isMuted,
+    });
   }
 
   /// Toggle local muting of another player

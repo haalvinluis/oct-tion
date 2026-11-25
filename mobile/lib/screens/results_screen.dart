@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../theme/app_theme.dart';
 import '../models/auction_state_model.dart';
 import '../services/socket_service.dart';
@@ -6,7 +7,7 @@ import '../services/auth_service.dart';
 import '../widgets/custom_button.dart';
 import 'home_screen.dart';
 
-class ResultsScreen extends StatelessWidget {
+class ResultsScreen extends StatefulWidget {
   final String categoryName;
   final List<StandingsRecordModel> standings;
 
@@ -17,9 +18,25 @@ class ResultsScreen extends StatelessWidget {
   });
 
   @override
+  State<ResultsScreen> createState() => _ResultsScreenState();
+}
+
+class _ResultsScreenState extends State<ResultsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Phase 2: Results screen MUST restore and enforce portrait orientation
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final winner = standings.isNotEmpty
-        ? standings.first
+    final winner = widget.standings.isNotEmpty
+        ? widget.standings.first
         : const StandingsRecordModel(
             rank: 1,
             playerId: '',
@@ -109,7 +126,7 @@ class ResultsScreen extends StatelessWidget {
                   final currentSocketId = SocketService.instance.socketId;
                   final currentProfileId = AuthService.instance.effectivePlayerId;
                   StandingsRecordModel? myStanding;
-                  for (final s in standings) {
+                  for (final s in widget.standings) {
                     if (s.playerId == currentSocketId || (currentProfileId.isNotEmpty && s.playerId == currentProfileId)) {
                       myStanding = s;
                       break;
@@ -125,7 +142,7 @@ class ResultsScreen extends StatelessWidget {
                       rewardText = '+200 Coins';
                       rewardReason = 'Victory Reward!';
                       rewardColor = AppTheme.goldHighlight;
-                    } else if (myStanding.rank == standings.length && standings.length > 1) {
+                    } else if (myStanding.rank == widget.standings.length && widget.standings.length > 1) {
                       rewardText = '-50 Coins';
                       rewardReason = 'Match Penalty';
                       rewardColor = AppTheme.error;
@@ -229,9 +246,9 @@ class ResultsScreen extends StatelessWidget {
               // Ranking Standings List
               Expanded(
                 child: ListView.builder(
-                  itemCount: standings.length,
+                  itemCount: widget.standings.length,
                   itemBuilder: (context, index) {
-                    final p = standings[index];
+                    final p = widget.standings[index];
                     final rank = p.rank;
 
                     return Container(

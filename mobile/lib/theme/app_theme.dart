@@ -5,30 +5,35 @@ class AppTheme {
   static const String fontFamily = 'PlusJakartaSans';
 
   // OCT-TION Premium Color Tokens: Deep Black-Burgundy, Dark Wine, Champagne Gold, and Warm Ivory
-  static const Color darkMaroonBg = Color(0xFF160609); // Main background #160609 (Deep black-burgundy)
+  static const Color deepBlackBurgundy = Color(0xFF0D0306); // #0D0306
+  static const Color darkCharcoalBurgundy = Color(0xFF1E0A12); // #1E0A12
+  static const Color trueChampagneGold = Color(0xFFD4AF37); // #D4AF37
+  static const Color warmIvory = Color(0xFFFDFBF7); // #FDFBF7
+
+  static const Color darkMaroonBg = deepBlackBurgundy; // Main background #0D0306 (Deep black-burgundy)
   static const Color maroonBackground = darkMaroonBg;
   static const Color mainBackground = darkMaroonBg;
-  static const Color secondaryBackground = Color(0xFF21080D); // Secondary background #21080D (Dark wine)
-  static const Color maroonSurface = Color(0xFF2A1014); // Card background #2A1014 (Dark charcoal-burgundy)
+  static const Color secondaryBackground = darkCharcoalBurgundy; // Secondary background #1E0A12
+  static const Color maroonSurface = darkCharcoalBurgundy; // Card background #1E0A12 (Dark charcoal-burgundy)
   static const Color cardBackground = maroonSurface;
   static const Color secondarySurface = secondaryBackground; // Secondary elevated surface
-  static const Color selectedCard = Color(0xFF40171B); // Selected card #40171B (Subtle muted burgundy)
-  static const Color surfaceBorder = Color(0x26D6AD70); // Subtle luxury champagne gold border (15% opacity)
-  static const Color goldBorder = Color(0x40D6AD70); // Soft antique gold border (25% opacity)
-  static const Color goldBorderGlow = Color(0x66D6AD70); // Champagne gold border glow (40% opacity)
-  static const Color warmCream = Color(0xFFF5EBDD); // Primary text #F5EBDD (Warm ivory)
+  static const Color selectedCard = Color(0xFF38141F); // Selected card (Subtle rich burgundy)
+  static const Color surfaceBorder = Color(0x33D4AF37); // Subtle luxury champagne gold border (20% opacity)
+  static const Color goldBorder = Color(0x59D4AF37); // Soft antique gold border (35% opacity)
+  static const Color goldBorderGlow = Color(0x80D4AF37); // Champagne gold border glow (50% opacity)
+  static const Color warmCream = warmIvory; // Primary text #FDFBF7 (Warm ivory)
   static const Color creamText = warmCream;
   static const Color primaryText = warmCream;
-  static const Color goldHighlight = Color(0xFFD6AD70); // Primary accent #D6AD70 (Champagne gold)
+  static const Color goldHighlight = trueChampagneGold; // Primary accent #D4AF37 (Champagne gold)
   static const Color champagneGold = goldHighlight;
   static const Color accentGold = goldHighlight;
-  static const Color pureWhite = Color(0xFFF5EBDD); // Warm ivory primary text
+  static const Color pureWhite = warmIvory; // Warm ivory primary text
   static const Color mutedText = Color(0xFFB9A99A); // Secondary text #B9A99A (Muted beige)
   static const Color secondaryText = mutedText;
-  static const Color maroonAccent = Color(0xFF40171B); // Selected muted burgundy
+  static const Color maroonAccent = Color(0xFF38141F); // Selected rich burgundy
   static const Color goldAccent = Color(0xFFA9824C); // Secondary accent #A9824C (Soft antique gold)
   static const Color softAntiqueGold = goldAccent;
-  static const Color darkMaroonText = Color(0xFF160609); // High contrast dark text for champagne gold buttons
+  static const Color darkMaroonText = deepBlackBurgundy; // High contrast dark text for champagne gold buttons
 
   // Aliases ensuring seamless backwards compatibility across all existing widgets
   static const Color deepNavyBg = darkMaroonBg;

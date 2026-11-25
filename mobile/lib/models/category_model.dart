@@ -63,7 +63,7 @@ class CategoryModel {
       case 'superheroes':
         return 'Superheroes';
       case 'marvel':
-        return 'Marvel';
+        return 'Marvel Characters';
       case 'other':
         return 'Other';
 
@@ -193,14 +193,8 @@ class CategoryModel {
     CategoryModel(id: 'spider_man', name: 'Spider-Man', parentCategoryId: 'superheroes', actualCount: 15, targetCount: 150),
     CategoryModel(id: 'marvel_avengers', name: 'Avengers', parentCategoryId: 'superheroes', actualCount: 15, targetCount: 200),
 
-    // Marvel
-    CategoryModel(id: 'marvel', name: 'Marvel', parentCategoryId: 'marvel', actualCount: 30, targetCount: 200),
-    CategoryModel(id: 'iron_man', name: 'Iron Man', parentCategoryId: 'marvel', actualCount: 15, targetCount: 150),
-    CategoryModel(id: 'captain_america', name: 'Captain America', parentCategoryId: 'marvel', actualCount: 15, targetCount: 150),
-    CategoryModel(id: 'thor', name: 'Thor', parentCategoryId: 'marvel', actualCount: 15, targetCount: 150),
-    CategoryModel(id: 'hulk', name: 'Hulk', parentCategoryId: 'marvel', actualCount: 15, targetCount: 150),
-    CategoryModel(id: 'x_men', name: 'X-Men', parentCategoryId: 'marvel', actualCount: 15, targetCount: 150),
-    CategoryModel(id: 'guardians_of_the_galaxy', name: 'Guardians of the Galaxy', parentCategoryId: 'marvel', actualCount: 15, targetCount: 150),
+    // Marvel - SPECIAL RULE: Exactly ONE selectable catalogue containing all Marvel characters
+    CategoryModel(id: 'marvel', name: 'Marvel Characters', parentCategoryId: 'marvel', actualCount: 30, targetCount: 1000),
 
     // Other
     CategoryModel(id: 'other_anime', name: 'Other Anime', parentCategoryId: 'other', actualCount: 15, targetCount: 200),
@@ -209,6 +203,9 @@ class CategoryModel {
   /// Returns the parent category ID for a topic ID
   static String getCategoryForTopic(String topicId) {
     final norm = normalizeId(topicId);
+    if (norm == 'marvel' || ['iron_man', 'captain_america', 'thor', 'hulk', 'x_men', 'guardians_of_the_galaxy'].contains(norm)) {
+      return 'marvel';
+    }
     for (final topic in canonicalTopics) {
       if (topic.id == norm && topic.parentCategoryId != null) {
         return topic.parentCategoryId!;
@@ -225,9 +222,6 @@ class CategoryModel {
     }
     if (['superheroes', 'batman', 'superman', 'spider_man', 'marvel_avengers'].contains(norm)) {
       return 'superheroes';
-    }
-    if (norm == 'marvel' || ['iron_man', 'captain_america', 'thor', 'hulk', 'x_men', 'guardians_of_the_galaxy'].contains(norm)) {
-      return 'marvel';
     }
     return 'other';
   }
@@ -255,6 +249,18 @@ class CategoryModel {
   /// Retrieves topics for a given category, falling back to canonicalTopics
   static List<CategoryModel> getTopicsForCategory(String categoryId, [List<CategoryModel>? topics]) {
     final norm = categoryId.trim().toLowerCase().replaceAll(RegExp(r'[\s\-]+'), '_');
+    // SPECIAL RULE FOR MARVEL: Exactly ONE selectable catalogue containing all Marvel characters
+    if (norm == 'marvel') {
+      return const [
+        CategoryModel(
+          id: 'marvel',
+          name: 'Marvel Characters',
+          parentCategoryId: 'marvel',
+          actualCount: 30,
+          targetCount: 1000,
+        ),
+      ];
+    }
     final pool = (topics != null && topics.isNotEmpty) ? topics : canonicalTopics;
     final filtered = pool.where((t) {
       final p = t.parentCategoryId ?? getCategoryForTopic(t.id);

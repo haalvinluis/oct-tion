@@ -1,3 +1,25 @@
+class PurchasedItemModel {
+  final String itemName;
+  final int price;
+
+  const PurchasedItemModel({
+    required this.itemName,
+    required this.price,
+  });
+
+  factory PurchasedItemModel.fromJson(Map<String, dynamic> json) {
+    return PurchasedItemModel(
+      itemName: json['itemName']?.toString() ?? '',
+      price: (json['price'] as num?)?.toInt() ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'itemName': itemName,
+    'price': price,
+  };
+}
+
 class PlayerModel {
   final String id;
   final String? sessionToken;
@@ -6,6 +28,7 @@ class PlayerModel {
   final bool isReady;
   final int budget;
   final List<String> acquiredItems;
+  final List<PurchasedItemModel> purchasedItems;
   final bool isConnected;
 
   const PlayerModel({
@@ -16,6 +39,7 @@ class PlayerModel {
     this.isReady = false,
     this.budget = 1000,
     this.acquiredItems = const [],
+    this.purchasedItems = const [],
     this.isConnected = true,
   });
 
@@ -31,6 +55,10 @@ class PlayerModel {
               ?.map((e) => e.toString())
               .toList() ??
           const [],
+      purchasedItems: (json['purchasedItems'] as List<dynamic>?)
+              ?.map((e) => PurchasedItemModel.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
       isConnected: json['isConnected'] ?? true,
     );
   }
@@ -44,6 +72,7 @@ class PlayerModel {
       'isReady': isReady,
       'budget': budget,
       'acquiredItems': acquiredItems,
+      'purchasedItems': purchasedItems.map((e) => e.toJson()).toList(),
       'isConnected': isConnected,
     };
   }
@@ -55,6 +84,7 @@ class PlayerModel {
     bool? isReady,
     int? budget,
     List<String>? acquiredItems,
+    List<PurchasedItemModel>? purchasedItems,
   }) {
     return PlayerModel(
       id: id ?? this.id,
@@ -63,6 +93,7 @@ class PlayerModel {
       isReady: isReady ?? this.isReady,
       budget: budget ?? this.budget,
       acquiredItems: acquiredItems ?? this.acquiredItems,
+      purchasedItems: purchasedItems ?? this.purchasedItems,
     );
   }
 }

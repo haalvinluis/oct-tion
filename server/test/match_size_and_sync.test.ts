@@ -67,8 +67,8 @@ describe('Match Size Options and Room Player Synchronization Tests', function ()
   // 1. MATCH SIZE OPTIONS & 25-ITEM REJECTION
   // ==========================================
   describe('1. Match Size Validation & 25-Item Rejection', () => {
-    it('Should define supported match sizes strictly as [5, 8, 10]', () => {
-      expect(SUPPORTED_ITEM_COUNTS).to.deep.equal([5, 8, 10]);
+    it('Should define supported match sizes strictly as [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]', () => {
+      expect(SUPPORTED_ITEM_COUNTS).to.deep.equal([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     });
 
     it('Should reject creating a room with 25 items', async () => {
@@ -84,7 +84,7 @@ describe('Match Size Options and Room Player Synchronization Tests', function ()
       });
 
       expect(res.success).to.be.false;
-      expect(res.error).to.include('25 items is not supported');
+      expect(res.error).to.include('Match size must be an integer between 1 and 10 items');
     });
 
     it('Should reject updating room settings to 25 items', async () => {
@@ -106,7 +106,7 @@ describe('Match Size Options and Room Player Synchronization Tests', function ()
       });
 
       expect(updateRes.success).to.be.false;
-      expect(updateRes.error).to.include('25 items is not supported');
+      expect(updateRes.error).to.include('Match size must be an integer between 1 and 10 items');
     });
 
     it('Should reject invalid non-supported match sizes (e.g. 50 items)', async () => {
@@ -122,7 +122,7 @@ describe('Match Size Options and Room Player Synchronization Tests', function ()
       });
 
       expect(res.success).to.be.false;
-      expect(res.error).to.include('Match size must be one of: 5, 8, 10 items');
+      expect(res.error).to.include('Match size must be an integer between 1 and 10 items');
     });
   });
 

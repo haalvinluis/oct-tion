@@ -86,11 +86,11 @@ describe('Configurable Bidding Timer & Server-Authoritative Expiration Tests', f
 
   it('3. Should reject invalid timer durations during room creation and updates', async () => {
     // 3a. RoomManager unit rejection for all invalid durations
-    const invalidDurations = [0, -5, 12, 60, 99, 3];
+    const invalidDurations = [0, -5, 12, 75, 99, 3];
     for (const invalid of invalidDurations) {
       expect(() => {
         roomManager.createRoom('dummy_sock', 'Host', 'cricket', 'AUCTION_TEAM_CHALLENGE', 5, invalid);
-      }).to.throw('Timer duration must be one of: 5, 10, 15, 20, 30, 45 seconds.');
+      }).to.throw('Timer duration must be one of: 5, 10, 15, 20, 30, 45, 60 seconds.');
     }
 
     // 3b. Socket create_room rejection
@@ -111,7 +111,7 @@ describe('Configurable Bidding Timer & Server-Authoritative Expiration Tests', f
     });
 
     expect(res.success).to.be.false;
-    expect(res.error).to.include('Timer duration must be one of: 5, 10, 15, 20, 30, 45 seconds.');
+    expect(res.error).to.include('Timer duration must be one of: 5, 10, 15, 20, 30, 45, 60 seconds.');
 
     // 3c. Verify update_room_settings rejects invalid timer
     const validClient = createClient();
@@ -134,7 +134,7 @@ describe('Configurable Bidding Timer & Server-Authoritative Expiration Tests', f
       );
     });
     expect(updateRes.success).to.be.false;
-    expect(updateRes.error).to.include('Timer duration must be one of: 5, 10, 15, 20, 30, 45 seconds.');
+    expect(updateRes.error).to.include('Timer duration must be one of: 5, 10, 15, 20, 30, 45, 60 seconds.');
   });
 
   it('4. All joined players receive consistent, synchronized timerDuration and remaining seconds', async () => {

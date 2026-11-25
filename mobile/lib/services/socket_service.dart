@@ -474,6 +474,7 @@ class SocketService {
     required String gameMode,
     required int itemCount,
     int timerDuration = 15,
+    int maxPlayers = 8,
   }) async {
     connect();
 
@@ -492,6 +493,7 @@ class SocketService {
         'gameMode': gameMode,
         'itemCount': itemCount,
         'timerDuration': timerDuration,
+        'maxPlayers': maxPlayers,
       },
       ack: (response) {
         if (response != null && response['success'] == true) {
@@ -511,6 +513,37 @@ class SocketService {
     return completer.future.timeout(
       const Duration(seconds: 8),
       onTimeout: () => throw Exception('Server request timed out. Is server running at $_serverUrl?'),
+    );
+  }
+
+  Future<RoomModel> findPublicRoom({String? category}) async {
+    connect();
+
+    if (!_socket!.connected) {
+      await _waitForConnection();
+    }
+
+    final completer = Completer<RoomModel>();
+
+    _socket!.emitWithAck(
+      'find_public_room',
+      {
+        if (category != null && category.isNotEmpty) 'category': category,
+      },
+      ack: (response) {
+        if (response != null && response['success'] == true && response['roomState'] != null) {
+          final room = RoomModel.fromJson(response['roomState']);
+          completer.complete(room);
+        } else {
+          final errorMsg = response?['error'] ?? 'No available public rooms found.';
+          completer.completeError(Exception(errorMsg));
+        }
+      },
+    );
+
+    return completer.future.timeout(
+      const Duration(seconds: 6),
+      onTimeout: () => throw Exception('Matchmaking search timed out. No available rooms.'),
     );
   }
 

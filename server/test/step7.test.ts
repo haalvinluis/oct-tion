@@ -139,7 +139,7 @@ describe('Step 7: Room Customization & Settings Tests', function () {
     });
 
     expect(updateRes.success).to.be.false;
-    expect(updateRes.error).to.include('Timer duration must be one of: 5, 10, 15, 20, 30, 45 seconds.');
+    expect(updateRes.error).to.include('Timer duration must be one of: 5, 10, 15, 20, 30, 45, 60 seconds.');
   });
 
   it('4. Lock room settings after auction starts', async () => {

@@ -129,6 +129,7 @@ export interface PlayerDTO {
   isReady: boolean;
   budget: number;
   acquiredItems: string[];
+  purchasedItems?: { itemName: string; price: number }[];
   isConnected?: boolean;
   profileId?: string;
 }

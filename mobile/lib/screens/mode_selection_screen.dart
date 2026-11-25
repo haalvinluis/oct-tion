@@ -71,12 +71,20 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
               _buildCategoryGrid(),
               const SizedBox(height: 24),
 
-              // Level 2: Single Catalogue Information (No Individual Card Roster Preview)
-              const SectionHeader(
-                title: '2. Selected Auction Catalogue',
-                subtitle: 'Server-authoritative mystery pool for match',
+              // Level 2: Topic Selection or Marvel Catalogue (Special Rule)
+              SectionHeader(
+                title: _selectedCategory == 'marvel'
+                    ? '2. Marvel Catalogue (Special Rule)'
+                    : '2. Select Topic / Title',
+                subtitle: _selectedCategory == 'marvel'
+                    ? 'Single unified Marvel collection (All characters included)'
+                    : 'Select a title; match will use this topic\'s characters only',
               ),
               const SizedBox(height: 12),
+              if (_selectedCategory != 'marvel') ...[
+                _buildTopicSelector(),
+                const SizedBox(height: 14),
+              ],
               _buildCatalogueInfoCard(),
               const SizedBox(height: 24),
 
@@ -173,7 +181,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Room Config: ${_getCatalogueName(_selectedCategory)} • $_selectedItemCount Random Mystery Items',
+                        'Room Config: ${_selectedCategory == 'marvel' ? 'Marvel Characters' : CategoryModel.defaultDisplayName(_selectedTopic)} • $_selectedItemCount Random Mystery Items',
                         style: const TextStyle(
                           color: AppTheme.warmCream,
                           fontSize: 12,
@@ -284,10 +292,80 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
     );
   }
 
+  Widget _buildTopicSelector() {
+    final topics = CategoryModel.getTopicsForCategory(_selectedCategory);
+    if (topics.isEmpty) return const SizedBox.shrink();
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: topics.map((t) {
+        final isSelected = _selectedTopic == t.id;
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              _selectedTopic = t.id;
+            });
+          },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+            decoration: BoxDecoration(
+              color: isSelected ? AppTheme.selectedCard : AppTheme.cardBackground,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: isSelected ? AppTheme.champagneGold : AppTheme.surfaceBorder,
+                width: isSelected ? 1.8 : 1,
+              ),
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: AppTheme.champagneGold.withValues(alpha: 0.25),
+                        blurRadius: 6,
+                      )
+                    ]
+                  : null,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (isSelected) ...[
+                  const Icon(Icons.check_circle_rounded, color: AppTheme.champagneGold, size: 14),
+                  const SizedBox(width: 6),
+                ],
+                Text(
+                  t.name,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                    color: isSelected ? AppTheme.champagneGold : AppTheme.warmCream,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  int _getTopicCount(String topicId) {
+    final norm = CategoryModel.normalizeId(topicId);
+    for (final t in CategoryModel.canonicalTopics) {
+      if (t.id == norm && t.actualCount > 0) return t.actualCount;
+    }
+    return 15;
+  }
+
   Widget _buildCatalogueInfoCard() {
-    final catalogueName = _getCatalogueName(_selectedCategory);
-    final count = _getCatalogueCount(_selectedCategory);
-    final description = _getCatalogueDescription(_selectedCategory);
+    final isMarvel = _selectedCategory == 'marvel';
+    final catalogueName = isMarvel
+        ? 'Marvel Characters'
+        : CategoryModel.defaultDisplayName(_selectedTopic);
+    final count = isMarvel ? 30 : _getTopicCount(_selectedTopic);
+    final description = isMarvel
+        ? 'Unified Marvel collection. All Marvel heroes and villains belong to this single official catalogue.'
+        : 'After selecting $catalogueName, this auction match will exclusively feature $catalogueName characters.';
 
     return Container(
       padding: const EdgeInsets.all(18),
