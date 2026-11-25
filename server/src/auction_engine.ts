@@ -85,7 +85,7 @@ export class AuctionEngine {
       scoringMethod: r.scoringMethod,
       provenance: r.provenance,
       isActive: r.isActive,
-      basePrice: getStartingBid(r.basePrice),
+      basePrice: 0,
     }));
 
     initialPlayers.forEach((p) => {
@@ -115,6 +115,9 @@ export class AuctionEngine {
 
   public get minNextBid(): number {
     if (!this.currentItem) return 0;
+    if (this.currentBid <= 0) {
+      return getMinBidIncrement(0); // Starting bid is $0, players initiate bidding from min increment (25)
+    }
     return getNextValidBid(this.currentBid, this.currentItem.basePrice);
   }
 

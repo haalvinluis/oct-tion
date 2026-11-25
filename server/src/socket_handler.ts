@@ -264,7 +264,7 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
         if (!isValidItemCount(parsedItemCount)) {
           const errResponse = {
             success: false,
-            error: `Match size must be an integer between 1 and 10 items.`,
+            error: `Match size must be an integer between 4 and 48 items.`,
           };
           if (typeof ack === 'function') ack(errResponse);
           return;
@@ -362,7 +362,7 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
             if (typeof ack === 'function') {
               ack({
                 success: false,
-                error: `Match size must be an integer between 1 and 10 items.`,
+                error: `Match size must be an integer between 4 and 48 items.`,
               });
             }
             return;
@@ -1478,6 +1478,19 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
       } catch (err: any) {
         if (typeof ack === 'function') ack({ success: false, error: err.message });
       }
+    });
+
+    // Real-Time Audio Chunk Relay for Live Voice Chat
+    socket.on('voice_audio_chunk', (data: any) => {
+      try {
+        const { roomCode, chunk } = data || {};
+        if (!roomCode || !chunk) return;
+        const normalizedCode = SecurityMiddleware.sanitizeString(roomCode, 15).toUpperCase();
+        socket.to(normalizedCode).emit('voice_audio_chunk', {
+          fromPlayerId: socket.id,
+          chunk,
+        });
+      } catch (_) {}
     });
 
     // In-Game Quick Chat Message

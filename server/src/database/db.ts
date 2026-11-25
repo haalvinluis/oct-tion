@@ -522,16 +522,26 @@ export class CharacterDatabase {
   ): CharacterRecord[] {
     const eligible = this.getEligibleRecordsForCategory(categoryId);
 
-    if (eligible.length < count) {
-      const available = eligible.length;
-      throw new Error(
-        `Insufficient valid records in category "${categoryId}". Requested ${count}, but only ${available} valid records exist.`
-      );
+    if (eligible.length === 0) {
+      throw new Error(`No eligible records found in category "${categoryId}".`);
     }
 
-    // Step 1: Select a random subset of available characters from the eligible pool
-    const poolShuffle = fisherYatesShuffle(eligible);
-    const selectedSubset = poolShuffle.slice(0, count);
+    let selectedSubset: CharacterRecord[] = [];
+    if (eligible.length >= count) {
+      const poolShuffle = fisherYatesShuffle(eligible);
+      selectedSubset = poolShuffle.slice(0, count);
+    } else {
+      let cycle = 1;
+      while (selectedSubset.length < count) {
+        const round = fisherYatesShuffle(eligible).map((r, i) => ({
+          ...r,
+          id: cycle === 1 ? r.id : `${r.id}_c${cycle}_${i}`,
+        }));
+        selectedSubset.push(...round);
+        cycle++;
+      }
+      selectedSubset = selectedSubset.slice(0, count);
+    }
 
     // Step 2: Randomize the bidding appearance order of the selected subset
     const randomizedQueue = fisherYatesShuffle(selectedSubset);

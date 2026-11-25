@@ -31,7 +31,8 @@ class SocketService {
 
   String? get socketId => _socket?.id;
   io.Socket? get socket => _socket;
-  String? get currentRoomCode => currentRoomNotifier.value?.roomCode;
+  String? get currentRoomCode =>
+      currentRoomNotifier.value?.roomCode ?? auctionNotifier.value?.roomCode;
   String get serverUrl => _serverUrl;
   bool get isConnected => _socket != null && _socket!.connected;
 

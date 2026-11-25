@@ -241,25 +241,15 @@ class HomeScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Row(
-          children: [
-            Icon(
-              Icons.grid_view_rounded,
-              color: AppTheme.goldHighlight,
-              size: 19,
-            ),
-            SizedBox(width: 8),
-            Text(
-              'Quick Access',
-              style: TextStyle(
-                fontFamily: AppTheme.fontFamily,
-                color: AppTheme.pureWhite,
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.2,
-              ),
-            ),
-          ],
+        const Text(
+          'Quick Access',
+          style: TextStyle(
+            fontFamily: AppTheme.fontFamily,
+            color: AppTheme.pureWhite,
+            fontSize: 18,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.2,
+          ),
         ),
         const SizedBox(height: 14),
 
@@ -269,16 +259,10 @@ class HomeScreen extends StatelessWidget {
             Expanded(
               child: _buildQuickActionCard(
                 context: context,
-                icon: Icons.people_alt_rounded,
-                iconGradient: const LinearGradient(
-                  colors: [Color(0xFFE5C07B), Color(0xFFA1782A)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
                 title: 'Friends & Invites',
                 subtitle: 'OCT-ID & Requests',
                 onTap: () {
-                  AudioService().playSfx(SfxType.buttonClick);
+                  AudioService().playButtonClick();
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const FriendsScreen()),
@@ -290,16 +274,10 @@ class HomeScreen extends StatelessWidget {
             Expanded(
               child: _buildQuickActionCard(
                 context: context,
-                icon: Icons.loyalty_rounded,
-                iconGradient: const LinearGradient(
-                  colors: [Color(0xFF10B981), Color(0xFF047857)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
                 title: 'My Bids',
                 subtitle: 'Match History',
                 onTap: () {
-                  AudioService().playSfx(SfxType.buttonClick);
+                  AudioService().playButtonClick();
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const MatchHistoryScreen()),
@@ -317,16 +295,10 @@ class HomeScreen extends StatelessWidget {
             Expanded(
               child: _buildQuickActionCard(
                 context: context,
-                icon: Icons.category_rounded,
-                iconGradient: const LinearGradient(
-                  colors: [Color(0xFFE11D48), Color(0xFF881337)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
                 title: 'Auctions',
                 subtitle: '6 Universes & Topics',
                 onTap: () {
-                  AudioService().playSfx(SfxType.buttonClick);
+                  AudioService().playButtonClick();
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const ModeSelectionScreen()),
@@ -338,16 +310,10 @@ class HomeScreen extends StatelessWidget {
             Expanded(
               child: _buildQuickActionCard(
                 context: context,
-                icon: Icons.settings_rounded,
-                iconGradient: const LinearGradient(
-                  colors: [Color(0xFFD97706), Color(0xFF78350F)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
                 title: 'Settings',
                 subtitle: 'Audio & Server',
                 onTap: () {
-                  AudioService().playSfx(SfxType.buttonClick);
+                  AudioService().playButtonClick();
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const SettingsScreen()),
@@ -363,8 +329,6 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildQuickActionCard({
     required BuildContext context,
-    required IconData icon,
-    required LinearGradient iconGradient,
     required String title,
     required String subtitle,
     required VoidCallback onTap,
@@ -378,7 +342,7 @@ class HomeScreen extends StatelessWidget {
         splashColor: AppTheme.goldHighlight.withValues(alpha: 0.15),
         highlightColor: AppTheme.goldHighlight.withValues(alpha: 0.08),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
           decoration: BoxDecoration(
             gradient: AppTheme.velvetCardGradient,
             borderRadius: BorderRadius.circular(18),
@@ -391,54 +355,31 @@ class HomeScreen extends StatelessWidget {
               ),
             ],
           ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  gradient: iconGradient,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: iconGradient.colors.first.withValues(alpha: 0.35),
-                      blurRadius: 6,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
+              Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontFamily: AppTheme.fontFamily,
+                  color: AppTheme.pureWhite,
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w700,
                 ),
-                child: Icon(icon, color: Colors.white, size: 20),
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontFamily: AppTheme.fontFamily,
-                        color: AppTheme.pureWhite,
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontFamily: AppTheme.fontFamily,
-                        color: AppTheme.mutedText,
-                        fontSize: 10.5,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
+              const SizedBox(height: 3),
+              Text(
+                subtitle,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontFamily: AppTheme.fontFamily,
+                  color: AppTheme.mutedText,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],

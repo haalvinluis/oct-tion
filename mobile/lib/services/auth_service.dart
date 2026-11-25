@@ -22,6 +22,8 @@ class AuthService {
   static const String _keyPublicPlayerId = 'powerbid_public_player_id';
   static const String _keyUsername = 'powerbid_username';
   static const String _keyCoinBalance = 'powerbid_coin_balance';
+  static const String _keyPlayerAge = 'octtion_player_age';
+  static const String _keyAgeVerified = 'octtion_age_verified';
 
   String _guestPlayerId = '';
   String? _sessionToken;
@@ -35,6 +37,8 @@ class AuthService {
   final ValueNotifier<String?> currentUsernameNotifier = ValueNotifier<String?>(null);
   final ValueNotifier<String?> publicPlayerIdNotifier = ValueNotifier<String?>(null);
   final ValueNotifier<int> coinBalanceNotifier = ValueNotifier<int>(500);
+  final ValueNotifier<int> playerAgeNotifier = ValueNotifier<int>(18);
+  final ValueNotifier<bool> isAgeVerifiedNotifier = ValueNotifier<bool>(false);
   final ValueNotifier<Map<String, dynamic>?> accountStatusNotifier =
       ValueNotifier<Map<String, dynamic>?>(null);
 
@@ -47,6 +51,9 @@ class AuthService {
   String? get currentUsername => currentUsernameNotifier.value;
   String get effectivePlayerId => _profileId ?? _guestPlayerId;
   int get coinBalance => coinBalanceNotifier.value;
+  int get playerAge => playerAgeNotifier.value;
+  bool get isAgeVerified => isAgeVerifiedNotifier.value;
+  bool get isAdult => playerAgeNotifier.value >= 18;
 
   String get defaultDisplayName {
     if (currentUsername != null && currentUsername!.trim().isNotEmpty) {
@@ -132,6 +139,16 @@ class AuthService {
       }
       publicPlayerIdNotifier.value = savedPublicId;
       debugPrint('[AuthService] Restored OCT-TION ID: $savedPublicId');
+
+      // 6. Load age verification
+      final savedAge = prefs.getInt(_keyPlayerAge);
+      final savedVerified = prefs.getBool(_keyAgeVerified);
+      if (savedAge != null) {
+        playerAgeNotifier.value = savedAge;
+      }
+      if (savedVerified != null) {
+        isAgeVerifiedNotifier.value = savedVerified;
+      }
     } catch (e) {
       debugPrint('[AuthService] Error initializing auth storage: $e');
       if (_guestPlayerId.isEmpty) {
@@ -593,6 +610,28 @@ class AuthService {
       }).catchError((e) {
         debugPrint('[AuthService] Error saving coin balance to storage: $e');
       });
+    }
+  }
+
+  /// Increments or decrements player coin balance and persists it immediately.
+  void addCoins(int delta) {
+    final current = coinBalanceNotifier.value;
+    final updated = (current + delta).clamp(0, 9999999);
+    updateCoinBalance(updated);
+  }
+
+  /// Sets and persists player age and verification status.
+  /// Age >= 18 is required to enable voice chat microphone transmission.
+  Future<void> setPlayerAge(int age) async {
+    playerAgeNotifier.value = age;
+    isAgeVerifiedNotifier.value = true;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(_keyPlayerAge, age);
+      await prefs.setBool(_keyAgeVerified, true);
+      debugPrint('[AuthService] Saved player age: $age (adult: ${age >= 18})');
+    } catch (e) {
+      debugPrint('[AuthService] Error saving player age: $e');
     }
   }
 }

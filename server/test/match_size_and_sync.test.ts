@@ -67,34 +67,37 @@ describe('Match Size Options and Room Player Synchronization Tests', function ()
   // 1. MATCH SIZE OPTIONS & 25-ITEM REJECTION
   // ==========================================
   describe('1. Match Size Validation & 25-Item Rejection', () => {
-    it('Should define supported match sizes strictly as [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]', () => {
-      expect(SUPPORTED_ITEM_COUNTS).to.deep.equal([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    it('Should define supported match sizes strictly from 4 items and above', () => {
+      expect(SUPPORTED_ITEM_COUNTS[0]).to.equal(4);
+      expect(SUPPORTED_ITEM_COUNTS).to.not.include(1);
+      expect(SUPPORTED_ITEM_COUNTS).to.not.include(2);
+      expect(SUPPORTED_ITEM_COUNTS).to.not.include(3);
     });
 
-    it('Should reject creating a room with 25 items', async () => {
+    it('Should reject creating a room with 60 items', async () => {
       const host = createClient();
       await waitForConnect(host);
 
       const res: any = await new Promise((resolve) => {
         host.emit(
           'create_room',
-          { username: 'Reject25Host', category: 'cricket', itemCount: 25 },
+          { username: 'Reject60Host', category: 'cricket', itemCount: 60 },
           resolve
         );
       });
 
       expect(res.success).to.be.false;
-      expect(res.error).to.include('Match size must be an integer between 1 and 10 items');
+      expect(res.error).to.include('Match size must be an integer between 4 and 48 items');
     });
 
-    it('Should reject updating room settings to 25 items', async () => {
+    it('Should reject updating room settings to 60 items', async () => {
       const host = createClient();
       await waitForConnect(host);
 
       const createRes: any = await new Promise((resolve) => {
         host.emit(
           'create_room',
-          { username: 'Update25Host', category: 'cricket', itemCount: 10 },
+          { username: 'Update60Host', category: 'cricket', itemCount: 8 },
           resolve
         );
       });
@@ -102,11 +105,11 @@ describe('Match Size Options and Room Player Synchronization Tests', function ()
       const roomCode = createRes.roomCode;
 
       const updateRes: any = await new Promise((resolve) => {
-        host.emit('update_room_settings', { roomCode, itemCount: 25 }, resolve);
+        host.emit('update_room_settings', { roomCode, itemCount: 60 }, resolve);
       });
 
       expect(updateRes.success).to.be.false;
-      expect(updateRes.error).to.include('Match size must be an integer between 1 and 10 items');
+      expect(updateRes.error).to.include('Match size must be an integer between 4 and 48 items');
     });
 
     it('Should reject invalid non-supported match sizes (e.g. 50 items)', async () => {
@@ -116,13 +119,13 @@ describe('Match Size Options and Room Player Synchronization Tests', function ()
       const res: any = await new Promise((resolve) => {
         host.emit(
           'create_room',
-          { username: 'InvalidHost', category: 'cricket', itemCount: 50 },
+          { username: 'InvalidHost', category: 'cricket', itemCount: 75 },
           resolve
         );
       });
 
       expect(res.success).to.be.false;
-      expect(res.error).to.include('Match size must be an integer between 1 and 10 items');
+      expect(res.error).to.include('Match size must be an integer between 4 and 48 items');
     });
   });
 

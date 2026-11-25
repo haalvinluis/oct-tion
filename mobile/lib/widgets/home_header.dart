@@ -165,34 +165,29 @@ class HomeHeader extends StatelessWidget {
                             },
                           ),
                           const SizedBox(height: 1),
-                          ValueListenableBuilder<int>(
-                            valueListenable: AuthService.instance.coinBalanceNotifier,
-                            builder: (context, coins, _) {
-                              return FittedBox(
-                                fit: BoxFit.scaleDown,
-                                alignment: Alignment.centerLeft,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      Icons.monetization_on_rounded,
-                                      size: 11,
-                                      color: AppTheme.goldHighlight,
-                                    ),
-                                    const SizedBox(width: 3),
-                                    Text(
-                                      '$coins',
-                                      style: const TextStyle(
-                                        fontFamily: AppTheme.fontFamily,
-                                        color: AppTheme.goldHighlight,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                    ),
-                                  ],
+                          const FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.shield_rounded,
+                                  size: 11,
+                                  color: AppTheme.goldHighlight,
                                 ),
-                              );
-                            },
+                                SizedBox(width: 3),
+                                Text(
+                                  'Player',
+                                  style: TextStyle(
+                                    fontFamily: AppTheme.fontFamily,
+                                    color: AppTheme.goldHighlight,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),

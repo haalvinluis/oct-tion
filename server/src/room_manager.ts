@@ -8,16 +8,16 @@ export const SUPPORTED_TIMER_DURATIONS = [5, 10, 15, 20, 30, 45, 60] as const;
 export type SupportedTimerDuration = (typeof SUPPORTED_TIMER_DURATIONS)[number];
 export const DEFAULT_TIMER_DURATION: SupportedTimerDuration = 15;
 
-export const SUPPORTED_ITEM_COUNTS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
-export type SupportedItemCount = (typeof SUPPORTED_ITEM_COUNTS)[number];
-export const DEFAULT_ITEM_COUNT: SupportedItemCount = 10;
+export const SUPPORTED_ITEM_COUNTS = [4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20, 24, 28, 32, 36, 40, 48] as const;
+export type SupportedItemCount = number;
+export const DEFAULT_ITEM_COUNT: number = 8;
 
 export const SUPPORTED_MAX_PLAYERS = [2, 3, 4, 5, 6, 7, 8] as const;
 export type SupportedMaxPlayers = (typeof SUPPORTED_MAX_PLAYERS)[number];
 export const DEFAULT_MAX_PLAYERS: SupportedMaxPlayers = 8;
 
 export function isValidItemCount(count: number): boolean {
-  if (count < 1 || count > 10 || !Number.isInteger(count)) {
+  if (count < 4 || count > 50 || !Number.isInteger(count)) {
     return false;
   }
   return true;

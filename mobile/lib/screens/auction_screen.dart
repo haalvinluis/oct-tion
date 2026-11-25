@@ -7,6 +7,8 @@ import '../services/socket_service.dart';
 import '../services/settings_service.dart';
 import '../services/audio_service.dart';
 import '../services/voice_chat_service.dart';
+import '../utils/platform_helper.dart';
+import '../widgets/age_verification_dialog.dart';
 import 'results_screen.dart';
 
 class AuctionScreen extends StatefulWidget {
@@ -35,19 +37,13 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
   void initState() {
     super.initState();
 
-    // 1. Force LANDSCAPE mode exclusively for the Live Auction Game
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
+    // 1. Force native LANDSCAPE mode exclusively for the Live Auction Game
+    PlatformHelper.forceLandscape();
 
-    // 2. Enable immersive sticky fullscreen UI for unobstructed horizontal gaming
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-
-    // 3. Initialize in-game voice chat signaling
+    // 2. Initialize in-game voice chat signaling
     VoiceChatService.instance.init(SocketService.instance.currentRoomCode);
 
-    // 4. Initialize animation controller for countdown pulse
+    // 3. Initialize animation controller for countdown pulse
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 700),
@@ -60,14 +56,17 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    PlatformHelper.forceLandscape();
+  }
+
+  @override
   void dispose() {
     // RESTORE PORTRAIT mode immediately when leaving the live game
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    PlatformHelper.forcePortrait();
 
+    AudioService().stopAllSounds();
     VoiceChatService.instance.leaveVoiceChat();
     _pulseController.dispose();
     SocketService.instance.auctionNotifier.removeListener(_onAuctionStateChanged);
@@ -75,6 +74,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
   }
 
   void _onAuctionStateChanged() {
+    if (!mounted) return;
     final state = SocketService.instance.auctionNotifier.value;
     if (state == null) return;
 
@@ -355,8 +355,10 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
         final isLeading = (myPlayer != null && myPlayer.id.isNotEmpty && state?.leadingBidderId == myPlayer.id) ||
             (currentSocketId != null && state?.leadingBidderId == currentSocketId);
 
-        final calculatedNextBid = currentBid > 0 ? (currentBid + _selectedBidIncrement) : (currentItem?.basePrice ?? 100);
-        final effectiveNextBid = calculatedNextBid < minNextBid ? minNextBid : calculatedNextBid;
+        final calculatedNextBid = currentBid > 0 ? (currentBid + _selectedBidIncrement) : _selectedBidIncrement;
+        final effectiveNextBid = currentBid > 0
+            ? (calculatedNextBid < minNextBid ? minNextBid : calculatedNextBid)
+            : _selectedBidIncrement;
         final canAffordBid = myRemainingBudget >= effectiveNextBid;
 
         return PopScope(
@@ -574,15 +576,19 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
             builder: (context, isMuted, _) {
               return GestureDetector(
                 onTap: () async {
-                  final unmuted = await VoiceChatService.instance.toggleMic();
+                  final res = await VoiceChatService.instance.toggleMic(context: context);
                   if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(unmuted ? 'Microphone Live 🎙️' : 'Microphone Muted 🔇'),
-                      duration: const Duration(milliseconds: 900),
-                      backgroundColor: unmuted ? Colors.green.shade800 : AppTheme.cardBackground,
-                    ),
-                  );
+                  if (res['message'] != null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(res['message'] as String),
+                        duration: const Duration(milliseconds: 1100),
+                        backgroundColor: res['success'] == true && res['isMuted'] == false
+                            ? Colors.green.shade800
+                            : AppTheme.cardBackground,
+                      ),
+                    );
+                  }
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -640,7 +646,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'PLAYERS (${players.length}/8)',
+                'PLAYERS (${players.length}/${SocketService.instance.currentRoomNotifier.value?.maxPlayers ?? 2})',
                 style: const TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
@@ -648,43 +654,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                   color: AppTheme.champagneGold,
                 ),
               ),
-              if (amHost)
-                GestureDetector(
-                  onTap: () {
-                    VoiceChatService.instance.hostMuteAll(true);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Host muted all players'),
-                        duration: Duration(milliseconds: 900),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: AppTheme.selectedCard,
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: AppTheme.surfaceBorder),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.mic_off_rounded, size: 10, color: AppTheme.champagneGold),
-                        SizedBox(width: 3),
-                        Text(
-                          'Mute All',
-                          style: TextStyle(
-                            fontSize: 9,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.champagneGold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-              else
-                const Icon(Icons.groups_rounded, color: AppTheme.mutedText, size: 14),
+              const Icon(Icons.groups_rounded, color: AppTheme.champagneGold, size: 16),
             ],
           ),
           const SizedBox(height: 8),
@@ -783,22 +753,37 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                               child: Icon(Icons.emoji_events_outlined, size: 12, color: AppTheme.champagneGold),
                             ),
 
-                            // In-Game Voice Status for this player (Muted/Speaking/Local Mute Toggle)
+                            // In-Game Voice Status for this player (Host Mute Moderation / Local Mute Toggle)
                             if (!isMe)
                               GestureDetector(
                                 onTap: () {
-                                  VoiceChatService.instance.toggleMuteOtherPlayer(p.id);
+                                  if (amHost) {
+                                    final newMuted = !isMuted;
+                                    VoiceChatService.instance.hostMutePlayer(p.id, newMuted);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(newMuted ? 'Host muted ${p.name}' : 'Host unmuted ${p.name}'),
+                                        duration: const Duration(milliseconds: 900),
+                                      ),
+                                    );
+                                  } else {
+                                    VoiceChatService.instance.toggleMuteOtherPlayer(p.id);
+                                  }
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 4),
                                   child: Icon(
-                                    isLocallyMuted
-                                        ? Icons.volume_off_rounded
-                                        : (isSpeaking ? Icons.graphic_eq_rounded : (isMuted ? Icons.mic_off_rounded : Icons.mic_rounded)),
+                                    amHost
+                                        ? (isMuted ? Icons.mic_off_rounded : Icons.mic_rounded)
+                                        : (isLocallyMuted
+                                            ? Icons.volume_off_rounded
+                                            : (isSpeaking ? Icons.graphic_eq_rounded : (isMuted ? Icons.mic_off_rounded : Icons.mic_rounded))),
                                     size: 13,
-                                    color: isLocallyMuted
-                                        ? Colors.redAccent
-                                        : (isSpeaking ? Colors.greenAccent : AppTheme.mutedText),
+                                    color: amHost
+                                        ? (isMuted ? Colors.redAccent : Colors.greenAccent)
+                                        : (isLocallyMuted
+                                            ? Colors.redAccent
+                                            : (isSpeaking ? Colors.greenAccent : AppTheme.mutedText)),
                                   ),
                                 ),
                               ),
@@ -899,11 +884,11 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text(
-                            'Remaining Coin Balance',
+                            'Remaining Match Budget',
                             style: TextStyle(color: AppTheme.mutedText, fontSize: 13),
                           ),
                           Text(
-                            '${player.budget} coins',
+                            '\$${player.budget}',
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
@@ -957,7 +942,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                                         ),
                                       ),
                                       Text(
-                                        '— ${item.price} coins',
+                                        '— \$${item.price}',
                                         style: const TextStyle(
                                           color: AppTheme.trueChampagneGold,
                                           fontWeight: FontWeight.bold,
@@ -1085,107 +1070,76 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
       ),
       child: Column(
         children: [
-          // Reveal Card Medallion & Name
+          // Reveal Card: Name and Status (Medallion removed per requirement)
           Expanded(
-            child: Row(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Character Portrait Medallion
-                Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF40171B), Color(0xFFD6AD70), Color(0xFFA9824C)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    border: Border.all(color: AppTheme.champagneGold, width: 2),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppTheme.champagneGold.withValues(alpha: 0.25),
-                        blurRadius: 14,
-                        spreadRadius: 2,
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: AppTheme.mainBackground,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: AppTheme.goldBorder, width: 0.8),
                       ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Icon(
-                      phase == 'SOLD' ? Icons.check_circle_rounded : Icons.person_rounded,
-                      color: AppTheme.warmCream,
-                      size: 54,
+                      child: Text(
+                        'ITEM ${(state?.currentItemIndex ?? 0) + 1}',
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.champagneGold,
+                        ),
+                      ),
                     ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: AppTheme.selectedCard,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        phase == 'SOLD' ? 'SOLD' : (phase == 'UNSOLD' ? 'UNSOLD' : 'LIVE AUCTION'),
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: phase == 'SOLD'
+                              ? Colors.greenAccent
+                              : (phase == 'UNSOLD' ? Colors.redAccent : AppTheme.warmCream),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  itemName,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontFamily: AppTheme.fontFamily,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 0.5,
+                    color: AppTheme.warmCream,
                   ),
                 ),
-                const SizedBox(width: 16),
-
-                // Character Details
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Wrap(
-                        spacing: 6,
-                        runSpacing: 4,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: AppTheme.mainBackground,
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(color: AppTheme.goldBorder, width: 0.8),
-                            ),
-                            child: Text(
-                              'ITEM ${(state?.currentItemIndex ?? 0) + 1}',
-                              style: const TextStyle(
-                                fontSize: 9,
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.champagneGold,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: AppTheme.selectedCard,
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              phase == 'SOLD' ? 'SOLD' : (phase == 'UNSOLD' ? 'UNSOLD' : 'LIVE AUCTION'),
-                              style: TextStyle(
-                                fontSize: 9,
-                                fontWeight: FontWeight.bold,
-                                color: phase == 'SOLD' ? Colors.greenAccent : (phase == 'UNSOLD' ? Colors.redAccent : AppTheme.warmCream),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        itemName,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontFamily: AppTheme.fontFamily,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w900,
-                          color: AppTheme.warmCream,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Base: \$${currentItem?.basePrice ?? 100} • Mystery Points Protected',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                          color: AppTheme.mutedText,
-                        ),
-                      ),
-                    ],
+                const SizedBox(height: 6),
+                const Text(
+                  'Starting Bid: \$0 • Players Start Bidding',
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: AppTheme.mutedText,
                   ),
                 ),
               ],
@@ -1300,7 +1254,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
               children: [
                 const Flexible(
                   child: Text(
-                    'Your Coins',
+                    'Your Budget',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(color: AppTheme.mutedText, fontSize: 11),

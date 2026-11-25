@@ -75,9 +75,7 @@ describe('Auction Selection & Appearance Order Randomization Tests', function ()
       expect(isAlphabeticalDesc).to.be.false;
 
       const prices = records.map((r) => r.basePrice);
-      const isPriceSortedAsc = prices.every((p, i, arr) => i === 0 || arr[i - 1] <= p);
-      const isPriceSortedDesc = prices.every((p, i, arr) => i === 0 || arr[i - 1] >= p);
-      expect(isPriceSortedAsc && isPriceSortedDesc).to.be.false;
+      expect(prices.every((p) => p === 0)).to.be.true;
 
       const ids = records.map((r) => r.id);
       const isIdSequential = ids.every((id, i) => id === `cricket_${i + 1}`);
@@ -124,7 +122,7 @@ describe('Auction Selection & Appearance Order Randomization Tests', function ()
           expect(item.displayName).to.be.a('string').and.not.empty;
           expect(item.isActive).to.be.true;
           expect(item.powerPoints).to.be.a('number').within(0, 100);
-          expect(item.basePrice).to.be.a('number').greaterThan(0);
+          expect(item.basePrice).to.equal(0);
         }
       }
     });

@@ -56,12 +56,12 @@ export function getStartingBid(catalogueBasePrice?: number): number {
 
 /**
  * Calculates the next minimum acceptable bid.
- * If currentBid is 0 (no bids yet), the starting bid is required.
+ * If currentBid is 0 (no bids yet), players start bidding at minimum increment.
  * Otherwise, currentBid + increment based on currentBid tier is required.
  */
 export function getNextValidBid(currentBid: number, catalogueBasePrice?: number): number {
   if (currentBid <= 0) {
-    return getStartingBid(catalogueBasePrice);
+    return getMinBidIncrement(0); // 25
   }
   return currentBid + getMinBidIncrement(currentBid);
 }

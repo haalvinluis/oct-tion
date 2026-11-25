@@ -60,8 +60,8 @@ class FeaturedAuctionCard extends StatelessWidget {
                     ? (auction.currentItem?.displayName ?? 'Live Character Auction')
                     : 'Naruto Characters';
                 final String descText = hasLiveAuction
-                    ? 'Room ${room.roomCode} • ${room.players.length}/8 Players Joined'
-                    : 'Shinobi team challenge • Max 8 Players per Room';
+                    ? 'Room ${room.roomCode} • ${room.players.length}/${room.maxPlayers} Players Joined'
+                    : 'Shinobi team challenge • Real-Time Multiplayer Room';
                 final String timerText = hasLiveAuction
                     ? '${auction.timerSecondsRemaining}s left'
                     : '15s Turns';

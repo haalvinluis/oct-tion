@@ -4,6 +4,7 @@ import '../theme/app_theme.dart';
 import '../models/auction_state_model.dart';
 import '../services/socket_service.dart';
 import '../services/auth_service.dart';
+import '../utils/platform_helper.dart';
 import '../widgets/custom_button.dart';
 import 'home_screen.dart';
 
@@ -26,11 +27,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
   void initState() {
     super.initState();
     // Phase 2: Results screen MUST restore and enforce portrait orientation
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    PlatformHelper.forcePortrait();
   }
 
   @override
@@ -120,115 +117,53 @@ class _ResultsScreenState extends State<ResultsScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Player Coin Reward & Balance Banner
-              Builder(
-                builder: (context) {
-                  final currentSocketId = SocketService.instance.socketId;
-                  final currentProfileId = AuthService.instance.effectivePlayerId;
-                  StandingsRecordModel? myStanding;
-                  for (final s in widget.standings) {
-                    if (s.playerId == currentSocketId || (currentProfileId.isNotEmpty && s.playerId == currentProfileId)) {
-                      myStanding = s;
-                      break;
-                    }
-                  }
-
-                  String rewardText = '+25 Coins';
-                  String rewardReason = 'Match Completion Reward';
-                  Color rewardColor = AppTheme.goldHighlight;
-
-                  if (myStanding != null) {
-                    if (myStanding.rank == 1) {
-                      rewardText = '+200 Coins';
-                      rewardReason = 'Victory Reward!';
-                      rewardColor = AppTheme.goldHighlight;
-                    } else if (myStanding.rank == widget.standings.length && widget.standings.length > 1) {
-                      rewardText = '-50 Coins';
-                      rewardReason = 'Match Penalty';
-                      rewardColor = AppTheme.error;
-                    } else {
-                      rewardText = '+25 Coins';
-                      rewardReason = 'Participation Reward';
-                      rewardColor = AppTheme.accent;
-                    }
-                  }
-
-                  return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: AppTheme.navySurface,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: rewardColor.withOpacity(0.4), width: 1.2),
+              // Match Status Banner (No Coins)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: AppTheme.navySurface,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppTheme.goldHighlight.withValues(alpha: 0.4), width: 1.2),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppTheme.goldHighlight.withValues(alpha: 0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.stars_rounded, color: AppTheme.goldHighlight, size: 22),
                     ),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: rewardColor.withOpacity(0.15),
-                            shape: BoxShape.circle,
+                    const SizedBox(width: 12),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'AUCTION MATCH COMPLETED',
+                            style: TextStyle(
+                              fontFamily: AppTheme.fontFamily,
+                              color: AppTheme.goldHighlight,
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.8,
+                            ),
                           ),
-                          child: Icon(Icons.monetization_on_rounded, color: rewardColor, size: 22),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                rewardReason.toUpperCase(),
-                                style: TextStyle(
-                                  fontFamily: AppTheme.fontFamily,
-                                  color: rewardColor,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 0.8,
-                                ),
-                              ),
-                              Text(
-                                rewardText,
-                                style: const TextStyle(
-                                  fontFamily: AppTheme.fontFamily,
-                                  color: AppTheme.pureWhite,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                            ],
+                          Text(
+                            'Final Standings & Rosters',
+                            style: TextStyle(
+                              fontFamily: AppTheme.fontFamily,
+                              color: AppTheme.pureWhite,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w800,
+                            ),
                           ),
-                        ),
-                        ValueListenableBuilder<int>(
-                          valueListenable: AuthService.instance.coinBalanceNotifier,
-                          builder: (context, balance, _) {
-                            return Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: AppTheme.surfaceLight,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(Icons.account_balance_wallet_rounded, color: AppTheme.goldHighlight, size: 16),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '$balance Coins',
-                                    style: const TextStyle(
-                                      fontFamily: AppTheme.fontFamily,
-                                      color: AppTheme.pureWhite,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  );
-                },
+                  ],
+                ),
               ),
               const SizedBox(height: 16),
 

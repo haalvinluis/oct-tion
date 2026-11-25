@@ -62,7 +62,7 @@ export class DataImporter {
         scoringMethod: raw.scoringMethod || 'Standard Rating Scale (0-100)',
         provenance: raw.provenance || 'Verified Official Reference Data',
         isActive: raw.isActive !== false,
-        basePrice: (raw.basePrice !== undefined && raw.basePrice > 0) ? raw.basePrice : getStartingBid(),
+        basePrice: 0,
       });
     }
 

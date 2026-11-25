@@ -39,9 +39,9 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
   static const List<int> supportedMaxPlayers = [2, 3, 4, 5, 6, 7, 8];
   int _selectedMaxPlayers = 4;
 
-  // Part 2: Exactly 10 selectable items options: 1..10
-  static const List<int> supportedItemCounts = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  int _selectedItemCount = 5;
+  // 4 items minimum per player (8 players = 32 characters, 2 players = 8 characters)
+  int _itemsPerPlayer = 4;
+  int get _selectedItemCount => _selectedMaxPlayers * _itemsPerPlayer;
 
   // Part 2: Exactly 6 selectable duration options: 10s, 15s, 20s, 30s, 45s, 60s
   static const List<int> supportedTimerDurations = [10, 15, 20, 30, 45, 60];
@@ -52,7 +52,6 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
   @override
   void initState() {
     super.initState();
-    _selectedItemCount = supportedItemCounts.contains(widget.itemCount) ? widget.itemCount : 5;
     _tabController = TabController(length: 2, vsync: this);
     _serverUrlController.text = SocketService.instance.serverUrl;
 
@@ -117,6 +116,7 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
             category: room.category,
             topic: room.topic,
             itemCount: _selectedItemCount,
+            maxPlayers: _selectedMaxPlayers,
             username: username,
           ),
         ),
@@ -632,8 +632,8 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
           const SizedBox(height: 8),
           _buildSummaryRow(
             icon: Icons.format_list_numbered_rounded,
-            label: 'Auction Items',
-            value: '$_selectedItemCount Items',
+            label: 'Auction Characters',
+            value: '$_selectedItemCount Characters ($_itemsPerPlayer / Player)',
           ),
           const SizedBox(height: 8),
           _buildSummaryRow(
@@ -714,36 +714,40 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: supportedMaxPlayers.map((count) {
-              final isSelected = _selectedMaxPlayers == count;
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedMaxPlayers = count;
-                  });
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(right: 8),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
-                  decoration: BoxDecoration(
-                    color: isSelected ? AppTheme.selectedCard : AppTheme.darkCharcoalBurgundy,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isSelected ? AppTheme.trueChampagneGold : AppTheme.surfaceBorder,
-                      width: isSelected ? 2 : 1,
+            children: [
+              for (final count in supportedMaxPlayers)
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedMaxPlayers = count;
+                    });
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+                    decoration: BoxDecoration(
+                      color: _selectedMaxPlayers == count
+                          ? AppTheme.selectedCard
+                          : AppTheme.darkCharcoalBurgundy,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: _selectedMaxPlayers == count
+                            ? AppTheme.trueChampagneGold
+                            : AppTheme.surfaceBorder,
+                        width: _selectedMaxPlayers == count ? 2 : 1,
+                      ),
                     ),
-                  ),
-                  child: Text(
-                    '$count',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                      color: isSelected ? AppTheme.trueChampagneGold : AppTheme.warmIvory,
+                    child: Text(
+                      '$count',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: _selectedMaxPlayers == count ? FontWeight.bold : FontWeight.w600,
+                        color: _selectedMaxPlayers == count ? AppTheme.trueChampagneGold : AppTheme.warmIvory,
+                      ),
                     ),
                   ),
                 ),
-              );
-            }).toList(),
+            ],
           ),
         ),
       ],
@@ -762,7 +766,7 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
                 Icon(Icons.format_list_numbered_rounded, color: AppTheme.trueChampagneGold, size: 18),
                 SizedBox(width: 8),
                 Text(
-                  'Auction Items Count',
+                  'Auction Characters',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
@@ -779,7 +783,7 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
                 border: Border.all(color: AppTheme.trueChampagneGold, width: 0.8),
               ),
               child: Text(
-                '$_selectedItemCount Items',
+                '$_selectedItemCount Characters ($_itemsPerPlayer / Player)',
                 style: const TextStyle(
                   color: AppTheme.trueChampagneGold,
                   fontWeight: FontWeight.bold,
@@ -793,36 +797,40 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: supportedItemCounts.map((count) {
-              final isSelected = _selectedItemCount == count;
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedItemCount = count;
-                  });
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(right: 8),
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-                  decoration: BoxDecoration(
-                    color: isSelected ? AppTheme.selectedCard : AppTheme.darkCharcoalBurgundy,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isSelected ? AppTheme.trueChampagneGold : AppTheme.surfaceBorder,
-                      width: isSelected ? 2 : 1,
+            children: [
+              for (final perPlayer in [4, 5, 6])
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _itemsPerPlayer = perPlayer;
+                    });
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+                    decoration: BoxDecoration(
+                      color: _itemsPerPlayer == perPlayer
+                          ? AppTheme.selectedCard
+                          : AppTheme.darkCharcoalBurgundy,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: _itemsPerPlayer == perPlayer
+                            ? AppTheme.trueChampagneGold
+                            : AppTheme.surfaceBorder,
+                        width: _itemsPerPlayer == perPlayer ? 2 : 1,
+                      ),
                     ),
-                  ),
-                  child: Text(
-                    '$count Item${count > 1 ? 's' : ''}',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                      color: isSelected ? AppTheme.trueChampagneGold : AppTheme.warmIvory,
+                    child: Text(
+                      '$perPlayer Per Player (${_selectedMaxPlayers * perPlayer} Total)',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: _itemsPerPlayer == perPlayer ? FontWeight.bold : FontWeight.w600,
+                        color: _itemsPerPlayer == perPlayer ? AppTheme.trueChampagneGold : AppTheme.warmIvory,
+                      ),
                     ),
                   ),
                 ),
-              );
-            }).toList(),
+            ],
           ),
         ),
       ],
@@ -870,40 +878,48 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
         ),
         const SizedBox(height: 10),
         Row(
-          children: supportedTimerDurations.map((duration) {
-            final isSelected = _selectedTimerDuration == duration;
-            return Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedTimerDuration = duration;
-                  });
-                },
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 3),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: BoxDecoration(
-                    color: isSelected ? AppTheme.selectedCard : AppTheme.darkCharcoalBurgundy,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isSelected ? AppTheme.trueChampagneGold : AppTheme.surfaceBorder,
-                      width: isSelected ? 2 : 1,
+          children: [
+            for (final duration in supportedTimerDurations)
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedTimerDuration = duration;
+                    });
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    decoration: BoxDecoration(
+                      color: _selectedTimerDuration == duration
+                          ? AppTheme.selectedCard
+                          : AppTheme.darkCharcoalBurgundy,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: _selectedTimerDuration == duration
+                            ? AppTheme.trueChampagneGold
+                            : AppTheme.surfaceBorder,
+                        width: _selectedTimerDuration == duration ? 2 : 1,
+                      ),
                     ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      '${duration}s',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                        color: isSelected ? AppTheme.trueChampagneGold : AppTheme.warmIvory,
+                    child: Center(
+                      child: Text(
+                        '${duration}s',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: _selectedTimerDuration == duration
+                              ? FontWeight.bold
+                              : FontWeight.w600,
+                          color: _selectedTimerDuration == duration
+                              ? AppTheme.trueChampagneGold
+                              : AppTheme.warmIvory,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              );
-            }).toList(),
-          ),
+              ),
+          ],
         ),
       ],
     );

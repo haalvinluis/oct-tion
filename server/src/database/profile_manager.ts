@@ -532,7 +532,7 @@ export class ProfileManager {
       ...(options?.economy || {}),
     };
 
-    // Prevent reward farming on abandoned matches or matches with insufficient participants
+    // Prevent reward farming on abandoned matches
     if (options?.isAbandoned || participants.length < economy.minParticipants) {
       console.log(`[ProfileManager] Match ${matchId} abandoned or has < ${economy.minParticipants} participants. Skipping coin economy.`);
       return rewardsMap;

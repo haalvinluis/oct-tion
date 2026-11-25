@@ -117,55 +117,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
               ),
               const SizedBox(height: 24),
 
-              // Match Size Selection Header
-              const SectionHeader(
-                title: '4. Auction Match Size',
-                subtitle: 'Number of character items auctioned per match',
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: _itemCountOptions.map((count) {
-                  final isSelected = _selectedItemCount == count;
-                  return Expanded(
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        setState(() {
-                          _selectedItemCount = count;
-                        });
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? AppTheme.selectedCard
-                              : AppTheme.cardBackground,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: isSelected ? AppTheme.champagneGold : AppTheme.surfaceBorder,
-                            width: isSelected ? 2 : 1,
-                          ),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              '$count Items',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: isSelected ? AppTheme.champagneGold : AppTheme.warmCream,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
               // Summary Capsule
               Container(
@@ -181,7 +133,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Room Config: ${_selectedCategory == 'marvel' ? 'Marvel Characters' : CategoryModel.defaultDisplayName(_selectedTopic)} • $_selectedItemCount Random Mystery Items',
+                        'Room Config: ${_selectedCategory == 'marvel' ? 'Marvel Characters' : CategoryModel.defaultDisplayName(_selectedTopic)} • Live Mystery Auction Arena',
                         style: const TextStyle(
                           color: AppTheme.warmCream,
                           fontSize: 12,

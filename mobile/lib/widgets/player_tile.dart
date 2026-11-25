@@ -8,6 +8,10 @@ class PlayerTile extends StatelessWidget {
   final String? name;
   final bool? isHost;
   final bool? isMe;
+  final bool? isMuted;
+  final bool? isSpeaking;
+  final bool canModerate;
+  final VoidCallback? onMicToggle;
 
   const PlayerTile({
     super.key,
@@ -16,6 +20,10 @@ class PlayerTile extends StatelessWidget {
     this.name,
     this.isHost,
     this.isMe,
+    this.isMuted,
+    this.isSpeaking,
+    this.canModerate = false,
+    this.onMicToggle,
   });
 
   @override
@@ -24,10 +32,12 @@ class PlayerTile extends StatelessWidget {
     final effectiveHost = isHost ?? player?.isHost ?? false;
     final effectiveMe = isMe ?? false;
     final isEmpty = effectiveName == null;
+    final muted = isMuted ?? true;
+    final speaking = isSpeaking ?? false;
 
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
         color: isEmpty ? AppTheme.surface.withValues(alpha: 0.5) : AppTheme.surface,
         borderRadius: BorderRadius.circular(12),
@@ -51,18 +61,37 @@ class PlayerTile extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              isEmpty ? 'Slot #${slotIndex + 1} (Waiting for player...)' : '$effectiveName${effectiveMe ? ' (You)' : ''}',
-              style: TextStyle(
-                color: isEmpty ? AppTheme.textSecondary : AppTheme.textPrimary,
-                fontWeight: isEmpty ? FontWeight.normal : FontWeight.w600,
-                fontSize: 14,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  isEmpty
+                      ? 'Slot #${slotIndex + 1} (Waiting for player...)'
+                      : '$effectiveName${effectiveMe ? ' (You)' : ''}',
+                  style: TextStyle(
+                    color: isEmpty ? AppTheme.textSecondary : AppTheme.textPrimary,
+                    fontWeight: isEmpty ? FontWeight.normal : FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+                if (!isEmpty && speaking)
+                  const Text(
+                    'Speaking...',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.greenAccent,
+                    ),
+                  ),
+              ],
             ),
           ),
           if (!isEmpty) ...[
+            // Host Badge
             if (effectiveHost)
               Container(
+                margin: const EdgeInsets.only(right: 8),
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: AppTheme.primary.withValues(alpha: 0.2),
@@ -77,12 +106,80 @@ class PlayerTile extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+              ),
+
+            // Microphone Moderation (Host controls player one-by-one)
+            if (canModerate && onMicToggle != null)
+              IconButton(
+                icon: Icon(
+                  muted ? Icons.mic_off_rounded : Icons.mic_rounded,
+                  color: muted ? Colors.redAccent : Colors.greenAccent,
+                  size: 20,
+                ),
+                tooltip: muted ? 'Host: Unmute Player' : 'Host: Mute Player',
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                onPressed: onMicToggle,
               )
-            else if (player?.isReady == true)
-              const Icon(
-                Icons.check_circle,
-                color: AppTheme.success,
-                size: 20,
+            // Self Mic Toggle (for current user in lobby)
+            else if (effectiveMe && onMicToggle != null)
+              GestureDetector(
+                onTap: onMicToggle,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: muted
+                        ? AppTheme.cardBackground
+                        : Colors.green.shade900.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: muted ? AppTheme.surfaceBorder : Colors.greenAccent,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        muted ? Icons.mic_off_rounded : Icons.mic_rounded,
+                        size: 14,
+                        color: muted ? AppTheme.mutedText : Colors.greenAccent,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        muted ? 'Muted' : 'Mic Live',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: muted ? AppTheme.mutedText : Colors.greenAccent,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            // Non-host viewing other players: mic indicator
+            else if (!effectiveMe)
+              Padding(
+                padding: const EdgeInsets.only(right: 4),
+                child: Icon(
+                  speaking
+                      ? Icons.graphic_eq_rounded
+                      : (muted ? Icons.mic_off_rounded : Icons.mic_rounded),
+                  color: speaking
+                      ? Colors.greenAccent
+                      : (muted ? AppTheme.mutedText.withValues(alpha: 0.5) : Colors.greenAccent),
+                  size: 18,
+                ),
+              ),
+
+            if (player?.isReady == true && !effectiveHost)
+              const Padding(
+                padding: EdgeInsets.only(left: 6),
+                child: Icon(
+                  Icons.check_circle,
+                  color: AppTheme.success,
+                  size: 18,
+                ),
               ),
           ],
         ],

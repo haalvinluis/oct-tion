@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'settings_service.dart';
 
 enum SfxType {
@@ -18,16 +19,43 @@ enum SfxType {
   error,
 }
 
-class AudioService {
+class AudioService with WidgetsBindingObserver {
   static final AudioService _instance = AudioService._internal();
   factory AudioService() => _instance;
-  AudioService._internal();
+  AudioService._internal() {
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  static const MethodChannel _soundChannel =
+      MethodChannel('com.auctiongame.mobile/sound');
 
   final Map<SfxType, DateTime> _lastPlayedMap = {};
-  static const int _dedupWindowMs = 300;
+  static const int _dedupWindowMs = 200;
+  bool _isForeground = true;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached ||
+        state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.hidden) {
+      _isForeground = false;
+      stopAllSounds();
+    } else if (state == AppLifecycleState.resumed) {
+      _isForeground = true;
+    }
+  }
+
+  /// Immediately stop all ongoing audio and sound effects
+  void stopAllSounds() {
+    try {
+      _soundChannel.invokeMethod('stopAllSound');
+    } catch (_) {}
+  }
 
   /// Play SFX with audio preference checks and deduplication filter.
   void playSfx(SfxType type) {
+    if (!_isForeground) return;
     final settings = SettingsService();
 
     // Check audio preferences
@@ -44,14 +72,33 @@ class AudioService {
 
     _lastPlayedMap[type] = now;
 
-    // Log sound event execution (in full app, triggers system sound or audio asset player)
+    final String soundName = switch (type) {
+      SfxType.buttonClick => 'click',
+      SfxType.auctionStart => 'gavel_strike',
+      SfxType.itemAnnounced => 'gavel_strike',
+      SfxType.bidAccepted => 'coin_bid',
+      SfxType.highestBidder => 'coin_bid',
+      SfxType.outbid => 'outbid_alert',
+      SfxType.timerWarning => 'timer_tick',
+      SfxType.itemSold => 'gavel_strike',
+      SfxType.itemUnsold => 'outbid_alert',
+      SfxType.matchVictory => 'victory',
+      SfxType.matchTie => 'coin_bid',
+      _ => 'click',
+    };
+
+    try {
+      _soundChannel.invokeMethod('playSound', {'sound': soundName});
+    } catch (_) {}
+
     if (kDebugMode) {
-      print('[AudioService] Play SFX: ${type.name} (Vol: ${(settings.masterVolume * 100).toInt()}%)');
+      print('[AudioService] Play SFX: ${type.name} -> $soundName');
     }
   }
 
   /// Play short, premium UI button click sound
   void playButtonClick() {
+    if (!_isForeground) return;
     final settings = SettingsService();
     if (!settings.masterSound || !settings.buttonTouchSound || settings.masterVolume <= 0) {
       return;
@@ -64,7 +111,9 @@ class AudioService {
     }
     _lastPlayedMap[SfxType.buttonClick] = now;
 
-    SystemSound.play(SystemSoundType.click);
+    try {
+      _soundChannel.invokeMethod('playSound', {'sound': 'click'});
+    } catch (_) {}
 
     if (settings.vibrationEnabled) {
       HapticFeedback.lightImpact();
@@ -74,8 +123,8 @@ class AudioService {
   /// Trigger haptic/vibration feedback if enabled in settings
   void triggerHaptic() {
     final settings = SettingsService();
-    if (settings.vibrationEnabled && kDebugMode) {
-      print('[AudioService] Haptic feedback triggered');
+    if (settings.vibrationEnabled) {
+      HapticFeedback.mediumImpact();
     }
   }
 }

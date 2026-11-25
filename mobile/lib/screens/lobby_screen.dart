@@ -7,6 +7,8 @@ import '../models/room_model.dart';
 import '../models/friend_model.dart';
 import '../services/socket_service.dart';
 import '../services/audio_service.dart';
+import '../services/voice_chat_service.dart';
+import '../utils/platform_helper.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/player_tile.dart';
 import '../widgets/section_header.dart';
@@ -17,6 +19,7 @@ class LobbyScreen extends StatefulWidget {
   final String category;
   final String? topic;
   final int itemCount;
+  final int maxPlayers;
   final String username;
 
   const LobbyScreen({
@@ -25,6 +28,7 @@ class LobbyScreen extends StatefulWidget {
     required this.category,
     this.topic,
     required this.itemCount,
+    this.maxPlayers = 2,
     required this.username,
   });
 
@@ -34,16 +38,14 @@ class LobbyScreen extends StatefulWidget {
 
 class _LobbyScreenState extends State<LobbyScreen> {
   bool _isStarting = false;
+  bool _hasNavigatedToAuction = false;
 
   @override
   void initState() {
     super.initState();
     // Phase 2: Lobby MUST use portrait mode
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    PlatformHelper.forcePortrait();
+    VoiceChatService.instance.init(widget.roomCode);
 
     SocketService.instance.connect();
 
@@ -58,8 +60,11 @@ class _LobbyScreenState extends State<LobbyScreen> {
   }
 
   void _onAuctionStateChanged() {
+    if (_hasNavigatedToAuction) return;
     final state = SocketService.instance.auctionNotifier.value;
     if (state != null && state.phase != 'LOBBY' && mounted) {
+      _hasNavigatedToAuction = true;
+      SocketService.instance.auctionNotifier.removeListener(_onAuctionStateChanged);
       AudioService().playSfx(SfxType.auctionStart);
       final room = SocketService.instance.currentRoomNotifier.value;
       Navigator.pushReplacement(
@@ -84,8 +89,9 @@ class _LobbyScreenState extends State<LobbyScreen> {
       room?.category ?? widget.category,
       categoryOptions,
     );
+    final maxP = room?.maxPlayers ?? widget.maxPlayers;
     final rawItemCount = room?.totalItems ?? widget.itemCount;
-    int selectedItemCount = const [5, 8, 10].contains(rawItemCount) ? rawItemCount : 10;
+    int selectedItemCount = (rawItemCount >= 4) ? rawItemCount : (4 * maxP);
     int selectedTimerDuration = room?.timerDuration ?? 15;
     bool hasInitiatedLiveFetch = false;
 
@@ -180,19 +186,20 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  const Text('Auction Item Count', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
+                  const Text('Auction Characters (Starting 4 / Player)', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: [5, 8, 10].map((cnt) {
-                      final isSel = selectedItemCount == cnt;
+                    children: [4, 5, 6].map((perP) {
+                      final totalCnt = perP * maxP;
+                      final isSel = selectedItemCount == totalCnt;
                       return ChoiceChip(
-                        label: Text('$cnt Items'),
+                        label: Text('$totalCnt Items ($perP/Player)'),
                         selected: isSel,
                         selectedColor: AppTheme.primary,
                         onSelected: (sel) {
-                          if (sel) setModalState(() => selectedItemCount = cnt);
+                          if (sel) setModalState(() => selectedItemCount = totalCnt);
                         },
                       );
                     }).toList(),
@@ -831,30 +838,73 @@ class _LobbyScreenState extends State<LobbyScreen> {
 
                   // Players Section Header
                   SectionHeader(
-                    title: 'Room Participants (${currentPlayers.length}/8)',
+                    title: 'Room Participants (${currentPlayers.length}/${room?.maxPlayers ?? widget.maxPlayers})',
                     subtitle: isHost
                         ? 'You are Host. Start when all players join.'
                         : 'Waiting for host to start match...',
                   ),
                   const SizedBox(height: 12),
 
-                  // Synchronized Player Roster List
+                  // Synchronized Player Roster List with Voice Chat & Host One-By-One Control
                   Expanded(
                     child: currentPlayers.isEmpty
                         ? const Center(
                             child: CircularProgressIndicator(color: AppTheme.accent),
                           )
-                        : ListView.builder(
-                            itemCount: currentPlayers.length,
-                            itemBuilder: (context, index) {
-                              final player = currentPlayers[index];
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 8.0),
-                                child: PlayerTile(
-                                  name: player.name,
-                                  isHost: player.isHost,
-                                  isMe: player.id == currentSocketId,
-                                ),
+                        : ValueListenableBuilder<Map<String, PlayerVoiceState>>(
+                            valueListenable: VoiceChatService.instance.playerStatesNotifier,
+                            builder: (context, voiceStates, _) {
+                              return ValueListenableBuilder<bool>(
+                                valueListenable: VoiceChatService.instance.isMicMutedNotifier,
+                                builder: (context, isSelfMuted, _) {
+                                  return ListView.builder(
+                                    itemCount: currentPlayers.length,
+                                    itemBuilder: (context, index) {
+                                      final player = currentPlayers[index];
+                                      final isMe = player.id == currentSocketId;
+                                      final voiceState = voiceStates[player.id];
+                                      final isPlayerMuted = isMe ? isSelfMuted : (voiceState?.isMuted ?? true);
+                                      final isSpeaking = isMe ? !isSelfMuted : (voiceState?.isSpeaking ?? false);
+
+                                      return Padding(
+                                        padding: const EdgeInsets.only(bottom: 8.0),
+                                        child: PlayerTile(
+                                          name: player.name,
+                                          isHost: player.isHost,
+                                          isMe: isMe,
+                                          isMuted: isPlayerMuted,
+                                          isSpeaking: isSpeaking,
+                                          canModerate: isHost && !isMe,
+                                          onMicToggle: () async {
+                                            if (isHost && !isMe) {
+                                              final newMuted = !isPlayerMuted;
+                                              VoiceChatService.instance.hostMutePlayer(player.id, newMuted);
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(
+                                                  content: Text(newMuted ? 'Host muted ${player.name}' : 'Host unmuted ${player.name}'),
+                                                  duration: const Duration(milliseconds: 900),
+                                                ),
+                                              );
+                                            } else if (isMe) {
+                                              final res = await VoiceChatService.instance.toggleMic(context: context);
+                                              if (mounted && res['message'] != null) {
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(res['message'] as String),
+                                                    duration: const Duration(milliseconds: 900),
+                                                    backgroundColor: res['success'] == true && res['isMuted'] == false
+                                                        ? Colors.green.shade800
+                                                        : AppTheme.cardBackground,
+                                                  ),
+                                                );
+                                              }
+                                            }
+                                          },
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
                               );
                             },
                           ),

@@ -13,6 +13,7 @@ import 'match_history_screen.dart';
 import 'settings_screen.dart';
 import 'character_packs_screen.dart';
 import '../widgets/legal_links_footer.dart';
+import '../widgets/age_verification_dialog.dart';
 
 class ProfileScreen extends StatefulWidget {
   final int initialTab;
@@ -566,74 +567,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ),
               ),
 
-              // Coin Balance Pill
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4.5),
-                decoration: BoxDecoration(
-                  color: AppTheme.secondarySurface,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: AppTheme.goldHighlight.withValues(alpha: 0.4),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('🪙', style: TextStyle(fontSize: 12)),
-                    const SizedBox(width: 5),
-                    ValueListenableBuilder<int>(
-                      valueListenable: AuthService.instance.coinBalanceNotifier,
-                      builder: (context, balance, child) => Text(
-                        '${_profileData?['coinBalance'] ?? balance} Coins',
-                        style: const TextStyle(
-                          fontFamily: AppTheme.fontFamily,
-                          color: AppTheme.goldHighlight,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 11.5,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Packs Store Pill
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const CharacterPacksScreen()),
-                  );
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4.5),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF5C451).withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: AppTheme.goldHighlight,
-                      width: 1,
-                    ),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.style_rounded, size: 13, color: AppTheme.goldHighlight),
-                      SizedBox(width: 4),
-                      Text(
-                        'Packs Store',
-                        style: TextStyle(
-                          fontFamily: AppTheme.fontFamily,
-                          color: AppTheme.goldHighlight,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 11.5,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
               // Link Account / Registered Pill
               ValueListenableBuilder<bool>(
                 valueListenable: AuthService.instance.isLoggedInNotifier,
@@ -666,6 +599,49 @@ class _ProfileScreenState extends State<ProfileScreen>
                             style: TextStyle(
                               fontFamily: AppTheme.fontFamily,
                               color: isLoggedIn ? const Color(0xFF10B981) : AppTheme.blueAccent,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+
+              // Age Verification Pill (Unchangeable)
+              ValueListenableBuilder<bool>(
+                valueListenable: AuthService.instance.isAgeVerifiedNotifier,
+                builder: (context, isVerified, _) {
+                  final age = AuthService.instance.playerAge;
+                  return GestureDetector(
+                    onTap: () => AgeVerificationDialog.show(context),
+                    child: Container(
+                      margin: const EdgeInsets.only(left: 6),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4.5),
+                      decoration: BoxDecoration(
+                        color: AppTheme.cardBackground,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: isVerified ? AppTheme.goldHighlight : AppTheme.surfaceBorder,
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            isVerified ? Icons.verified_user_rounded : Icons.shield_outlined,
+                            size: 13,
+                            color: isVerified ? AppTheme.goldHighlight : AppTheme.mutedText,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            isVerified ? 'Age $age (Verified)' : 'Verify Age',
+                            style: TextStyle(
+                              fontFamily: AppTheme.fontFamily,
+                              color: isVerified ? AppTheme.goldHighlight : AppTheme.mutedText,
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
                             ),
@@ -1119,13 +1095,17 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
 
       if (backendRes['success'] == true) {
         Navigator.pop(context);
+        if (!AuthService.instance.isAgeVerified) {
+          await AgeVerificationDialog.show(context);
+        }
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
               autoSwitchedToLogin
                   ? 'Welcome back! Signed into your existing Google account.'
                   : (isLinkMode
-                      ? 'Google account linked! Coins and match history protected.'
+                      ? 'Google account linked! Match history and stats protected.'
                       : 'Welcome back! Signed in with Google.'),
             ),
             backgroundColor: const Color(0xFF10B981),
@@ -1387,7 +1367,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
                     ),
                     SizedBox(height: 2),
                     Text(
-                      'Secure your coins, stats & match history',
+                      'Secure your stats & match history',
                       style: TextStyle(
                         fontFamily: AppTheme.fontFamily,
                         fontSize: 11.5,
@@ -1406,7 +1386,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
           ),
           const SizedBox(height: 16),
 
-          // Mode Selector: Link Guest (Keep Coins) vs Sign In (Existing User)
+          // Mode Selector: Link Guest (Keep Stats) vs Sign In (Existing User)
           Row(
             children: [
               Expanded(
@@ -1425,7 +1405,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
                       ),
                     ),
                     child: Text(
-                      'Link Guest (Keep Coins)',
+                      'Link Guest (Keep Stats)',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: AppTheme.fontFamily,
@@ -1472,7 +1452,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
 
           Text(
             !_isSocialLoginMode
-                ? 'Connect your verified Google account. Your current coin balance, match history, and profile will be permanently linked.'
+                ? 'Connect your verified Google account. Your match history, stats, and profile will be permanently linked.'
                 : 'Sign in to an existing Google-linked account. Your previously saved account data will be restored on this device.',
             style: const TextStyle(
               fontFamily: AppTheme.fontFamily,
