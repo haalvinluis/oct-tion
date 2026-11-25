@@ -1056,7 +1056,6 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
       },
     );
   }
-  }
 
   // ==================== Center Column: Random Character Reveal ====================
   Widget _buildCenterCharacterRevealArea(

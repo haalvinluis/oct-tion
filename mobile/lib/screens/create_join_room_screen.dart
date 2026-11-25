@@ -220,36 +220,29 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
     });
 
     try {
-      final res = await SocketService.instance.findPublicRoom(category: widget.selectedCategory);
-      if (res != null && res['found'] == true && res['roomCode'] != null) {
-        final roomCode = res['roomCode'] as String;
-        final room = await SocketService.instance.joinRoom(
-          username: username,
-          roomCode: roomCode,
-        );
-        if (!mounted) return;
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => LobbyScreen(
-              roomCode: room.roomCode,
-              category: room.category,
-              topic: room.topic,
-              itemCount: room.totalItems,
-              username: username,
-            ),
+      final room = await SocketService.instance.findPublicRoom(category: widget.selectedCategory);
+      if (!mounted) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => LobbyScreen(
+            roomCode: room.roomCode,
+            category: room.category,
+            topic: room.topic,
+            itemCount: room.totalItems,
+            username: username,
           ),
-        );
-      } else {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No active public match found. Hosting a new public room for you...'),
-            backgroundColor: AppTheme.trueChampagneGold,
-          ),
-        );
-        await _handleCreateRoom();
-      }
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No active public match found. Hosting a new public room for you...'),
+          backgroundColor: AppTheme.trueChampagneGold,
+        ),
+      );
+      await _handleCreateRoom();
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
