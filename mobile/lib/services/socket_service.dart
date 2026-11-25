@@ -39,14 +39,18 @@ class SocketService {
     try {
       final prefs = await SharedPreferences.getInstance();
       final savedUrl = prefs.getString(_prefServerUrlKey);
-      if (savedUrl != null &&
-          savedUrl.trim().isNotEmpty &&
-          savedUrl != 'https://api.powerbid.game') {
-        _serverUrl = savedUrl.trim();
-        debugPrint('[SocketService] Loaded persisted server URL: $_serverUrl');
-      } else {
+      final isLocalIp = savedUrl != null &&
+          (savedUrl.contains('10.238.') ||
+           savedUrl.contains('10.0.2.') ||
+           savedUrl.contains('127.0.0.1') ||
+           savedUrl.contains('localhost'));
+      if (kReleaseMode || isLocalIp || savedUrl == null || savedUrl.trim().isEmpty || savedUrl == 'https://api.powerbid.game') {
         _serverUrl = AppConfig.defaultServerUrl;
+        await prefs.setString(_prefServerUrlKey, _serverUrl);
+      } else {
+        _serverUrl = savedUrl.trim();
       }
+      debugPrint('[SocketService] Active server URL: $_serverUrl');
     } catch (e) {
       debugPrint('[SocketService] Could not read persisted server URL: $e');
     }
@@ -151,7 +155,7 @@ class SocketService {
       debugPrint('[SocketService] Connection error to $_serverUrl: $err');
       isConnectedNotifier.value = false;
       errorNotifier.value = 'Cannot connect to server at $_serverUrl';
-      if (_fallbackAttemptIndex < AppConfig.localFallbackCandidates.length) {
+      if (!kReleaseMode && _fallbackAttemptIndex < AppConfig.localFallbackCandidates.length) {
         final nextCandidate = AppConfig.localFallbackCandidates[_fallbackAttemptIndex];
         _fallbackAttemptIndex++;
         if (nextCandidate != _serverUrl) {
