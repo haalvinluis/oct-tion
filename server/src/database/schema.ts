@@ -32,6 +32,8 @@ export interface PlayerProfile {
   totalTeamPoints: number;
   coinBalance: number; // Persistent virtual coins
   categoriesPlayed: Set<string>;
+  winStreak: number;
+  bestWinStreak: number;
 }
 
 export interface PurchasedItemRecord {

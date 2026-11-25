@@ -132,6 +132,7 @@ export interface PlayerDTO {
   purchasedItems?: { itemName: string; price: number }[];
   isConnected?: boolean;
   profileId?: string;
+  winStreak?: number;
 }
 
 export interface RoomStateDTO {
@@ -215,6 +216,8 @@ export interface PlayerProfileDTO {
   coinBalance: number; // Persistent virtual coins
   achievementsUnlockedCount: number;
   totalAchievementsCount: number;
+  winStreak: number;
+  bestWinStreak: number;
 }
 
 export interface UserAccountDTO {

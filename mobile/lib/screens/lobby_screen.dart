@@ -875,6 +875,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                                           isMuted: isPlayerMuted,
                                           isSpeaking: isSpeaking,
                                           canModerate: isHost && !isMe,
+                                          winStreak: player.winStreak,
                                           onMicToggle: () async {
                                             if (isHost && !isMe) {
                                               final newMuted = !isPlayerMuted;

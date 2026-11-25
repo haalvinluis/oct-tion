@@ -181,6 +181,8 @@ export class ProfileManager {
           totalTeamPoints: row.total_team_points || 0,
           coinBalance: row.coin_balance ?? 500,
           categoriesPlayed: new Set<string>(),
+          winStreak: row.win_streak || 0,
+          bestWinStreak: row.best_win_streak || 0,
         };
         this.profilesMap.set(profile.id, profile);
         this.publicPlayerIdToIdMap.set(profile.publicPlayerId, profile.id);
@@ -250,6 +252,8 @@ export class ProfileManager {
         totalTeamPoints: row.total_team_points || 0,
         coinBalance: row.coin_balance ?? 500,
         categoriesPlayed: new Set<string>(),
+        winStreak: row.win_streak || 0,
+        bestWinStreak: row.best_win_streak || 0,
       };
       this.profilesMap.set(profile.id, profile);
       this.publicPlayerIdToIdMap.set(profile.publicPlayerId, profile.id);
@@ -356,6 +360,8 @@ export class ProfileManager {
       totalTeamPoints: 0,
       coinBalance: 500,
       categoriesPlayed: new Set<string>(),
+      winStreak: 0,
+      bestWinStreak: 0,
     };
 
     this.profilesMap.set(playerId, profile);
@@ -433,6 +439,8 @@ export class ProfileManager {
       coinBalance: profile.coinBalance ?? 500,
       achievementsUnlockedCount: unlockedCount,
       totalAchievementsCount: ACHIEVEMENTS_CATALOG.length,
+      winStreak: profile.winStreak || 0,
+      bestWinStreak: profile.bestWinStreak || 0,
     };
   }
 
@@ -481,8 +489,15 @@ export class ProfileManager {
       profile.matchesPlayed += 1;
       if (match.isTie && participant.rank === 1) {
         profile.matchesTied += 1;
+        profile.winStreak = 0;
       } else if (participant.rank === 1) {
         profile.matchesWon += 1;
+        profile.winStreak = (profile.winStreak || 0) + 1;
+        if (profile.winStreak > (profile.bestWinStreak || 0)) {
+          profile.bestWinStreak = profile.winStreak;
+        }
+      } else {
+        profile.winStreak = 0;
       }
 
       profile.totalCharactersPurchased += participant.itemsWon;

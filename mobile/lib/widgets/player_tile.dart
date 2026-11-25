@@ -11,6 +11,7 @@ class PlayerTile extends StatelessWidget {
   final bool? isMuted;
   final bool? isSpeaking;
   final bool canModerate;
+  final int? winStreak;
   final VoidCallback? onMicToggle;
 
   const PlayerTile({
@@ -23,6 +24,7 @@ class PlayerTile extends StatelessWidget {
     this.isMuted,
     this.isSpeaking,
     this.canModerate = false,
+    this.winStreak,
     this.onMicToggle,
   });
 
@@ -107,6 +109,41 @@ class PlayerTile extends StatelessWidget {
                   ),
                 ),
               ),
+
+            // Win Streak Badge
+            Container(
+              margin: const EdgeInsets.only(right: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+              decoration: BoxDecoration(
+                color: (winStreak ?? player?.winStreak ?? 0) > 0
+                    ? const Color(0xFFF97316).withValues(alpha: 0.25)
+                    : AppTheme.surfaceLight.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(
+                  color: (winStreak ?? player?.winStreak ?? 0) > 0
+                      ? const Color(0xFFF97316)
+                      : AppTheme.surfaceLight,
+                  width: 0.8,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('🔥', style: TextStyle(fontSize: 10)),
+                  const SizedBox(width: 3),
+                  Text(
+                    '${winStreak ?? player?.winStreak ?? 0}',
+                    style: TextStyle(
+                      color: (winStreak ?? player?.winStreak ?? 0) > 0
+                          ? const Color(0xFFF97316)
+                          : AppTheme.textSecondary,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
             // Microphone Moderation (Host controls player one-by-one)
             if (canModerate && onMicToggle != null)

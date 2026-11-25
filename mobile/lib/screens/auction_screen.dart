@@ -387,7 +387,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                         children: [
                           // Left Column: Room Players & Live Microphone Presence
                           SizedBox(
-                            width: 200,
+                            width: 220,
                             child: _buildPlayerRosterPanel(state, currentSocketId, sessionToken),
                           ),
                           const SizedBox(width: 10),
@@ -691,88 +691,169 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                             width: isLeadingThisPlayer ? 1.5 : 0.8,
                           ),
                         ),
-                        child: Row(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            // Small Player Medallion
-                            CircleAvatar(
-                              radius: 12,
-                              backgroundColor: isLeadingThisPlayer ? AppTheme.champagneGold : AppTheme.secondaryBackground,
-                              child: Text(
-                                p.name.isNotEmpty ? p.name[0].toUpperCase() : '?',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                  color: isLeadingThisPlayer ? AppTheme.mainBackground : AppTheme.warmCream,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-
-                            // Name and Budget
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          isMe ? '${p.name} (You)' : p.name,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            fontWeight: isMe || isLeadingThisPlayer ? FontWeight.bold : FontWeight.normal,
-                                            color: isLeadingThisPlayer ? AppTheme.champagneGold : AppTheme.warmCream,
-                                          ),
-                                        ),
-                                      ),
-                                      if (hasPassedThisPlayer)
-                                        const Text(
-                                          'PASS',
-                                          style: TextStyle(color: Colors.redAccent, fontSize: 8, fontWeight: FontWeight.bold),
-                                        ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    '\$${p.budget} • ${p.acquiredItems.length} Won',
-                                    style: const TextStyle(
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppTheme.mutedText,
+                            Row(
+                              children: [
+                                // Small Player Medallion
+                                CircleAvatar(
+                                  radius: 12,
+                                  backgroundColor: isLeadingThisPlayer ? AppTheme.champagneGold : AppTheme.secondaryBackground,
+                                  child: Text(
+                                    p.name.isNotEmpty ? p.name[0].toUpperCase() : '?',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                      color: isLeadingThisPlayer ? AppTheme.mainBackground : AppTheme.warmCream,
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
+                                ),
+                                const SizedBox(width: 6),
 
-                            // Trophy collection inspector icon
-                            const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 3),
-                              child: Icon(Icons.emoji_events_outlined, size: 12, color: AppTheme.champagneGold),
-                            ),
-
-                            // In-Game Voice Status for this player (Host Mute Moderation / Local Mute Toggle)
-                            if (!isMe)
-                              GestureDetector(
-                                onTap: () {
-                                  if (amHost) {
-                                    final newMuted = !isMuted;
-                                    VoiceChatService.instance.hostMutePlayer(p.id, newMuted);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(newMuted ? 'Host muted ${p.name}' : 'Host unmuted ${p.name}'),
-                                        duration: const Duration(milliseconds: 900),
+                                // Name, Win Streak, and Budget
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              isMe ? '${p.name} (You)' : p.name,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: 11,
+                                                fontWeight: isMe || isLeadingThisPlayer ? FontWeight.bold : FontWeight.normal,
+                                                color: isLeadingThisPlayer ? AppTheme.champagneGold : AppTheme.warmCream,
+                                              ),
+                                            ),
+                                          ),
+                                          // Win Streak Badge
+                                          Container(
+                                            margin: const EdgeInsets.only(left: 3),
+                                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                                            decoration: BoxDecoration(
+                                              color: p.winStreak > 0
+                                                  ? const Color(0xFFF97316).withValues(alpha: 0.25)
+                                                  : AppTheme.secondaryBackground,
+                                              borderRadius: BorderRadius.circular(4),
+                                              border: Border.all(
+                                                color: p.winStreak > 0 ? const Color(0xFFF97316) : AppTheme.surfaceBorder,
+                                                width: 0.6,
+                                              ),
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                const Text('🔥', style: TextStyle(fontSize: 8)),
+                                                const SizedBox(width: 2),
+                                                Text(
+                                                  '${p.winStreak}',
+                                                  style: TextStyle(
+                                                    fontSize: 8.5,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: p.winStreak > 0 ? const Color(0xFFF97316) : AppTheme.mutedText,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          if (hasPassedThisPlayer)
+                                            const Padding(
+                                              padding: EdgeInsets.only(left: 4),
+                                              child: Text(
+                                                'PASS',
+                                                style: TextStyle(color: Colors.redAccent, fontSize: 8, fontWeight: FontWeight.bold),
+                                              ),
+                                            ),
+                                        ],
                                       ),
-                                    );
-                                  } else {
-                                    VoiceChatService.instance.toggleMuteOtherPlayer(p.id);
-                                  }
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 4),
-                                  child: Icon(
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        '\$${p.budget} • ${p.acquiredItems.length} Won',
+                                        style: const TextStyle(
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppTheme.mutedText,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                // In-Game Voice Status for this player (Host Mute Moderation / Local Mute Toggle)
+                                if (!isMe)
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (amHost) {
+                                        final newMuted = !isMuted;
+                                        VoiceChatService.instance.hostMutePlayer(p.id, newMuted);
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text(newMuted ? 'Host muted ${p.name}' : 'Host unmuted ${p.name}'),
+                                            duration: const Duration(milliseconds: 900),
+                                          ),
+                                        );
+                                      } else {
+                                        VoiceChatService.instance.toggleMuteOtherPlayer(p.id);
+                                      }
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 4),
+                                      child: Icon(
+                                        isPlayerMuted ? Icons.mic_off_rounded : (isSpeaking ? Icons.graphic_eq_rounded : Icons.mic_rounded),
+                                        size: 13,
+                                        color: isPlayerMuted
+                                            ? Colors.redAccent
+                                            : (isSpeaking ? Colors.greenAccent : AppTheme.champagneGold),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+
+                            // Characters Brought / Won (Short and shown in left side)
+                            if (p.acquiredItems.isNotEmpty) ...[
+                              const SizedBox(height: 5),
+                              Wrap(
+                                spacing: 3,
+                                runSpacing: 2.5,
+                                children: p.acquiredItems.map((itemName) {
+                                  final shortName = itemName.length > 11 ? '${itemName.substring(0, 10)}…' : itemName;
+                                  return Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1.5),
+                                    decoration: BoxDecoration(
+                                      color: isMe ? AppTheme.selectedCard : AppTheme.mainBackground,
+                                      borderRadius: BorderRadius.circular(4),
+                                      border: Border.all(
+                                        color: AppTheme.champagneGold.withValues(alpha: 0.6),
+                                        width: 0.6,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(Icons.shield_rounded, size: 7.5, color: AppTheme.champagneGold),
+                                        const SizedBox(width: 2.5),
+                                        Text(
+                                          shortName,
+                                          style: const TextStyle(
+                                            fontSize: 8,
+                                            fontWeight: FontWeight.w700,
+                                            color: AppTheme.warmCream,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ],
+                          ],
+                        ),
                                     amHost
                                         ? (isMuted ? Icons.mic_off_rounded : Icons.mic_rounded)
                                         : (isLocallyMuted
@@ -810,6 +891,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
   ) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: AppTheme.darkCharcoalBurgundy,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -818,56 +900,96 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
         return StatefulBuilder(
           builder: (context, setModalState) {
             return SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Header: Avatar, Name, and Role
-                    Row(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.88,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        CircleAvatar(
-                          radius: 20,
-                          backgroundColor: AppTheme.trueChampagneGold,
-                          child: Text(
-                            player.name.isNotEmpty ? player.name[0].toUpperCase() : '?',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.deepBlackBurgundy,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                player.name,
+                        // Header: Avatar, Name, and Role
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 20,
+                              backgroundColor: AppTheme.trueChampagneGold,
+                              child: Text(
+                                player.name.isNotEmpty ? player.name[0].toUpperCase() : '?',
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  color: AppTheme.warmIvory,
+                                  color: AppTheme.deepBlackBurgundy,
                                 ),
                               ),
-                              Text(
-                                player.isHost ? 'Room Host • Active Bidder' : 'Player • Active Bidder',
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  color: AppTheme.mutedText,
-                                ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          player.name,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppTheme.warmIvory,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: player.winStreak > 0
+                                              ? const Color(0xFFF97316).withValues(alpha: 0.25)
+                                              : AppTheme.secondaryBackground,
+                                          borderRadius: BorderRadius.circular(6),
+                                          border: Border.all(
+                                            color: player.winStreak > 0 ? const Color(0xFFF97316) : AppTheme.surfaceBorder,
+                                            width: 0.8,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Text('🔥', style: TextStyle(fontSize: 10)),
+                                            const SizedBox(width: 3),
+                                            Text(
+                                              '${player.winStreak} Streak',
+                                              style: TextStyle(
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.bold,
+                                                color: player.winStreak > 0 ? const Color(0xFFF97316) : AppTheme.mutedText,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    player.isHost ? 'Room Host • Active Bidder' : 'Player • Active Bidder',
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      color: AppTheme.mutedText,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.close_rounded, color: AppTheme.mutedText),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                          ],
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.close_rounded, color: AppTheme.mutedText),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                      ],
-                    ),
                     const SizedBox(height: 14),
                     const Divider(color: AppTheme.surfaceBorder, height: 1),
                     const SizedBox(height: 14),
@@ -1035,8 +1157,8 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                   ],
                 ),
               ),
-            );
-          },
+            ),
+          ),
         );
       },
     );

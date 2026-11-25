@@ -278,6 +278,8 @@ class _ProfileScreenState extends State<ProfileScreen>
     final totalPurchased = _profileData?['totalCharactersPurchased'] ?? 0;
     final unlockedCount = _profileData?['achievementsUnlockedCount'] ?? 0;
     final totalAchCount = _profileData?['totalAchievementsCount'] ?? 7;
+    final winStreak = _profileData?['winStreak'] ?? 0;
+    final bestWinStreak = _profileData?['bestWinStreak'] ?? 0;
 
     return Scaffold(
       backgroundColor: AppTheme.deepNavyBg,
@@ -360,6 +362,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                       totalPurchased: totalPurchased,
                       unlockedCount: unlockedCount,
                       totalAchCount: totalAchCount,
+                      winStreak: winStreak,
+                      bestWinStreak: bestWinStreak,
                     ),
                     _buildRecentHistoryTab(),
                   ],
@@ -667,6 +671,8 @@ class _ProfileScreenState extends State<ProfileScreen>
     required int totalPurchased,
     required int unlockedCount,
     required int totalAchCount,
+    required int winStreak,
+    required int bestWinStreak,
   }) {
     final bottomInset = MediaQuery.of(context).padding.bottom;
 
@@ -729,6 +735,30 @@ class _ProfileScreenState extends State<ProfileScreen>
             value: '$totalPurchased Characters',
             icon: Icons.shopping_bag_rounded,
             color: AppTheme.purpleAccent,
+          ),
+          const SizedBox(height: 10),
+
+          // Row 4: Win Streak & Best Streak
+          Row(
+            children: [
+              Expanded(
+                child: StatBadge(
+                  label: 'CURRENT STREAK',
+                  value: '🔥 $winStreak',
+                  icon: Icons.local_fire_department_rounded,
+                  color: const Color(0xFFF97316),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: StatBadge(
+                  label: 'BEST STREAK',
+                  value: '🏆 $bestWinStreak',
+                  icon: Icons.military_tech_rounded,
+                  color: AppTheme.goldHighlight,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 24),
 

@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import { AuctionEngine } from './auction_engine';
 import { RoomStateDTO, GameMode } from './shared/socket_events';
 import { CharacterDatabase } from './database/db';
+import { ProfileManager } from './database/profile_manager';
 
 export const SUPPORTED_TIMER_DURATIONS = [5, 10, 15, 20, 30, 45, 60] as const;
 export type SupportedTimerDuration = (typeof SUPPORTED_TIMER_DURATIONS)[number];
@@ -33,6 +34,7 @@ export interface Player {
   budget: number;
   acquiredItems: string[];
   isConnected: boolean;
+  winStreak?: number;
   disconnectedAt?: number;
 }
 
@@ -69,6 +71,7 @@ export function toRoomStateDTO(room: RoomState): RoomStateDTO {
       budget: p.budget,
       acquiredItems: p.acquiredItems,
       isConnected: p.isConnected,
+      winStreak: p.winStreak ?? (p.profileId ? (ProfileManager.getInstance().getProfileById(p.profileId)?.winStreak ?? 0) : 0),
     })),
   };
 }
@@ -140,6 +143,7 @@ export class RoomManager {
     const sessionToken = crypto.randomUUID();
 
     const fallbackSuffix = (profileId || socketId).replace(/[^a-zA-Z0-9]/g, '').slice(-4) || 'User';
+    const effectiveWinStreak = ProfileManager.getInstance().getProfileById(profileId || socketId)?.winStreak ?? 0;
     const hostPlayer: Player = {
       id: socketId,
       profileId,
@@ -150,6 +154,7 @@ export class RoomManager {
       budget: 1000,
       acquiredItems: [],
       isConnected: true,
+      winStreak: effectiveWinStreak,
     };
 
     const roomState: RoomState = {
@@ -212,6 +217,7 @@ export class RoomManager {
 
     const sessionToken = crypto.randomUUID();
     const fallbackSuffix = (profileId || socketId).replace(/[^a-zA-Z0-9]/g, '').slice(-4) || 'User';
+    const effectiveWinStreak = ProfileManager.getInstance().getProfileById(profileId || socketId)?.winStreak ?? 0;
     const newPlayer: Player = {
       id: socketId,
       profileId,
@@ -222,6 +228,7 @@ export class RoomManager {
       budget: 1000,
       acquiredItems: [],
       isConnected: true,
+      winStreak: effectiveWinStreak,
     };
 
     room.players.push(newPlayer);

@@ -30,6 +30,7 @@ class PlayerModel {
   final List<String> acquiredItems;
   final List<PurchasedItemModel> purchasedItems;
   final bool isConnected;
+  final int winStreak;
 
   const PlayerModel({
     required this.id,
@@ -41,6 +42,7 @@ class PlayerModel {
     this.acquiredItems = const [],
     this.purchasedItems = const [],
     this.isConnected = true,
+    this.winStreak = 0,
   });
 
   factory PlayerModel.fromJson(Map<String, dynamic> json) {
@@ -60,6 +62,7 @@ class PlayerModel {
               .toList() ??
           const [],
       isConnected: json['isConnected'] ?? true,
+      winStreak: json['winStreak'] ?? 0,
     );
   }
 

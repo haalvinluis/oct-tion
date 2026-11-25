@@ -593,6 +593,9 @@ export class AuctionEngine {
           itemName: item.itemName,
           price: item.price,
         })),
+        sessionToken: p.sessionToken,
+        profileId: p.profileId,
+        winStreak: (p as any).winStreak ?? (p.profileId ? (ProfileManager.getInstance().getProfileById(p.profileId)?.winStreak ?? 0) : 0),
       })),
       auctionQueue: this.items.map((item) => this.toClientItem(item)!),
     };
