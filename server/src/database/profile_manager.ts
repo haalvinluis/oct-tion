@@ -317,6 +317,26 @@ export class ProfileManager {
     return id;
   }
 
+  private static GAMER_ADJECTIVES = [
+    'Shadow', 'Apex', 'Cyber', 'Vortex', 'Phantom', 'Storm', 'Mystic', 'Nova',
+    'Hyper', 'Titan', 'Viper', 'Blaze', 'Iron', 'Echo', 'Frost', 'Solar',
+    'Pulse', 'Crimson', 'Quantum', 'Rapid', 'Thunder', 'Ghost', 'Alpha', 'Rogue',
+    'Zenith', 'Stealth', 'Inferno', 'Cosmic', 'Turbo', 'Atomic', 'Omega', 'Matrix'
+  ];
+
+  private static GAMER_NOUNS = [
+    'Bidder', 'Knight', 'Striker', 'Hunter', 'Blade', 'Master', 'Champion', 'Gavel',
+    'Reaper', 'Warrior', 'Rider', 'Sniper', 'Captain', 'Legend', 'Warlock', 'Beast',
+    'Hawk', 'Wolf', 'Samurai', 'Seeker', 'Ninja', 'Titan', 'Falcon', 'Ranger'
+  ];
+
+  public static generateRandomGamerTag(): string {
+    const adj = ProfileManager.GAMER_ADJECTIVES[Math.floor(Math.random() * ProfileManager.GAMER_ADJECTIVES.length)];
+    const noun = ProfileManager.GAMER_NOUNS[Math.floor(Math.random() * ProfileManager.GAMER_NOUNS.length)];
+    const num = Math.floor(10 + Math.random() * 90);
+    return `${adj}${noun}${num}`;
+  }
+
   public getOrCreateProfile(playerId: string, requestedUsername?: string): PlayerProfile {
     let profile = this.profilesMap.get(playerId);
     if (profile) {
@@ -326,15 +346,8 @@ export class ProfileManager {
     let username = requestedUsername ? requestedUsername.trim() : '';
     if (!username || !this.isUsernameAvailable(username, playerId)) {
       let baseName = username ? username.replace(/[^a-zA-Z0-9_]/g, '') : '';
-      if (!baseName || baseName.length < 3) {
-        if (playerId.startsWith('pb_guest_')) {
-          const suffix = playerId.replace('pb_guest_', '').slice(-4).toUpperCase() || randomBytes(2).toString('hex').toUpperCase();
-          baseName = `Guest_${suffix}`;
-        } else {
-          const cleanId = playerId.replace(/[^a-zA-Z0-9]/g, '');
-          const suffix = cleanId.slice(-4).toUpperCase() || randomBytes(2).toString('hex').toUpperCase();
-          baseName = `Player_${suffix}`;
-        }
+      if (!baseName || baseName.length < 3 || baseName.startsWith('Guest_') || baseName.startsWith('Player_')) {
+        baseName = ProfileManager.generateRandomGamerTag();
       }
       let candidate = baseName;
       let count = 1;

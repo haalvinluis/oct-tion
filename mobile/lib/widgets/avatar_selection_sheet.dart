@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../theme/app_theme.dart';
 import '../services/avatar_service.dart';
 
@@ -23,12 +24,13 @@ class AvatarSelectionSheet extends StatefulWidget {
 class _AvatarSelectionSheetState extends State<AvatarSelectionSheet> {
   bool _isPicking = false;
 
-  Future<void> _handlePickGallery() async {
+  Future<void> _handlePickImage(ImageSource source) async {
     setState(() => _isPicking = true);
 
     try {
       final success = await AvatarService.instance.pickAndSetGalleryPhoto(
         username: widget.username,
+        source: source,
       );
 
       if (mounted) {
@@ -36,10 +38,26 @@ class _AvatarSelectionSheetState extends State<AvatarSelectionSheet> {
         if (success) {
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Profile photo updated from gallery!'),
-              backgroundColor: AppTheme.blueAccent,
-              duration: Duration(seconds: 2),
+            SnackBar(
+              behavior: SnackBarBehavior.floating,
+              width: 280,
+              backgroundColor: const Color(0xFF1B1626),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: AppTheme.champagneGold, width: 1.2),
+              ),
+              content: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.check_circle_rounded, color: AppTheme.champagneGold, size: 18),
+                  SizedBox(width: 8),
+                  Text(
+                    'Profile photo updated!',
+                    style: TextStyle(color: AppTheme.warmIvory, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              duration: const Duration(seconds: 2),
             ),
           );
         }
@@ -49,8 +67,18 @@ class _AvatarSelectionSheetState extends State<AvatarSelectionSheet> {
         setState(() => _isPicking = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Could not access gallery: $e'),
-            backgroundColor: Colors.redAccent,
+            behavior: SnackBarBehavior.floating,
+            width: 280,
+            backgroundColor: const Color(0xFF1B1626),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: const BorderSide(color: Color(0xFFEF4444), width: 1.2),
+            ),
+            content: Text(
+              'Could not access photo: $e',
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: AppTheme.warmIvory),
+            ),
           ),
         );
       }
@@ -117,7 +145,7 @@ class _AvatarSelectionSheetState extends State<AvatarSelectionSheet> {
 
                 // 1. Gallery Photo Action Button
                 GestureDetector(
-                  onTap: _isPicking ? null : _handlePickGallery,
+                  onTap: _isPicking ? null : () => _handlePickImage(ImageSource.gallery),
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -176,7 +204,7 @@ class _AvatarSelectionSheetState extends State<AvatarSelectionSheet> {
                               Text(
                                 currentData.isGallery
                                     ? 'Custom photo currently active'
-                                    : 'Pick a photo from your Android gallery',
+                                    : 'Choose any picture from device gallery',
                                 style: const TextStyle(
                                   fontFamily: AppTheme.fontFamily,
                                   color: AppTheme.mutedText,
@@ -196,7 +224,69 @@ class _AvatarSelectionSheetState extends State<AvatarSelectionSheet> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
+
+                // 2. Camera Photo Action Button
+                GestureDetector(
+                  onTap: _isPicking ? null : () => _handlePickImage(ImageSource.camera),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: AppTheme.secondarySurface.withValues(alpha: 0.6),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: AppTheme.surfaceBorder,
+                        width: 1.0,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: AppTheme.cardBackground,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: AppTheme.surfaceBorder),
+                          ),
+                          child: const Icon(
+                            Icons.photo_camera_rounded,
+                            color: AppTheme.warmIvory,
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Take New Photo with Camera',
+                                style: TextStyle(
+                                  fontFamily: AppTheme.fontFamily,
+                                  color: AppTheme.pureWhite,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              SizedBox(height: 2),
+                              Text(
+                                'Snap a live profile selfie or photo',
+                                style: TextStyle(
+                                  fontFamily: AppTheme.fontFamily,
+                                  color: AppTheme.mutedText,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 18),
 
                 // 2. Default Curated Avatars Heading
                 const Text(

@@ -219,17 +219,20 @@ class AvatarService {
     }
   }
 
-  /// Prompts user to pick a photo from device gallery.
-  Future<bool> pickAndSetGalleryPhoto({String? username}) async {
+  /// Prompts user to pick a photo from device gallery or camera.
+  Future<bool> pickAndSetGalleryPhoto({
+    String? username,
+    ImageSource source = ImageSource.gallery,
+  }) async {
     if (_isProcessing) return false;
     _isProcessing = true;
 
     try {
       final XFile? pickedFile = await _picker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 600,
-        maxHeight: 600,
-        imageQuality: 85,
+        source: source,
+        maxWidth: 800,
+        maxHeight: 800,
+        imageQuality: 88,
       );
 
       if (pickedFile == null) {
@@ -237,14 +240,38 @@ class AvatarService {
         return false; // User cancelled
       }
 
-      // Copy to persistent application documents directory
+      // Read raw bytes from XFile to avoid scoped-storage or virtual URI file copy issues on Android
+      final bytes = await pickedFile.readAsBytes();
+      if (bytes.isEmpty) {
+        _isProcessing = false;
+        return false;
+      }
+
+      // Save to persistent application documents directory with unique timestamp
       final docsDir = await getApplicationDocumentsDirectory();
-      final targetPath = '${docsDir.path}/powerbid_profile_avatar.jpg';
-      final savedFile = await File(pickedFile.path).copy(targetPath);
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final targetPath = '${docsDir.path}/octtion_avatar_$timestamp.jpg';
+      final savedFile = File(targetPath);
+      await savedFile.writeAsBytes(bytes, flush: true);
 
       final prefs = await SharedPreferences.getInstance();
+      final oldPath = prefs.getString(_keyImagePath);
       await prefs.setString(_keyAvatarType, 'gallery');
       await prefs.setString(_keyImagePath, savedFile.path);
+
+      // Clean up previous image file if it exists and has different path
+      if (oldPath != null && oldPath.isNotEmpty && oldPath != savedFile.path) {
+        try {
+          final oldFile = File(oldPath);
+          if (await oldFile.exists()) {
+            await oldFile.delete();
+          }
+        } catch (_) {}
+      }
+
+      // Clear Flutter's memory imageCache so the updated image is instantly visible
+      PaintingBinding.instance.imageCache.clear();
+      PaintingBinding.instance.imageCache.clearLiveImages();
 
       avatarNotifier.value = AvatarData(
         isGallery: true,
@@ -259,8 +286,8 @@ class AvatarService {
 
       _isProcessing = false;
       return true;
-    } catch (e) {
-      debugPrint('[AvatarService] Error picking image: $e');
+    } catch (e, stack) {
+      debugPrint('[AvatarService] Error picking image: $e\n$stack');
       _isProcessing = false;
       return false;
     }

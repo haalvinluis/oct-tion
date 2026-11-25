@@ -55,6 +55,37 @@ class AuthService {
   bool get isAgeVerified => isAgeVerifiedNotifier.value;
   bool get isAdult => playerAgeNotifier.value >= 18;
 
+  static const List<String> _gamerAdjectives = [
+    'Shadow', 'Apex', 'Cyber', 'Vortex', 'Phantom', 'Storm', 'Mystic', 'Nova',
+    'Hyper', 'Titan', 'Viper', 'Blaze', 'Iron', 'Echo', 'Frost', 'Solar',
+    'Pulse', 'Crimson', 'Quantum', 'Rapid', 'Thunder', 'Ghost', 'Alpha', 'Rogue',
+    'Zenith', 'Stealth', 'Inferno', 'Cosmic', 'Turbo', 'Atomic', 'Omega', 'Matrix'
+  ];
+
+  static const List<String> _gamerNouns = [
+    'Bidder', 'Knight', 'Striker', 'Hunter', 'Blade', 'Master', 'Champion', 'Gavel',
+    'Reaper', 'Warrior', 'Rider', 'Sniper', 'Captain', 'Legend', 'Warlock', 'Beast',
+    'Hawk', 'Wolf', 'Samurai', 'Seeker', 'Ninja', 'Titan', 'Falcon', 'Ranger'
+  ];
+
+  static String generateRandomGamerTag() {
+    final rng = Random.secure();
+    final adj = _gamerAdjectives[rng.nextInt(_gamerAdjectives.length)];
+    final noun = _gamerNouns[rng.nextInt(_gamerNouns.length)];
+    final num = 10 + rng.nextInt(90);
+    return '$adj$noun$num';
+  }
+
+  static String generateUniqueOcttionId() {
+    final rng = Random.secure();
+    const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+    final buffer = StringBuffer('OCT-');
+    for (int i = 0; i < 6; i++) {
+      buffer.write(chars[rng.nextInt(chars.length)]);
+    }
+    return buffer.toString();
+  }
+
   String get defaultDisplayName {
     if (currentUsername != null && currentUsername!.trim().isNotEmpty) {
       return currentUsername!.trim();
@@ -62,13 +93,7 @@ class AuthService {
     if (_userEmail != null && _userEmail!.contains('@')) {
       return _userEmail!.split('@').first;
     }
-    if (_guestPlayerId.isNotEmpty) {
-      final suffix = _guestPlayerId.length >= 4
-          ? _guestPlayerId.substring(_guestPlayerId.length - 4)
-          : _guestPlayerId;
-      return 'Guest_$suffix';
-    }
-    return 'Guest';
+    return generateRandomGamerTag();
   }
 
   /// Initializes persistent guest UUID, stored username, and existing session token from SharedPreferences.
@@ -87,11 +112,21 @@ class AuthService {
       }
       _guestPlayerId = savedGuestId;
 
-      // 2. Load stored username
+      // 2. Load stored username or generate a unique random game name on fresh install
       final savedUsername = prefs.getString(_keyUsername);
-      if (savedUsername != null && savedUsername.trim().isNotEmpty) {
+      if (savedUsername != null &&
+          savedUsername.trim().isNotEmpty &&
+          !savedUsername.startsWith('Guest_') &&
+          !savedUsername.startsWith('Player_') &&
+          savedUsername != 'Guest' &&
+          savedUsername != 'GuestPlayer') {
         currentUsernameNotifier.value = savedUsername.trim();
         debugPrint('[AuthService] Restored chosen username: $savedUsername');
+      } else {
+        final randomTag = generateRandomGamerTag();
+        currentUsernameNotifier.value = randomTag;
+        await prefs.setString(_keyUsername, randomTag);
+        debugPrint('[AuthService] Generated and persisted fresh gamer tag: $randomTag');
       }
 
       // 3. Load stored session token and user info
@@ -126,19 +161,18 @@ class AuthService {
         debugPrint('[AuthService] Restored persisted coin balance: $savedCoins');
       }
 
-      // 5. Load or generate persistent OCT-TION ID
+      // 5. Load or generate persistent unique OCT-TION ID
       String? savedPublicId = prefs.getString(_keyPublicPlayerId);
       if (savedPublicId != null && savedPublicId.startsWith('PB-')) {
         savedPublicId = 'OCT-${savedPublicId.substring(3)}';
         await prefs.setString(_keyPublicPlayerId, savedPublicId);
       }
-      if (savedPublicId == null || savedPublicId.trim().isEmpty) {
-        final rng = Random();
-        savedPublicId = 'OCT-${10000 + rng.nextInt(90000)}';
+      if (savedPublicId == null || savedPublicId.trim().isEmpty || savedPublicId.length < 8) {
+        savedPublicId = generateUniqueOcttionId();
         await prefs.setString(_keyPublicPlayerId, savedPublicId);
       }
       publicPlayerIdNotifier.value = savedPublicId;
-      debugPrint('[AuthService] Restored OCT-TION ID: $savedPublicId');
+      debugPrint('[AuthService] Restored unique OCT-TION ID: $savedPublicId');
 
       // 6. Load age verification
       final savedAge = prefs.getInt(_keyPlayerAge);
@@ -162,7 +196,7 @@ class AuthService {
     final rng = Random.secure();
     final chars = 'abcdef0123456789';
     final buffer = StringBuffer('pb_guest_');
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 24; i++) {
       buffer.write(chars[rng.nextInt(chars.length)]);
     }
     return buffer.toString();

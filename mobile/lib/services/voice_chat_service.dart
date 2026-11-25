@@ -260,6 +260,59 @@ class VoiceChatService {
     }
   }
 
+  /// Displays a sleek, floating, non-intrusive pill notification for Mic Live or Mic Muted
+  static void showMicNotification(BuildContext context, {required bool isMuted}) {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    scaffoldMessenger.hideCurrentSnackBar();
+    scaffoldMessenger.showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        width: 250,
+        elevation: 8,
+        backgroundColor: const Color(0xFF1B1626),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(22),
+          side: BorderSide(
+            color: isMuted ? const Color(0xFFEF4444) : const Color(0xFF10B981),
+            width: 1.4,
+          ),
+        ),
+        duration: const Duration(milliseconds: 1100),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                color: isMuted
+                    ? const Color(0xFFEF4444).withValues(alpha: 0.2)
+                    : const Color(0xFF10B981).withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                isMuted ? Icons.mic_off_rounded : Icons.mic_rounded,
+                color: isMuted ? const Color(0xFFEF4444) : const Color(0xFF10B981),
+                size: 16,
+              ),
+            ),
+            const SizedBox(width: 9),
+            Text(
+              isMuted ? 'Microphone Muted' : 'Microphone Live',
+              style: const TextStyle(
+                color: Color(0xFFF9F7F5),
+                fontWeight: FontWeight.w700,
+                fontSize: 13,
+                letterSpacing: 0.2,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   /// Host moderation: mute/unmute a specific player
   Future<void> hostMutePlayer(String targetPlayerId, bool isMuted) async {
     if (_activeRoomCode == null) return;

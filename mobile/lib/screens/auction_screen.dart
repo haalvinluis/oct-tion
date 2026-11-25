@@ -577,14 +577,25 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                 onTap: () async {
                   final res = await VoiceChatService.instance.toggleMic(context: context);
                   if (!mounted) return;
-                  if (res['message'] != null) {
+                  if (res['success'] == true) {
+                    VoiceChatService.showMicNotification(context, isMuted: res['isMuted'] == true);
+                  } else if (res['message'] != null) {
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(res['message'] as String),
-                        duration: const Duration(milliseconds: 1100),
-                        backgroundColor: res['success'] == true && res['isMuted'] == false
-                            ? Colors.green.shade800
-                            : AppTheme.cardBackground,
+                        behavior: SnackBarBehavior.floating,
+                        width: 270,
+                        backgroundColor: const Color(0xFF1B1626),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          side: const BorderSide(color: Color(0xFFEF4444), width: 1.2),
+                        ),
+                        content: Text(
+                          res['message'] as String,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: AppTheme.warmIvory, fontSize: 12),
+                        ),
+                        duration: const Duration(milliseconds: 1400),
                       ),
                     );
                   }

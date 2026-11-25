@@ -44,6 +44,7 @@ class AvatarWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(radius),
           child: Image.file(
             file,
+            key: ValueKey(avatarData.imagePath),
             width: diameter,
             height: diameter,
             fit: BoxFit.cover,
