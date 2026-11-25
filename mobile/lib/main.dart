@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'theme/app_theme.dart';
-import 'screens/home_screen.dart';
+import 'screens/loading_screen.dart';
 import 'services/settings_service.dart';
-import 'services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await AuthService.instance.init();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   runApp(const AuctionGameApp());
 }
 
 class AuctionGameApp extends StatefulWidget {
-  const AuctionGameApp({super.key});
+  final Widget? home;
+  const AuctionGameApp({super.key, this.home});
 
   @override
   State<AuctionGameApp> createState() => _AuctionGameAppState();
@@ -39,7 +43,7 @@ class _AuctionGameAppState extends State<AuctionGameApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'PowerBid',
+      title: 'OCT-TION',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
@@ -52,7 +56,7 @@ class _AuctionGameAppState extends State<AuctionGameApp> {
           child: child ?? const SizedBox.shrink(),
         );
       },
-      home: const HomeScreen(),
+      home: widget.home ?? const LoadingScreen(),
     );
   }
 }

@@ -206,7 +206,7 @@ describe('Step 9: Full Game End-to-End Multiplayer Integration Tests', function 
 
     // Guest tries to modify room settings
     const rogueSettings: any = await new Promise((res) => {
-      guest.emit('update_room_settings', { roomCode, itemCount: 25 }, res);
+      guest.emit('update_room_settings', { roomCode, itemCount: 8 }, res);
     });
     expect(rogueSettings.success).to.be.false;
     expect(rogueSettings.error).to.include('host');

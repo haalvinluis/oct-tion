@@ -1,9 +1,11 @@
+import 'category_model.dart';
 import 'player_model.dart';
 import 'item_model.dart';
 
 class RoomModel {
   final String roomCode;
   final String category;
+  final String topic;
   final String gameMode;
   final int totalItems;
   final int timerDuration;
@@ -18,6 +20,7 @@ class RoomModel {
   const RoomModel({
     required this.roomCode,
     required this.category,
+    this.topic = 'cricket',
     this.gameMode = 'AUCTION_TEAM_CHALLENGE',
     required this.totalItems,
     this.timerDuration = 15,
@@ -33,33 +36,8 @@ class RoomModel {
   ItemModel? get currentItem =>
       (currentItemIndex < items.length) ? items[currentItemIndex] : null;
 
-  String get categoryDisplayName {
-    switch (category.toLowerCase()) {
-      case 'cricket':
-        return 'Cricket';
-      case 'naruto':
-        return 'Naruto';
-      case 'one_piece':
-        return 'One Piece';
-      case 'dragon_ball':
-        return 'Dragon Ball';
-      case 'pokemon':
-        return 'Pokémon';
-      case 'demon_slayer':
-        return 'Demon Slayer';
-      case 'jujutsu_kaisen':
-        return 'Jujutsu Kaisen';
-      case 'classic_cartoons':
-        return 'Classic Cartoons';
-      case 'superheroes':
-        return 'Superheroes';
-      case 'marvel_avengers':
-        return 'Marvel Avengers';
-      case 'other_anime':
-      default:
-        return 'Other Anime';
-    }
-  }
+  String get categoryDisplayName => CategoryModel.defaultDisplayName(category);
+  String get topicDisplayName => CategoryModel.defaultDisplayName(topic);
 
   factory RoomModel.fromJson(Map<String, dynamic> json) {
     final playersList = (json['players'] as List<dynamic>?)
@@ -67,9 +45,16 @@ class RoomModel {
             .toList() ??
         [];
 
+    final cat = CategoryModel.normalizeId(json['category']?.toString());
+    final rawTopic = json['topic']?.toString();
+    final top = (rawTopic != null && rawTopic.trim().isNotEmpty)
+        ? CategoryModel.normalizeId(rawTopic)
+        : cat;
+
     return RoomModel(
       roomCode: json['roomCode'] ?? '',
-      category: json['category'] ?? 'cricket',
+      category: cat,
+      topic: top,
       gameMode: json['gameMode'] ?? 'AUCTION_TEAM_CHALLENGE',
       totalItems: json['itemCount'] ?? 10,
       timerDuration: json['timerDuration'] ?? 15,

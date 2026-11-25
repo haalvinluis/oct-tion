@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import '../theme/app_theme.dart';
+import '../models/category_model.dart';
 import '../models/room_model.dart';
 import '../models/friend_model.dart';
 import '../services/socket_service.dart';
@@ -14,6 +15,7 @@ import 'auction_screen.dart';
 class LobbyScreen extends StatefulWidget {
   final String roomCode;
   final String category;
+  final String? topic;
   final int itemCount;
   final String username;
 
@@ -21,6 +23,7 @@ class LobbyScreen extends StatefulWidget {
     super.key,
     required this.roomCode,
     required this.category,
+    this.topic,
     required this.itemCount,
     required this.username,
   });
@@ -51,11 +54,12 @@ class _LobbyScreenState extends State<LobbyScreen> {
     final state = SocketService.instance.auctionNotifier.value;
     if (state != null && state.phase != 'LOBBY' && mounted) {
       AudioService().playSfx(SfxType.auctionStart);
+      final room = SocketService.instance.currentRoomNotifier.value;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (_) => AuctionScreen(
-            categoryDisplayName: widget.category.toUpperCase(),
+            categoryDisplayName: room?.categoryDisplayName ?? CategoryModel.defaultDisplayName(widget.category),
           ),
         ),
       );
@@ -65,23 +69,18 @@ class _LobbyScreenState extends State<LobbyScreen> {
   void _showHostSettingsModal(BuildContext context, RoomModel? room) {
     AudioService().playSfx(SfxType.buttonClick);
 
-    String selectedCategory = room?.category ?? widget.category;
-    int selectedItemCount = room?.totalItems ?? widget.itemCount;
-    int selectedTimerDuration = room?.timerDuration ?? 15;
+    // Initial category options preloaded from canonical categories
+    List<CategoryModel> categoryOptions = CategoryModel.mergeAndDeduplicate([]);
 
-    final categories = [
-      {'id': 'Cricket', 'name': 'Cricket'},
-      {'id': 'Naruto', 'name': 'Naruto'},
-      {'id': 'One Piece', 'name': 'One Piece'},
-      {'id': 'Dragon Ball', 'name': 'Dragon Ball'},
-      {'id': 'Pokemon', 'name': 'Pokémon'},
-      {'id': 'Demon Slayer', 'name': 'Demon Slayer'},
-      {'id': 'Jujutsu Kaisen', 'name': 'Jujutsu Kaisen'},
-      {'id': 'Classic Cartoons', 'name': 'Classic Cartoons'},
-      {'id': 'Superheroes', 'name': 'Superheroes'},
-      {'id': 'Marvel Avengers', 'name': 'Marvel Avengers'},
-      {'id': 'Other Anime', 'name': 'Other Anime'},
-    ];
+    // Safely resolve initial selected category
+    String selectedCategory = CategoryModel.resolveSelectedId(
+      room?.category ?? widget.category,
+      categoryOptions,
+    );
+    final rawItemCount = room?.totalItems ?? widget.itemCount;
+    int selectedItemCount = const [5, 8, 10].contains(rawItemCount) ? rawItemCount : 10;
+    int selectedTimerDuration = room?.timerDuration ?? 15;
+    bool hasInitiatedLiveFetch = false;
 
     showModalBottomSheet(
       context: context,
@@ -93,6 +92,52 @@ class _LobbyScreenState extends State<LobbyScreen> {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setModalState) {
+            if (!hasInitiatedLiveFetch) {
+              hasInitiatedLiveFetch = true;
+              if (SocketService.instance.isConnectedNotifier.value) {
+                SocketService.instance.getCategories().then((liveCats) {
+                  if (liveCats.isNotEmpty) {
+                    final merged = CategoryModel.mergeAndDeduplicate(liveCats);
+                    setModalState(() {
+                      categoryOptions = merged;
+                      selectedCategory = CategoryModel.resolveSelectedId(
+                        selectedCategory,
+                        categoryOptions,
+                      );
+                    });
+                  }
+                }).catchError((_) {
+                  // Silently fallback to canonical list
+                });
+              }
+            }
+
+            // Ensure selectedCategory is guaranteed to exist in categoryOptions
+            final safeSelectedCategory = CategoryModel.resolveSelectedId(
+              selectedCategory,
+              categoryOptions,
+            );
+            if (safeSelectedCategory != selectedCategory) {
+              selectedCategory = safeSelectedCategory;
+            }
+
+            // Guarantee strictly unique DropdownMenuItem values
+            final uniqueItems = <DropdownMenuItem<String>>[];
+            final seenIds = <String>{};
+            for (final cat in categoryOptions) {
+              if (seenIds.add(cat.id)) {
+                uniqueItems.add(
+                  DropdownMenuItem<String>(
+                    value: cat.id,
+                    child: Text(
+                      cat.name,
+                      style: const TextStyle(color: AppTheme.textPrimary),
+                    ),
+                  ),
+                );
+              }
+            }
+
             return Padding(
               padding: EdgeInsets.only(
                 left: 20,
@@ -100,9 +145,10 @@ class _LobbyScreenState extends State<LobbyScreen> {
                 top: 20,
                 bottom: MediaQuery.of(context).viewInsets.bottom + 20,
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     'ROOM CUSTOMIZATION',
@@ -119,12 +165,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     value: selectedCategory,
                     dropdownColor: AppTheme.surfaceLight,
                     decoration: const InputDecoration(contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
-                    items: categories.map((c) {
-                      return DropdownMenuItem<String>(
-                        value: c['id'],
-                        child: Text(c['name']!, style: const TextStyle(color: AppTheme.textPrimary)),
-                      );
-                    }).toList(),
+                    items: uniqueItems,
                     onChanged: (val) {
                       if (val != null) {
                         setModalState(() => selectedCategory = val);
@@ -134,38 +175,36 @@ class _LobbyScreenState extends State<LobbyScreen> {
                   const SizedBox(height: 16),
                   const Text('Auction Item Count', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
                   const SizedBox(height: 8),
-                  Row(
-                    children: [5, 10, 25].map((cnt) {
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [5, 8, 10].map((cnt) {
                       final isSel = selectedItemCount == cnt;
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: ChoiceChip(
-                          label: Text('$cnt Items'),
-                          selected: isSel,
-                          selectedColor: AppTheme.primary,
-                          onSelected: (sel) {
-                            if (sel) setModalState(() => selectedItemCount = cnt);
-                          },
-                        ),
+                      return ChoiceChip(
+                        label: Text('$cnt Items'),
+                        selected: isSel,
+                        selectedColor: AppTheme.primary,
+                        onSelected: (sel) {
+                          if (sel) setModalState(() => selectedItemCount = cnt);
+                        },
                       );
                     }).toList(),
                   ),
                   const SizedBox(height: 16),
                   const Text('Bidding Timer Duration', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
                   const SizedBox(height: 8),
-                  Row(
-                    children: [10, 15, 20].map((t) {
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [5, 10, 15, 20, 30, 45].map((t) {
                       final isSel = selectedTimerDuration == t;
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: ChoiceChip(
-                          label: Text('${t}s Timer'),
-                          selected: isSel,
-                          selectedColor: AppTheme.primary,
-                          onSelected: (sel) {
-                            if (sel) setModalState(() => selectedTimerDuration = t);
-                          },
-                        ),
+                      return ChoiceChip(
+                        label: Text('${t}s Timer'),
+                        selected: isSel,
+                        selectedColor: AppTheme.primary,
+                        onSelected: (sel) {
+                          if (sel) setModalState(() => selectedTimerDuration = t);
+                        },
                       );
                     }).toList(),
                   ),
@@ -204,6 +243,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     },
                   ),
                 ],
+                ),
               ),
             );
           },
@@ -603,8 +643,8 @@ class _LobbyScreenState extends State<LobbyScreen> {
                               label: const Text('WhatsApp', style: TextStyle(fontWeight: FontWeight.bold)),
                               onPressed: () {
                                 if (inviteUrl != null) {
-                                  final msg = 'Join my PowerBid auction! Open this invitation to view the room and join: $inviteUrl';
-                                  Share.share(msg, subject: 'PowerBid Auction Invitation');
+                                  final msg = 'Join my OCT-TION auction! Open this invitation to view the room and join: $inviteUrl';
+                                  Share.share(msg, subject: 'OCT-TION Auction Invitation');
                                 }
                               },
                             ),
@@ -620,8 +660,8 @@ class _LobbyScreenState extends State<LobbyScreen> {
                               label: const Text('Share Link', style: TextStyle(fontWeight: FontWeight.bold)),
                               onPressed: () {
                                 if (inviteUrl != null) {
-                                  final msg = 'Join my PowerBid auction! Open this invitation to view the room and join: $inviteUrl';
-                                  Share.share(msg, subject: 'PowerBid Auction Invitation');
+                                  final msg = 'Join my OCT-TION auction! Open this invitation to view the room and join: $inviteUrl';
+                                  Share.share(msg, subject: 'OCT-TION Auction Invitation');
                                 }
                               },
                             ),
@@ -647,7 +687,9 @@ class _LobbyScreenState extends State<LobbyScreen> {
         final currentPlayers = room?.players ?? [];
         final hostId = room?.hostId;
         final currentSocketId = SocketService.instance.socketId;
-        final isHost = (currentSocketId != null && hostId == currentSocketId);
+        final isHost = (currentSocketId != null && hostId == currentSocketId) ||
+            (room == null) ||
+            (room.players.any((p) => p.isHost && (p.name == widget.username || (currentSocketId != null && p.id == currentSocketId))));
 
         return Scaffold(
           appBar: AppBar(
@@ -718,7 +760,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                           spacing: 8,
                           children: [
                             Chip(
-                              label: Text('Category: ${(room?.category ?? widget.category).toUpperCase()}'),
+                              label: Text('Category: ${room?.categoryDisplayName ?? CategoryModel.defaultDisplayName(widget.category)} • Topic: ${room?.topicDisplayName ?? (widget.topic != null ? CategoryModel.defaultDisplayName(widget.topic!) : room?.categoryDisplayName ?? CategoryModel.defaultDisplayName(widget.category))}'),
                               backgroundColor: AppTheme.surfaceLight,
                               labelStyle: const TextStyle(fontSize: 11, color: AppTheme.textPrimary),
                             ),
@@ -820,30 +862,33 @@ class _LobbyScreenState extends State<LobbyScreen> {
                       onPressed: _handleStartAuction,
                     )
                   else
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: AppTheme.surfaceLight.withOpacity(0.4),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppTheme.surfaceLight),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppTheme.surfaceLight.withValues(alpha: 0.4),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppTheme.surfaceBorder),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.accent),
+                            ),
+                            SizedBox(width: 12),
+                            Flexible(
+                              child: Text(
+                                'Waiting for Host to start match...',
+                                style: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.bold),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.accent),
-                          ),
-                          SizedBox(width: 12),
-                          Text(
-                            'Waiting for Host to start match...',
-                            style: TextStyle(color: AppTheme.textSecondary, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
                 ],
               ),
             ),

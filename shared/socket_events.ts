@@ -68,11 +68,34 @@ export const SOCKET_EVENTS = {
   REGISTER_ACCOUNT: 'register_account',
   LOGIN_ACCOUNT: 'login_account',
   LINK_GUEST_ACCOUNT: 'link_guest_account',
+  LINK_GOOGLE_ACCOUNT: 'link_google_account',
+  LINK_FACEBOOK_ACCOUNT: 'link_facebook_account',
+  LOGIN_GOOGLE_ACCOUNT: 'login_google_account',
+  LOGIN_FACEBOOK_ACCOUNT: 'login_facebook_account',
+  GET_ACCOUNT_STATUS: 'get_account_status',
   LOGOUT_ACCOUNT: 'logout_account',
   GET_COIN_BALANCE: 'get_coin_balance',
+  COIN_BALANCE_UPDATE: 'coin_balance_update',
+
+  // Character Packs (Coins Only)
+  GET_CHARACTER_PACKS: 'get_character_packs',
+  PURCHASE_CHARACTER_PACK: 'purchase_character_pack',
+  GET_UNLOCKED_CHARACTERS: 'get_unlocked_characters',
 } as const;
 
 export type GameMode = 'POWER_COMPARISON' | 'AUCTION_TEAM_CHALLENGE';
+
+export interface AccountStatusDTO {
+  accountId?: string;
+  profileId: string;
+  isGuest: boolean;
+  email?: string;
+  hasPassword?: boolean;
+  googleLinked: boolean;
+  googleEmail?: string;
+  facebookLinked: boolean;
+  facebookEmail?: string;
+}
 
 export interface CategoryDTO {
   id: string;
@@ -107,11 +130,13 @@ export interface PlayerDTO {
   budget: number;
   acquiredItems: string[];
   isConnected?: boolean;
+  profileId?: string;
 }
 
 export interface RoomStateDTO {
   roomCode: string;
   category: string;
+  topic?: string;
   gameMode: GameMode;
   itemCount: number;
   timerDuration: number;
@@ -128,6 +153,14 @@ export type AuctionPhase =
   | 'UNSOLD'
   | 'COMPLETED';
 
+export const SUPPORTED_TIMER_DURATIONS = [5, 10, 15, 20, 30, 45] as const;
+export type SupportedTimerDuration = (typeof SUPPORTED_TIMER_DURATIONS)[number];
+export const DEFAULT_TIMER_DURATION: SupportedTimerDuration = 15;
+
+export const SUPPORTED_ITEM_COUNTS = [5, 8, 10] as const;
+export type SupportedItemCount = (typeof SUPPORTED_ITEM_COUNTS)[number];
+export const DEFAULT_ITEM_COUNT: SupportedItemCount = 10;
+
 export interface AuctionStateDTO {
   roomCode: string;
   gameMode: GameMode;
@@ -135,6 +168,7 @@ export interface AuctionStateDTO {
   currentItemIndex: number;
   totalItems: number;
   timerDuration: number;
+  turnDeadline?: number;
   currentItem?: CharacterItemDTO;
   currentBid: number;
   minNextBid: number;
@@ -143,6 +177,7 @@ export interface AuctionStateDTO {
   timerSecondsRemaining: number;
   passedPlayerIds: string[];
   players: PlayerDTO[];
+  auctionQueue?: CharacterItemDTO[];
 }
 
 export interface StandingsRecordDTO {
@@ -331,4 +366,33 @@ export interface InAppNotificationDTO {
   isRead: boolean;
   createdAt: string;
 }
+
+export interface CharacterPreviewDTO {
+  id: string;
+  displayName: string;
+  categoryId: string;
+  basePrice: number;
+}
+
+export interface CharacterPackDTO {
+  id: string;
+  name: string;
+  description: string;
+  characterCount: number;
+  priceCoins: number;
+  badge: string;
+  gradientColors: string[];
+  eligibleCharactersPreview: CharacterPreviewDTO[];
+}
+
+export interface CharacterUnlockRecordDTO {
+  id: string;
+  playerId: string;
+  characterId: string;
+  characterName: string;
+  categoryId: string;
+  packId: string;
+  unlockedAt: string;
+}
+
 

@@ -9,9 +9,16 @@ import {
 } from '../../shared/socket_events';
 import { CharacterDatabase } from './database/db';
 import { ProfileManager } from './database/profile_manager';
+import {
+  BIDDING_ECONOMY_CONFIG,
+  getMinBidIncrement,
+  getStartingBid,
+  getNextValidBid,
+} from './config/bidding_economy';
 
-export const MIN_BID_INCREMENT = 50;
+export const MIN_BID_INCREMENT = 25;
 export const ITEM_TIMER_DURATION = 15;
+export { getMinBidIncrement, getStartingBid, getNextValidBid, BIDDING_ECONOMY_CONFIG };
 
 export interface PurchasedItemRecord {
   itemName: string;
@@ -36,6 +43,7 @@ export class AuctionEngine {
   public leadingBidderName?: string;
   public timerSecondsRemaining: number = ITEM_TIMER_DURATION;
   public timerDuration: number = ITEM_TIMER_DURATION;
+  public turnDeadline: number = 0;
   public passedPlayerIds: Set<string> = new Set();
   public players: Map<string, InternalPlayer> = new Map();
 
@@ -50,7 +58,8 @@ export class AuctionEngine {
     gameMode: GameMode,
     totalItems: number,
     initialPlayers: PlayerDTO[],
-    timerDuration: number = ITEM_TIMER_DURATION
+    timerDuration: number = ITEM_TIMER_DURATION,
+    previousSequenceIds?: string[]
   ) {
     this.io = io;
     this.roomCode = roomCode;
@@ -59,9 +68,14 @@ export class AuctionEngine {
     this.totalItems = totalItems;
     this.timerDuration = timerDuration;
     this.timerSecondsRemaining = timerDuration;
+    this.turnDeadline = Date.now() + timerDuration * 1000;
 
-    // Fetch unique records from verified CharacterDatabase
-    const dbRecords = CharacterDatabase.getInstance().getCharacterRecords(category, totalItems);
+    // Fetch unique records using server-authoritative Fisher-Yates shuffle
+    const dbRecords = CharacterDatabase.getInstance().getShuffledCharacterRecords(
+      category,
+      totalItems,
+      previousSequenceIds
+    );
     this.items = dbRecords.map((r) => ({
       id: r.id,
       categoryId: r.categoryId,
@@ -71,7 +85,7 @@ export class AuctionEngine {
       scoringMethod: r.scoringMethod,
       provenance: r.provenance,
       isActive: r.isActive,
-      basePrice: r.basePrice,
+      basePrice: getStartingBid(r.basePrice),
     }));
 
     initialPlayers.forEach((p) => {
@@ -101,10 +115,7 @@ export class AuctionEngine {
 
   public get minNextBid(): number {
     if (!this.currentItem) return 0;
-    if (this.currentBid === 0) {
-      return this.currentItem.basePrice;
-    }
-    return this.currentBid + MIN_BID_INCREMENT;
+    return getNextValidBid(this.currentBid, this.currentItem.basePrice);
   }
 
   public broadcastAuctionState(): void {
@@ -136,6 +147,7 @@ export class AuctionEngine {
       currentItem: this.toClientItem(this.currentItem),
       itemIndex: this.currentItemIndex + 1,
       totalItems: this.totalItems,
+      roomState: stateDTO,
     });
 
     setTimeout(() => {
@@ -148,6 +160,7 @@ export class AuctionEngine {
   public startBiddingPhase(): void {
     this.phase = 'BIDDING';
     this.timerSecondsRemaining = this.timerDuration;
+    this.turnDeadline = Date.now() + this.timerDuration * 1000;
     this.isFinalizingSale = false;
     this.passedPlayerIds.clear();
     this.currentBid = 0;
@@ -176,12 +189,16 @@ export class AuctionEngine {
     }
 
     this.timerSecondsRemaining = this.timerDuration;
+    this.turnDeadline = Date.now() + this.timerDuration * 1000;
 
     this.timerHandle = setInterval(() => {
-      this.timerSecondsRemaining--;
+      const now = Date.now();
+      const remainingMs = this.turnDeadline - now;
+      const remainingSec = Math.max(0, Math.ceil(remainingMs / 1000));
+      this.timerSecondsRemaining = remainingSec;
       this.broadcastAuctionState();
 
-      if (this.timerSecondsRemaining <= 0) {
+      if (remainingSec <= 0 || now >= this.turnDeadline) {
         this.stopTimer();
         this.finalizeItemSale();
       }
@@ -211,7 +228,12 @@ export class AuctionEngine {
       throw new Error('Bidding is not open for this item.');
     }
 
-    if (this.timerSecondsRemaining <= 0) {
+    const now = Date.now();
+    if (this.turnDeadline <= 0 && this.timerSecondsRemaining > 0) {
+      this.turnDeadline = now + this.timerSecondsRemaining * 1000;
+    }
+    const hasDeadlinePassed = this.turnDeadline > 0 && now >= this.turnDeadline;
+    if (this.isFinalizingSale || this.timerSecondsRemaining <= 0 || hasDeadlinePassed) {
       throw new Error('Timer has expired for this item.');
     }
 
@@ -379,11 +401,13 @@ export class AuctionEngine {
       this.leadingBidderName = undefined;
       this.passedPlayerIds.clear();
 
+      const stateDTO = this.getAuctionStateDTO();
       this.io.to(this.roomCode).emit('item_announced', {
         roomCode: this.roomCode,
         currentItem: this.toClientItem(this.currentItem),
         itemIndex: this.currentItemIndex + 1,
         totalItems: this.totalItems,
+        roomState: stateDTO,
       });
 
       setTimeout(() => {
@@ -405,8 +429,10 @@ export class AuctionEngine {
         rankedList[0].player.acquiredItems.length === rankedList[1].player.acquiredItems.length &&
         rankedList[0].player.budget === rankedList[1].player.budget;
 
-      const winnerId = standings.length > 0 ? standings[0].playerId : '';
-      const winnerName = standings.length > 0 ? standings[0].playerName : 'None';
+      const topStanding = standings.length > 0 ? standings[0] : undefined;
+      const topPlayer = topStanding ? this.players.get(topStanding.playerId) : undefined;
+      const winnerId = topPlayer?.profileId || (topStanding ? topStanding.playerId : '');
+      const winnerName = topStanding ? topStanding.playerName : 'None';
 
       const matchRecord = {
         matchId: `match_${this.roomCode}_${Date.now()}`,
@@ -417,19 +443,23 @@ export class AuctionEngine {
         winnerId,
         winnerName,
         isTie,
-        participants: standings.map((s, idx) => ({
-          playerId: s.playerId,
-          username: s.playerName,
-          rank: s.rank,
-          itemsWon: s.itemsWon,
-          totalTeamPoints: rankedList[idx]?.totalTeamPoints,
-          remainingBudget: s.remainingBudget,
-          purchasedItems: s.itemsList.map((item) => ({
-            itemId: item.itemName,
-            itemName: item.itemName,
-            price: item.price,
-          })),
-        })),
+        participants: standings.map((s, idx) => {
+          const roomPlayer = this.players.get(s.playerId);
+          const effectiveId = roomPlayer?.profileId || s.playerId;
+          return {
+            playerId: effectiveId,
+            username: s.playerName,
+            rank: s.rank,
+            itemsWon: s.itemsWon,
+            totalTeamPoints: rankedList[idx]?.totalTeamPoints,
+            remainingBudget: s.remainingBudget,
+            purchasedItems: s.itemsList.map((item) => ({
+              itemId: item.itemName,
+              itemName: item.itemName,
+              price: item.price,
+            })),
+          };
+        }),
       };
 
       const recordRes = ProfileManager.getInstance().recordCompletedMatch(matchRecord);
@@ -442,7 +472,21 @@ export class AuctionEngine {
         standings,
         roomState: this.getAuctionStateDTO(),
         newUnlockedAchievements: recordRes.newlyUnlocked,
+        coinRewards: recordRes.coinRewards,
       });
+
+      // Deliver individual authoritative coin balance updates to each connected player socket
+      for (const [socketId, player] of this.players.entries()) {
+        const effectiveId = player.profileId || socketId;
+        const reward = recordRes.coinRewards[effectiveId] || recordRes.coinRewards[socketId];
+        if (reward) {
+          this.io.to(socketId).emit('coin_balance_update', {
+            coinBalance: reward.balanceAfter,
+            change: reward.amount,
+            reason: reward.reason,
+          });
+        }
+      }
     }
   }
 
@@ -532,6 +576,7 @@ export class AuctionEngine {
       leadingBidderId: this.leadingBidderId,
       leadingBidderName: this.leadingBidderName,
       timerDuration: this.timerDuration,
+      turnDeadline: this.turnDeadline,
       timerSecondsRemaining: this.timerSecondsRemaining,
       passedPlayerIds: Array.from(this.passedPlayerIds),
       players: Array.from(this.players.values()).map((p) => ({
@@ -542,6 +587,7 @@ export class AuctionEngine {
         budget: p.budget,
         acquiredItems: p.acquiredItems,
       })),
+      auctionQueue: this.items.map((item) => this.toClientItem(item)!),
     };
   }
 

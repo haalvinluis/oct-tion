@@ -4,8 +4,24 @@ import { AuctionEngine } from './auction_engine';
 import { RoomStateDTO, GameMode } from '../../shared/socket_events';
 import { CharacterDatabase } from './database/db';
 
+export const SUPPORTED_TIMER_DURATIONS = [5, 10, 15, 20, 30, 45] as const;
+export type SupportedTimerDuration = (typeof SUPPORTED_TIMER_DURATIONS)[number];
+export const DEFAULT_TIMER_DURATION: SupportedTimerDuration = 15;
+
+export const SUPPORTED_ITEM_COUNTS = [5, 8, 10] as const;
+export type SupportedItemCount = (typeof SUPPORTED_ITEM_COUNTS)[number];
+export const DEFAULT_ITEM_COUNT: SupportedItemCount = 10;
+
+export function isValidItemCount(count: number): boolean {
+  if (count === 25 || count > 10 || count < 1 || !Number.isInteger(count)) {
+    return false;
+  }
+  return true;
+}
+
 export interface Player {
   id: string;
+  profileId?: string;
   sessionToken: string;
   name: string;
   isHost: boolean;
@@ -19,6 +35,7 @@ export interface Player {
 export interface RoomState {
   roomCode: string;
   category: string;
+  topic?: string;
   gameMode: GameMode;
   itemCount: number;
   timerDuration: number;
@@ -32,6 +49,7 @@ export function toRoomStateDTO(room: RoomState): RoomStateDTO {
   return {
     roomCode: room.roomCode,
     category: room.category,
+    topic: room.topic || room.category,
     gameMode: room.gameMode,
     itemCount: room.itemCount,
     timerDuration: room.timerDuration ?? 15,
@@ -39,6 +57,7 @@ export function toRoomStateDTO(room: RoomState): RoomStateDTO {
     hostId: room.hostId,
     players: room.players.map((p) => ({
       id: p.id,
+      profileId: p.profileId,
       sessionToken: p.sessionToken,
       name: p.name,
       isHost: p.isHost,
@@ -73,14 +92,35 @@ export class RoomManager {
     username: string,
     category: string,
     gameMode: GameMode = 'AUCTION_TEAM_CHALLENGE',
-    itemCount: number = 10,
-    timerDuration: number = 15
+    itemCount: number = DEFAULT_ITEM_COUNT,
+    timerDuration: number = DEFAULT_TIMER_DURATION,
+    profileId?: string,
+    topic?: string
   ): { roomState: RoomStateDTO; player: Player } {
-    // Validate record availability in Database
-    CharacterDatabase.getInstance().getCharacterRecords(category, itemCount);
+    const resolvedItemCount =
+      itemCount !== undefined && itemCount !== null
+        ? Number(itemCount)
+        : DEFAULT_ITEM_COUNT;
 
-    if (![10, 15, 20].includes(timerDuration)) {
-      throw new Error('Timer duration must be 10, 15, or 20 seconds.');
+    if (!isValidItemCount(resolvedItemCount)) {
+      if (resolvedItemCount === 25) {
+        throw new Error('Match size 25 items is not supported. Supported match sizes are 5, 8, and 10 items.');
+      }
+      throw new Error(`Match size must be one of: ${SUPPORTED_ITEM_COUNTS.join(', ')} items.`);
+    }
+
+    const effectiveTopic = (topic && topic.trim().length > 0) ? topic.trim() : category;
+
+    // Validate record availability in Database for the selected topic/category
+    CharacterDatabase.getInstance().getCharacterRecords(effectiveTopic, resolvedItemCount);
+
+    const resolvedTimer =
+      timerDuration !== undefined && timerDuration !== null
+        ? Number(timerDuration)
+        : DEFAULT_TIMER_DURATION;
+
+    if (!SUPPORTED_TIMER_DURATIONS.includes(resolvedTimer as any)) {
+      throw new Error(`Timer duration must be one of: ${SUPPORTED_TIMER_DURATIONS.join(', ')} seconds.`);
     }
 
     this.leaveAllRooms(socketId);
@@ -88,10 +128,12 @@ export class RoomManager {
     const roomCode = this.generateRoomCode();
     const sessionToken = crypto.randomUUID();
 
+    const fallbackSuffix = (profileId || socketId).replace(/[^a-zA-Z0-9]/g, '').slice(-4) || 'User';
     const hostPlayer: Player = {
       id: socketId,
+      profileId,
       sessionToken,
-      name: username.trim() || 'Player1',
+      name: username.trim() || `Player_${fallbackSuffix}`,
       isHost: true,
       isReady: true,
       budget: 1000,
@@ -102,9 +144,10 @@ export class RoomManager {
     const roomState: RoomState = {
       roomCode,
       category,
+      topic: effectiveTopic,
       gameMode,
-      itemCount,
-      timerDuration,
+      itemCount: resolvedItemCount,
+      timerDuration: resolvedTimer,
       maxPlayers: 8,
       hostId: socketId,
       players: [hostPlayer],
@@ -119,7 +162,8 @@ export class RoomManager {
   public joinRoom(
     socketId: string,
     username: string,
-    roomCode: string
+    roomCode: string,
+    profileId?: string
   ): { roomState: RoomStateDTO; player: Player } {
     const normalizedCode = roomCode.trim().toUpperCase();
     const room = this.rooms.get(normalizedCode);
@@ -128,22 +172,40 @@ export class RoomManager {
       throw new Error(`Room code "${normalizedCode}" not found.`);
     }
 
-    if (room.players.length >= room.maxPlayers) {
-      throw new Error(`Room "${normalizedCode}" is full (Max 8 players).`);
+    const existingPlayerIndex = room.players.findIndex(
+      (p) => p.id === socketId || (profileId && p.profileId && p.profileId === profileId)
+    );
+    if (existingPlayerIndex !== -1) {
+      const existingPlayer = room.players[existingPlayerIndex];
+      if (existingPlayer.id !== socketId) {
+        this.socketToRoom.delete(existingPlayer.id);
+        existingPlayer.id = socketId;
+      }
+      existingPlayer.isConnected = true;
+      existingPlayer.disconnectedAt = undefined;
+      if (username && username.trim().length > 0) {
+        existingPlayer.name = username.trim();
+      }
+      this.socketToRoom.set(socketId, normalizedCode);
+      if (room.auctionEngine) {
+        room.auctionEngine.updatePlayers(room.players);
+      }
+      return { roomState: toRoomStateDTO(room), player: existingPlayer };
     }
 
-    const existingPlayerIndex = room.players.findIndex((p) => p.id === socketId);
-    if (existingPlayerIndex !== -1) {
-      return { roomState: toRoomStateDTO(room), player: room.players[existingPlayerIndex] };
+    if (room.players.length >= room.maxPlayers) {
+      throw new Error(`Room "${normalizedCode}" is full (Max 8 players).`);
     }
 
     this.leaveAllRooms(socketId);
 
     const sessionToken = crypto.randomUUID();
+    const fallbackSuffix = (profileId || socketId).replace(/[^a-zA-Z0-9]/g, '').slice(-4) || 'User';
     const newPlayer: Player = {
       id: socketId,
+      profileId,
       sessionToken,
-      name: username.trim() || 'Player',
+      name: username.trim() || `Player_${fallbackSuffix}`,
       isHost: false,
       isReady: true,
       budget: 1000,
@@ -311,7 +373,7 @@ export class RoomManager {
   public updateRoomSettings(
     socketId: string,
     roomCode: string,
-    settings: { category?: string; itemCount?: number; timerDuration?: number }
+    settings: { category?: string; topic?: string; itemCount?: number; timerDuration?: number }
   ): RoomStateDTO {
     const normalizedCode = roomCode.trim().toUpperCase();
     const room = this.rooms.get(normalizedCode);
@@ -329,20 +391,35 @@ export class RoomManager {
     }
 
     const newCategory = settings.category ?? room.category;
-    const newItemCount = settings.itemCount ?? room.itemCount;
-    const newTimerDuration = settings.timerDuration ?? room.timerDuration;
+    const newTopic = settings.topic ?? (settings.category ? settings.category : (room.topic || room.category));
+    let newItemCount = room.itemCount;
 
-    if (settings.timerDuration !== undefined) {
-      if (![10, 15, 20].includes(settings.timerDuration)) {
-        throw new Error('Timer duration must be 10, 15, or 20 seconds.');
+    if (settings.itemCount !== undefined && settings.itemCount !== null) {
+      const resolvedItemCount = Number(settings.itemCount);
+      if (!isValidItemCount(resolvedItemCount)) {
+        if (resolvedItemCount === 25) {
+          throw new Error('Match size 25 items is not supported. Supported match sizes are 5, 8, and 10 items.');
+        }
+        throw new Error(`Match size must be one of: ${SUPPORTED_ITEM_COUNTS.join(', ')} items.`);
       }
+      newItemCount = resolvedItemCount;
+    }
+    let newTimerDuration = room.timerDuration;
+
+    if (settings.timerDuration !== undefined && settings.timerDuration !== null) {
+      const resolvedTimer = Number(settings.timerDuration);
+      if (!SUPPORTED_TIMER_DURATIONS.includes(resolvedTimer as any)) {
+        throw new Error(`Timer duration must be one of: ${SUPPORTED_TIMER_DURATIONS.join(', ')} seconds.`);
+      }
+      newTimerDuration = resolvedTimer;
     }
 
-    if (settings.category !== undefined || settings.itemCount !== undefined) {
-      CharacterDatabase.getInstance().getCharacterRecords(newCategory, newItemCount);
+    if (settings.category !== undefined || settings.topic !== undefined || settings.itemCount !== undefined) {
+      CharacterDatabase.getInstance().getCharacterRecords(newTopic, newItemCount);
     }
 
     room.category = newCategory;
+    room.topic = newTopic;
     room.itemCount = newItemCount;
     room.timerDuration = newTimerDuration;
 
@@ -361,11 +438,14 @@ export class RoomManager {
       throw new Error('Only the room host can start the auction.');
     }
 
-    if (!room.auctionEngine) {
+    if (!room.auctionEngine || room.auctionEngine.phase === 'COMPLETED') {
+      if (room.auctionEngine) {
+        room.auctionEngine.destroy();
+      }
       room.auctionEngine = new AuctionEngine(
         io,
         normalizedCode,
-        room.category,
+        room.topic || room.category,
         room.gameMode,
         room.itemCount,
         room.players,

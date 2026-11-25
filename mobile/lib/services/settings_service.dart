@@ -9,6 +9,7 @@ class SettingsService extends ChangeNotifier {
   bool _masterSound = true;
   bool _sfxEnabled = true;
   bool _musicEnabled = true;
+  bool _buttonTouchSound = true;
   double _masterVolume = 1.0;
 
   // Gameplay Settings
@@ -24,6 +25,7 @@ class SettingsService extends ChangeNotifier {
   bool get masterSound => _masterSound;
   bool get sfxEnabled => _sfxEnabled;
   bool get musicEnabled => _musicEnabled;
+  bool get buttonTouchSound => _buttonTouchSound;
   double get masterVolume => _masterVolume;
 
   bool get vibrationEnabled => _vibrationEnabled;
@@ -46,6 +48,11 @@ class SettingsService extends ChangeNotifier {
 
   void setMusicEnabled(bool val) {
     _musicEnabled = val;
+    notifyListeners();
+  }
+
+  void setButtonTouchSound(bool val) {
+    _buttonTouchSound = val;
     notifyListeners();
   }
 

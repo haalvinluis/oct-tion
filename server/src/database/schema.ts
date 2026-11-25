@@ -16,6 +16,7 @@ export interface CategoryInfo {
   targetCount: number;
   scoringMethod: string;
   provenance: string;
+  parentCategoryId?: string;
 }
 
 export interface PlayerProfile {
@@ -48,6 +49,7 @@ export interface MatchParticipantRecord {
   totalTeamPoints?: number;
   remainingBudget: number;
   purchasedItems: PurchasedItemRecord[];
+  isAbandoned?: boolean;
 }
 
 export interface CompletedMatchRecord {
@@ -59,6 +61,7 @@ export interface CompletedMatchRecord {
   winnerId: string;
   winnerName: string;
   isTie: boolean;
+  isAbandoned?: boolean;
   participants: MatchParticipantRecord[];
 }
 

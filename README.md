@@ -1,6 +1,6 @@
-# PowerBid — Multiplayer Auction Game (Monorepo)
+# OCT-TION — Multiplayer Auction Game (Monorepo)
 
-**PowerBid** is an Android online multiplayer auction game targeting `<50 MB` download size, featuring authoritative real-time bidding rooms powered by Flutter, Node.js, TypeScript, Socket.IO, and PostgreSQL.
+**OCT-TION — Bid • Win • Rule** is an Android online multiplayer auction game targeting `<50 MB` download size, featuring authoritative real-time bidding rooms powered by Flutter, Node.js, TypeScript, Socket.IO, and PostgreSQL.
 
 ## Monorepo Layout
 

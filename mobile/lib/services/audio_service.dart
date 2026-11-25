@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'settings_service.dart';
 
 enum SfxType {
@@ -46,6 +47,27 @@ class AudioService {
     // Log sound event execution (in full app, triggers system sound or audio asset player)
     if (kDebugMode) {
       print('[AudioService] Play SFX: ${type.name} (Vol: ${(settings.masterVolume * 100).toInt()}%)');
+    }
+  }
+
+  /// Play short, premium UI button click sound
+  void playButtonClick() {
+    final settings = SettingsService();
+    if (!settings.masterSound || !settings.buttonTouchSound || settings.masterVolume <= 0) {
+      return;
+    }
+
+    final now = DateTime.now();
+    final lastPlayed = _lastPlayedMap[SfxType.buttonClick];
+    if (lastPlayed != null && now.difference(lastPlayed).inMilliseconds < 100) {
+      return;
+    }
+    _lastPlayedMap[SfxType.buttonClick] = now;
+
+    SystemSound.play(SystemSoundType.click);
+
+    if (settings.vibrationEnabled) {
+      HapticFeedback.lightImpact();
     }
   }
 

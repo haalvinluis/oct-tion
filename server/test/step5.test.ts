@@ -139,9 +139,10 @@ describe('Step 5: Categories, Character Database, Power Points & Winner System T
     const itemSoldPromise = new Promise<any>((resolve) => host.on('item_sold', resolve));
 
     await new Promise((resolve) => host.emit('start_auction', { roomCode }, resolve));
+    const engine = roomManager.getAuctionEngine(roomCode)!;
 
     const soldEvt = await itemSoldPromise;
-    expect(soldEvt.winnerName).to.include('Sachin Tendulkar');
+    expect(soldEvt.winnerName).to.equal(engine.items[0].displayName);
     expect(soldEvt.winnerName).to.not.include('Pts');
     expect(soldEvt.item.powerPoints).to.be.undefined;
   });
@@ -163,8 +164,8 @@ describe('Step 5: Categories, Character Database, Power Points & Winner System T
     const engine = roomManager.getAuctionEngine(roomCode)!;
     engine.phase = 'BIDDING';
 
-    // Simulate winning Item 1 (Sachin Tendulkar, 99 pts) for $300
-    engine.placeBid(host.id!, 300);
+    const firstItem = engine.items[0];
+    engine.placeBid(host.id!, firstItem.basePrice);
     engine.finalizeItemSale();
 
     const standings = engine.calculateFinalStandings();
@@ -172,9 +173,9 @@ describe('Step 5: Categories, Character Database, Power Points & Winner System T
     expect(standings[0].playerName).to.equal('HostUser');
     expect(standings[0].rank).to.equal(1);
     expect(standings[0].itemsWon).to.equal(1);
-    expect(standings[0].totalTeamPoints).to.equal(99);
+    expect(standings[0].totalTeamPoints).to.equal(firstItem.powerPoints);
     expect((standings[0].itemsList[0] as any).powerPoints).to.be.undefined;
-    expect(standings[0].remainingBudget).to.equal(700);
+    expect(standings[0].remainingBudget).to.equal(1000 - firstItem.basePrice);
   });
 
   it('7. Should verify pure text-only structure (no image URL properties)', () => {

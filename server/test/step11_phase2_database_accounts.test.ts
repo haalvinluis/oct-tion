@@ -3,6 +3,7 @@ import { newDb } from 'pg-mem';
 import { DatabasePool } from '../src/database/pg_pool';
 import { AuthManager } from '../src/database/auth_manager';
 import { ProfileManager } from '../src/database/profile_manager';
+import { getMinBidIncrement } from '../src/auction_engine';
 
 describe('Step 11: Phase 2 Database, Accounts, Guest Linking & Coin Rewards Tests', function () {
   this.timeout(15000);
@@ -203,7 +204,7 @@ describe('Step 11: Phase 2 Database, Accounts, Guest Linking & Coin Rewards Test
   });
 
   describe('4. Virtual Coin Rewards & Idempotent Match Crediting', () => {
-    it('Should award coins accurately to winner, runner-up, and participants', async () => {
+    it('Should award coins accurately: +200 to winner, +25 to completion participant, and -50 to loser', async () => {
       const pm = ProfileManager.getInstance();
 
       const p1 = pm.getOrCreateProfile('p1_winner', 'WinnerUser'); // starts at 500
@@ -221,18 +222,62 @@ describe('Step 11: Phase 2 Database, Accounts, Guest Linking & Coin Rewards Test
 
       expect(rewards.get('p1_winner')?.amount).to.equal(150);
       expect(rewards.get('p2_second')?.amount).to.equal(75);
-      expect(rewards.get('p3_third')?.amount).to.equal(25);
+      expect(rewards.get('p3_third')?.amount).to.equal(0); // 500 floor protected
 
-      expect(p1.coinBalance).to.equal(500 + 150);
-      expect(p2.coinBalance).to.equal(500 + 75);
-      expect(p3.coinBalance).to.equal(500 + 25);
+      expect(p1.coinBalance).to.equal(500 + 150); // 650
+      expect(p2.coinBalance).to.equal(500 + 75);  // 575
+      expect(p3.coinBalance).to.equal(500);       // Protected 500 floor preserved
+    });
+
+    it('Should protect 500 starting balance floor when deducting loser penalty', async () => {
+      const pm = ProfileManager.getInstance();
+      const pLow = pm.getOrCreateProfile('p_low_balance', 'LowBalanceUser');
+      pLow.coinBalance = 520; // 520 coins
+
+      const participants = [
+        { playerId: 'p_winner_other', rank: 1, itemsWon: 2 },
+        { playerId: 'p_low_balance', rank: 2, itemsWon: 0, isLoser: true },
+      ];
+
+      const rewards = await pm.awardMatchCoins('m_low_bal_test', 'p_winner_other', participants);
+      expect(rewards.get('p_low_balance')?.amount).to.equal(-20);
+      expect(pLow.coinBalance).to.equal(500); // Cannot drop below protected 500 floor!
+    });
+
+    it('Should prevent reward farming on abandoned matches', async () => {
+      const pm = ProfileManager.getInstance();
+      const pAlone = pm.getOrCreateProfile('p_alone', 'AloneUser');
+      pAlone.coinBalance = 500;
+
+      // Abandoned or solitary match
+      const solitaryParticipants = [{ playerId: 'p_alone', rank: 1, itemsWon: 1 }];
+      const solitaryRewards = await pm.awardMatchCoins('m_farming_01', 'p_alone', solitaryParticipants);
+      expect(solitaryRewards.size).to.equal(0);
+      expect(pAlone.coinBalance).to.equal(500); // Unchanged
+
+      // Explicitly abandoned match
+      const abandonedRewards = await pm.awardMatchCoins(
+        'm_abandoned_02',
+        'p_alone',
+        [
+          { playerId: 'p_alone', rank: 1, itemsWon: 1 },
+          { playerId: 'p_quitter', rank: 2, itemsWon: 0, isAbandoned: true },
+        ],
+        { isAbandoned: true }
+      );
+      expect(abandonedRewards.size).to.equal(0);
+      expect(pAlone.coinBalance).to.equal(500); // Unchanged
     });
 
     it('Should prevent duplicate coin rewards for the same match (Idempotence)', async () => {
       const pm = ProfileManager.getInstance();
       const p1 = pm.getOrCreateProfile('p1_idempotent', 'IdemUser');
+      const p2 = pm.getOrCreateProfile('p2_idempotent', 'IdemUser2');
 
-      const participants = [{ playerId: 'p1_idempotent', rank: 1, itemsWon: 2 }];
+      const participants = [
+        { playerId: 'p1_idempotent', rank: 1, itemsWon: 2 },
+        { playerId: 'p2_idempotent', rank: 2, itemsWon: 1 },
+      ];
 
       // First award
       await pm.awardMatchCoins('match_idem_01', 'p1_idempotent', participants);
@@ -260,6 +305,26 @@ describe('Step 11: Phase 2 Database, Accounts, Guest Linking & Coin Rewards Test
       expect((profile as any).totalTeamPoints).to.be.undefined;
       expect((profile as any).scoringFormula).to.be.undefined;
       expect((profile as any).powerPoints).to.be.undefined;
+    });
+  });
+
+  describe('6. Tiered Bidding Increments & Starting Bid Verification', () => {
+    it('Should enforce 25 increment for bids under 500', () => {
+      expect(getMinBidIncrement(0)).to.equal(25);
+      expect(getMinBidIncrement(200)).to.equal(25);
+      expect(getMinBidIncrement(499)).to.equal(25);
+    });
+
+    it('Should enforce 50 increment for bids between 500 and 1,499', () => {
+      expect(getMinBidIncrement(500)).to.equal(50);
+      expect(getMinBidIncrement(1000)).to.equal(50);
+      expect(getMinBidIncrement(1499)).to.equal(50);
+    });
+
+    it('Should enforce 100 increment for bids 1,500 and above', () => {
+      expect(getMinBidIncrement(1500)).to.equal(100);
+      expect(getMinBidIncrement(2000)).to.equal(100);
+      expect(getMinBidIncrement(10000)).to.equal(100);
     });
   });
 });

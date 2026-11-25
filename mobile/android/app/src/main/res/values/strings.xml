@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">OCT-TION</string>
+
+    <!-- Meta / Facebook Login Configuration -->
+    <!-- Replace with your actual Facebook App ID from https://developers.facebook.com/apps/ -->
+    <string name="facebook_app_id">000000000000000</string>
+    <!-- Replace with fb + your Facebook App ID (e.g. fb1234567890) -->
+    <string name="fb_login_protocol_scheme">fb000000000000000</string>
+    <!-- Replace with your Facebook Client Token from Meta Dashboard -> Settings -> Advanced -->
+    <string name="facebook_client_token">00000000000000000000000000000000</string>
+</resources>

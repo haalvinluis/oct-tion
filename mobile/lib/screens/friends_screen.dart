@@ -342,7 +342,7 @@ class _FriendsScreenState extends State<FriendsScreen>
               ),
               const SizedBox(height: 8),
               const Text(
-                'Use the Find Friends tab to search players by their unique Player ID (e.g. PB-XXXXXX).',
+                'Use the Find Friends tab to search players by their unique Player ID (e.g. OCT-10427).',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
               ),
@@ -683,7 +683,7 @@ class _FriendsScreenState extends State<FriendsScreen>
                 ),
                 const SizedBox(height: 6),
                 const Text(
-                  'Every PowerBid player has a unique non-sequential ID (e.g. PB-A7K9X2). Ask your friend for their ID and enter it below.',
+                  'Every OCT-TION player has a unique non-sequential ID (e.g. OCT-10427). Ask your friend for their ID and enter it below.',
                   style: TextStyle(fontSize: 12, color: AppTheme.textSecondary),
                 ),
                 const SizedBox(height: 16),
@@ -695,7 +695,7 @@ class _FriendsScreenState extends State<FriendsScreen>
                         textCapitalization: TextCapitalization.characters,
                         style: const TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold, letterSpacing: 1.0),
                         decoration: InputDecoration(
-                          hintText: 'PB-XXXXXX',
+                          hintText: 'OCT-XXXXX',
                           hintStyle: TextStyle(color: AppTheme.textSecondary.withValues(alpha: 0.5)),
                           filled: true,
                           fillColor: AppTheme.surfaceLight,

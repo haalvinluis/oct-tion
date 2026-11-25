@@ -158,6 +158,8 @@ ephemeral/
 **/*.sqlite3
 *.db
 **/*.db
+server_data/
+**/server_data/
 
 # 8. Testing Coverage, Logs & Local Screenshots
 coverage/

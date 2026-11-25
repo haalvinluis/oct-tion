@@ -18,7 +18,7 @@ class PowerBidLogo extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Official PowerBid Brand Logo Image
+        // Official OCT-TION Brand Logo Image
         Container(
           width: iconSize + 70,
           height: iconSize + 70,
@@ -26,7 +26,7 @@ class PowerBidLogo extends StatelessWidget {
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.primary.withValues(alpha: 0.35),
+                color: AppTheme.maroonBackground.withValues(alpha: 0.35),
                 blurRadius: 24,
                 spreadRadius: 2,
               ),
@@ -40,7 +40,7 @@ class PowerBidLogo extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(24),
             child: Image.asset(
-              'assets/images/powerbid_logo.png',
+              'assets/images/octtion_logo.png',
               fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) {
                 // Graceful fallback to styled vector emblem
@@ -51,29 +51,21 @@ class PowerBidLogo extends StatelessWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Color(0xFF1E293B),
-                        Color(0xFF0F172A),
+                        Color(0xFF160609),
+                        Color(0xFF2A1014),
                       ],
                     ),
                     border: Border.all(
-                      color: AppTheme.silver,
+                      color: AppTheme.gold,
                       width: 2.0,
                     ),
                   ),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Icon(
-                        Icons.bolt_rounded,
-                        size: iconSize * 0.9,
-                        color: AppTheme.electricBlue.withValues(alpha: 0.6),
-                      ),
-                      Icon(
-                        Icons.gavel_rounded,
-                        size: iconSize * 0.75,
-                        color: AppTheme.gold,
-                      ),
-                    ],
+                  child: Center(
+                    child: Icon(
+                      Icons.gavel_rounded,
+                      size: iconSize * 0.85,
+                      color: AppTheme.creamText,
+                    ),
                   ),
                 );
               },
@@ -81,20 +73,20 @@ class PowerBidLogo extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        // Stylized Brand Typography: "Power" (Gold) + "Bid" (Electric Blue)
+        // Stylized Brand Typography: "OCT-" (Cream) + "TION" (Gold)
         RichText(
           text: TextSpan(
             children: [
               TextSpan(
-                text: 'Power',
+                text: 'OCT-',
                 style: TextStyle(
                   fontSize: fontSize,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1.5,
-                  color: AppTheme.gold,
+                  color: AppTheme.creamText,
                   shadows: [
                     Shadow(
-                      color: AppTheme.gold.withValues(alpha: 0.4),
+                      color: AppTheme.maroonBackground.withValues(alpha: 0.8),
                       blurRadius: 12,
                       offset: const Offset(0, 2),
                     ),
@@ -102,15 +94,15 @@ class PowerBidLogo extends StatelessWidget {
                 ),
               ),
               TextSpan(
-                text: 'Bid',
+                text: 'TION',
                 style: TextStyle(
                   fontSize: fontSize,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1.5,
-                  color: AppTheme.primary,
+                  color: AppTheme.gold,
                   shadows: [
                     Shadow(
-                      color: AppTheme.primary.withValues(alpha: 0.5),
+                      color: AppTheme.gold.withValues(alpha: 0.5),
                       blurRadius: 14,
                       offset: const Offset(0, 2),
                     ),
@@ -123,12 +115,12 @@ class PowerBidLogo extends StatelessWidget {
         if (showSubtitle) ...[
           const SizedBox(height: 6),
           const Text(
-            'REAL-TIME MULTIPLAYER AUCTION',
+            'OCT-TION — Bid • Win • Rule',
             style: TextStyle(
-              color: AppTheme.silver,
+              color: AppTheme.creamText,
               fontSize: 10,
               fontWeight: FontWeight.w700,
-              letterSpacing: 2.0,
+              letterSpacing: 1.5,
             ),
           ),
         ],
@@ -136,3 +128,5 @@ class PowerBidLogo extends StatelessWidget {
     );
   }
 }
+
+typedef OcttionLogo = PowerBidLogo;

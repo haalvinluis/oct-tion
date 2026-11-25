@@ -1,9 +1,16 @@
+databases:
+  - name: powerbid-db
+    databaseName: powerbid_prod
+    user: powerbid_user
+    plan: free
+    region: oregon
+
 services:
   - type: web
     name: powerbid-game-server
     runtime: node
-    plan: starter # Starter plan recommended for WebSockets to avoid idle sleep drops
-    region: oregon # Or nearest region
+    plan: free
+    region: oregon
     rootDir: server
     buildCommand: npm install && npm run build
     startCommand: npm run start
@@ -15,17 +22,19 @@ services:
         value: 10000
       - key: CORS_ORIGIN
         value: "*"
-      - key: JWT_SECRET
-        generateValue: true
-      - key: DB_HOST
-        sync: false
-      - key: DB_PORT
-        value: "5432"
-      - key: DB_NAME
-        sync: false
-      - key: DB_USER
-        sync: false
-      - key: DB_PASSWORD
-        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: powerbid-db
+          property: connectionString
       - key: DB_SSL
         value: "true"
+      - key: DB_REQUIRED
+        value: "false"
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_ANDROID_CLIENT_ID
+        sync: false
+      - key: INVITE_BASE_URL
+        value: "https://powerbid.app/invite"
+      - key: ALLOW_MOCK_OAUTH
+        value: "false"

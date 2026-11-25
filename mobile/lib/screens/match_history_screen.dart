@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../services/socket_service.dart';
+import '../widgets/powerbid_bottom_nav_bar.dart';
 import 'match_details_screen.dart';
 
 class MatchHistoryScreen extends StatefulWidget {
@@ -56,8 +57,11 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.deepNavyBg,
       appBar: AppBar(
-        title: const Text('Match History Log'),
+        title: const Text('My Bids & Match History'),
+        backgroundColor: AppTheme.navySurface,
+        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
@@ -163,20 +167,20 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
 
                           return Card(
                             margin: const EdgeInsets.only(bottom: 10),
-                            color: AppTheme.surface,
+                            color: AppTheme.navySurface,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),
-                              side: const BorderSide(color: AppTheme.surfaceLight),
+                              side: const BorderSide(color: AppTheme.surfaceBorder),
                             ),
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               leading: Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: AppTheme.primary.withValues(alpha: 0.2),
+                                  color: AppTheme.primary.withValues(alpha: 0.15),
                                   shape: BoxShape.circle,
                                 ),
-                                child: const Icon(Icons.gavel_rounded, color: AppTheme.accent, size: 20),
+                                child: const Icon(Icons.gavel_rounded, color: AppTheme.goldHighlight, size: 20),
                               ),
                               title: Row(
                                 children: [
@@ -192,13 +196,14 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                     decoration: BoxDecoration(
-                                      color: AppTheme.surfaceLight,
+                                      color: AppTheme.secondarySurface,
                                       borderRadius: BorderRadius.circular(6),
+                                      border: Border.all(color: AppTheme.surfaceBorder),
                                     ),
                                     child: Text(
                                       gameMode,
                                       style: const TextStyle(
-                                        color: AppTheme.accent,
+                                        color: AppTheme.goldHighlight,
                                         fontSize: 10,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -210,10 +215,10 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                                 padding: const EdgeInsets.only(top: 4.0),
                                 child: Text(
                                   '${isTie ? 'Tie Result' : 'Winner: $winnerName'} • $itemCount Items • $dateStr',
-                                  style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                                  style: const TextStyle(color: AppTheme.mutedText, fontSize: 12),
                                 ),
                               ),
-                              trailing: const Icon(Icons.chevron_right_rounded, color: AppTheme.textSecondary),
+                              trailing: const Icon(Icons.chevron_right_rounded, color: AppTheme.mutedText),
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -230,6 +235,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                         },
                       ),
       ),
+      bottomNavigationBar: const PowerBidBottomNavBar(currentIndex: 3),
     );
   }
 }

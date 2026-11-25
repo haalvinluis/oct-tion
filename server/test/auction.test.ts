@@ -88,7 +88,8 @@ describe('Real-Time Auction Engine Integration Tests', function () {
     expect(startedEvt.roomCode).to.equal(roomCode);
 
     const announcedEvt = await announcedPromise;
-    expect(announcedEvt.currentItem.name).to.equal('Naruto Uzumaki');
+    const engine = roomManager.getAuctionEngine(roomCode)!;
+    expect(announcedEvt.currentItem.name).to.equal(engine.items[0].displayName);
     expect(announcedEvt.itemIndex).to.equal(1);
     expect(announcedEvt.totalItems).to.equal(5);
   });
@@ -243,7 +244,7 @@ describe('Real-Time Auction Engine Integration Tests', function () {
     // Verify budget deduction ($1000 - $300 = $700)
     const winnerPlayer = engine!.players.get(host.id!);
     expect(winnerPlayer!.budget).to.equal(700);
-    expect(winnerPlayer!.acquiredItems).to.include('Sachin Tendulkar');
+    expect(winnerPlayer!.acquiredItems).to.include(engine!.items[0].displayName);
   });
 
   it('7. Should mark item UNSOLD when no bids are placed before timer expires', async () => {
@@ -265,7 +266,7 @@ describe('Real-Time Auction Engine Integration Tests', function () {
     engine.finalizeItemSale();
 
     const unsoldEvt = await unsoldPromise;
-    expect(unsoldEvt.item.name).to.equal('Naruto Uzumaki');
+    expect(unsoldEvt.item.name).to.equal(engine.items[0].displayName);
   });
 
   it('8. Should process concurrent bids sequentially without state corruption', async () => {

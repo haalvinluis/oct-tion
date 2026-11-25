@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/settings_service.dart';
 import '../services/audio_service.dart';
+import '../services/policy_service.dart';
 import '../theme/app_theme.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -100,6 +101,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ? (val) {
                             AudioService().playSfx(SfxType.buttonClick);
                             _settings.setSfxEnabled(val);
+                          }
+                        : null,
+                  ),
+                  const Divider(color: AppTheme.surfaceLight),
+                  SwitchListTile(
+                    title: const Text('Button Touch Sounds', style: TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: const Text('Subtle UI audio feedback on button taps', style: TextStyle(color: AppTheme.textSecondary)),
+                    value: _settings.buttonTouchSound,
+                    activeColor: AppTheme.accent,
+                    onChanged: _settings.masterSound
+                        ? (val) {
+                            AudioService().playButtonClick();
+                            _settings.setButtonTouchSound(val);
                           }
                         : null,
                   ),
@@ -275,7 +289,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const SizedBox(height: 24),
 
-          // Section 5: About PowerBid
+          // Section 5: About OCT-TION
           _buildSectionHeader('ABOUT', Icons.info_outline),
           Card(
             child: Padding(
@@ -285,25 +299,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.bolt_rounded, color: AppTheme.electricBlue, size: 28),
+                      const Icon(Icons.gavel_rounded, color: AppTheme.gold, size: 28),
                       const SizedBox(width: 8),
                       RichText(
                         text: const TextSpan(
                           children: [
                             TextSpan(
-                              text: 'Power',
+                              text: 'OCT-',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w900,
+                                color: AppTheme.creamText,
+                              ),
+                            ),
+                            TextSpan(
+                              text: 'TION',
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w900,
                                 color: AppTheme.gold,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'Bid',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w900,
-                                color: AppTheme.primary,
                               ),
                             ),
                           ],
@@ -318,7 +332,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Real-Time Multiplayer Auction Game. Draft high-scoring characters, manage budgets, and outbid opponents in live arenas.',
+                    'OCT-TION — Bid • Win • Rule. Real-time multiplayer auction game. Draft high-scoring characters, manage budgets, and outbid opponents in live arenas.',
                     style: TextStyle(color: AppTheme.textSecondary, fontSize: 13, height: 1.4),
                   ),
                 ],
@@ -326,6 +340,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const SizedBox(height: 24),
+
+          // Section 6: Legal & Policies
+          _buildSectionHeader('LEGAL & POLICIES', Icons.policy_outlined),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.privacy_tip_outlined, color: AppTheme.accent),
+                    title: const Text('Privacy Policy', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                    subtitle: const Text('Data handling, Google Sign-In and account deletion', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+                    trailing: const Icon(Icons.open_in_new_rounded, size: 18, color: AppTheme.textSecondary),
+                    onTap: () {
+                      AudioService().playSfx(SfxType.buttonClick);
+                      PolicyService.openPrivacyPolicy(context);
+                    },
+                  ),
+                  const Divider(color: AppTheme.surfaceLight, height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.description_outlined, color: AppTheme.accent),
+                    title: const Text('Terms & Conditions', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                    subtitle: const Text('Rules, bidding system, virtual currency & guidelines', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+                    trailing: const Icon(Icons.open_in_new_rounded, size: 18, color: AppTheme.textSecondary),
+                    onTap: () {
+                      AudioService().playSfx(SfxType.buttonClick);
+                      PolicyService.openTermsOfService(context);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 32),
         ],
       ),
     );

@@ -56,14 +56,14 @@ describe('Step 7: Room Customization & Settings Tests', function () {
     expect(createRes.roomState.itemCount).to.equal(10);
     expect(createRes.roomState.timerDuration).to.equal(15);
 
-    // Update settings to Cricket, 25 items, 10s timer
+    // Update settings to Cricket, 8 items, 10s timer
     const updateRes: any = await new Promise((res) => {
       hostSocket.emit(
         'update_room_settings',
         {
           roomCode: createRes.roomCode,
           category: 'Cricket',
-          itemCount: 25,
+          itemCount: 8,
           timerDuration: 10,
         },
         res
@@ -72,7 +72,7 @@ describe('Step 7: Room Customization & Settings Tests', function () {
 
     expect(updateRes.success).to.be.true;
     expect(updateRes.roomState.category).to.equal('Cricket');
-    expect(updateRes.roomState.itemCount).to.equal(25);
+    expect(updateRes.roomState.itemCount).to.equal(8);
     expect(updateRes.roomState.timerDuration).to.equal(10);
   });
 
@@ -115,7 +115,7 @@ describe('Step 7: Room Customization & Settings Tests', function () {
     expect(updateRes.error).to.include('Only the room host can change room settings.');
   });
 
-  it('3. Reject invalid timer duration (must be 10, 15, or 20)', async () => {
+  it('3. Reject invalid timer duration (must be one of: 5, 10, 15, 20, 30, 45 seconds)', async () => {
     const hostSocket = createClient();
     await waitForConnect(hostSocket);
 
@@ -132,14 +132,14 @@ describe('Step 7: Room Customization & Settings Tests', function () {
         'update_room_settings',
         {
           roomCode: createRes.roomCode,
-          timerDuration: 30,
+          timerDuration: 99,
         },
         res
       );
     });
 
     expect(updateRes.success).to.be.false;
-    expect(updateRes.error).to.include('Timer duration must be 10, 15, or 20 seconds.');
+    expect(updateRes.error).to.include('Timer duration must be one of: 5, 10, 15, 20, 30, 45 seconds.');
   });
 
   it('4. Lock room settings after auction starts', async () => {

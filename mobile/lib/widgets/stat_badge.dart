@@ -6,6 +6,7 @@ class StatBadge extends StatelessWidget {
   final String value;
   final IconData? icon;
   final Color? color;
+  final double? valueFontSize;
 
   const StatBadge({
     super.key,
@@ -13,18 +14,26 @@ class StatBadge extends StatelessWidget {
     required this.value,
     this.icon,
     this.color,
+    this.valueFontSize,
   });
 
   @override
   Widget build(BuildContext context) {
-    final activeColor = color ?? AppTheme.accent;
+    final activeColor = color ?? AppTheme.goldHighlight;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppTheme.surfaceLight, width: 1),
+        color: AppTheme.navySurface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.surfaceBorder, width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -34,27 +43,39 @@ class StatBadge extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (icon != null) ...[
-                Icon(icon, size: 16, color: activeColor),
-                const SizedBox(width: 6),
+                Icon(icon, size: 15, color: activeColor),
+                const SizedBox(width: 5),
               ],
-              Text(
-                label.toUpperCase(),
-                style: const TextStyle(
-                  color: AppTheme.textSecondary,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.5,
+              Flexible(
+                child: Text(
+                  label.toUpperCase(),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontFamily: AppTheme.fontFamily,
+                    color: AppTheme.mutedText,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.4,
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 6),
-          Text(
-            value,
-            style: TextStyle(
-              color: AppTheme.textPrimary,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+          const SizedBox(height: 5),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontFamily: AppTheme.fontFamily,
+                color: AppTheme.pureWhite,
+                fontSize: valueFontSize ?? 18,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
         ],

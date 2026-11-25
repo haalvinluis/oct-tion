@@ -1,4 +1,6 @@
 import { randomBytes } from 'crypto';
+import fs from 'fs';
+import path from 'path';
 import {
   PlayerProfile,
   CompletedMatchRecord,
@@ -14,6 +16,26 @@ import {
   CoinTransactionDTO,
 } from '../../../shared/socket_events';
 import { DatabasePool } from './pg_pool';
+
+export const PROTECTED_STARTING_BALANCE = 500;
+
+export interface MatchEconomyConfig {
+  winnerReward: number; // 150
+  runnerUpReward: number; // 75
+  completionReward: number; // 25
+  loserPenalty: number; // -50
+  protectedStartingBalance: number; // 500
+  minParticipants: number; // 2
+}
+
+export const DEFAULT_MATCH_ECONOMY: MatchEconomyConfig = {
+  winnerReward: 150,
+  runnerUpReward: 75,
+  completionReward: 25,
+  loserPenalty: -50,
+  protectedStartingBalance: PROTECTED_STARTING_BALANCE,
+  minParticipants: 2,
+};
 
 export const ACHIEVEMENTS_CATALOG: AchievementDef[] = [
   {
@@ -80,7 +102,9 @@ export class ProfileManager {
   private coinTransactions: CoinTransactionDTO[] = [];
   private processedCoinMatchIds: Set<string> = new Set();
 
-  private constructor() {}
+  private constructor() {
+    this.loadOfflineCache();
+  }
 
   public static getInstance(): ProfileManager {
     if (!ProfileManager.instance) {
@@ -89,17 +113,200 @@ export class ProfileManager {
     return ProfileManager.instance;
   }
 
+  private getCacheFilePath(): string {
+    return path.resolve(__dirname, '../../../server_data/profiles_cache.json');
+  }
+
+  public loadOfflineCache(): void {
+    if (process.env.NODE_ENV === 'test') return;
+    try {
+      const cachePath = this.getCacheFilePath();
+      if (!fs.existsSync(cachePath)) return;
+      const data = JSON.parse(fs.readFileSync(cachePath, 'utf8'));
+      if (Array.isArray(data.profiles)) {
+        for (const p of data.profiles) {
+          const profile: PlayerProfile = {
+            ...p,
+            categoriesPlayed: new Set<string>(p.categoriesPlayed || []),
+          };
+          this.profilesMap.set(profile.id, profile);
+          this.publicPlayerIdToIdMap.set(profile.publicPlayerId, profile.id);
+          this.usernameToIdMap.set(profile.username.toLowerCase(), profile.id);
+        }
+      }
+    } catch (err: any) {
+      console.error('[ProfileManager] Error reading offline cache:', err.message);
+    }
+  }
+
+  public saveOfflineCache(): void {
+    if (process.env.NODE_ENV === 'test') return;
+    try {
+      const cachePath = this.getCacheFilePath();
+      const dir = path.dirname(cachePath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      const serializedProfiles = Array.from(this.profilesMap.values()).map((p) => ({
+        ...p,
+        categoriesPlayed: Array.from(p.categoriesPlayed || []),
+      }));
+      fs.writeFileSync(cachePath, JSON.stringify({ profiles: serializedProfiles }, null, 2), 'utf8');
+    } catch (err: any) {
+      console.error('[ProfileManager] Error writing offline cache:', err.message);
+    }
+  }
+
+  public async preloadFromDatabase(): Promise<void> {
+    const db = DatabasePool.getInstance();
+    if (!db.isDatabaseConnected) return;
+
+    try {
+      const res = await db.query(
+        `SELECT id, public_player_id, username, avatar_text, coin_balance, created_at,
+                matches_played, matches_won, matches_tied, total_characters_purchased, total_team_points
+         FROM player_profiles`
+      );
+      for (const row of res.rows) {
+        const profile: PlayerProfile = {
+          id: row.id,
+          publicPlayerId: row.public_player_id,
+          username: row.username,
+          avatarText: row.avatar_text || '⚡',
+          createdAt: row.created_at ? new Date(row.created_at).toISOString() : new Date().toISOString(),
+          matchesPlayed: row.matches_played || 0,
+          matchesWon: row.matches_won || 0,
+          matchesTied: row.matches_tied || 0,
+          totalCharactersPurchased: row.total_characters_purchased || 0,
+          totalTeamPoints: row.total_team_points || 0,
+          coinBalance: row.coin_balance ?? 500,
+          categoriesPlayed: new Set<string>(),
+        };
+        this.profilesMap.set(profile.id, profile);
+        this.publicPlayerIdToIdMap.set(profile.publicPlayerId, profile.id);
+        this.usernameToIdMap.set(profile.username.toLowerCase(), profile.id);
+      }
+
+      // If fresh database, migrate existing local cached profiles into PostgreSQL automatically
+      if (res.rows.length === 0 && this.profilesMap.size > 0) {
+        console.log(`[ProfileManager] Fresh PostgreSQL database detected. Migrating ${this.profilesMap.size} existing profiles into cloud database...`);
+        for (const p of this.profilesMap.values()) {
+          try {
+            await db.query(
+              `INSERT INTO player_profiles (id, public_player_id, username, avatar_text, coin_balance, created_at,
+                                           matches_played, matches_won, matches_tied, total_characters_purchased, total_team_points)
+               VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+               ON CONFLICT (id) DO NOTHING`,
+              [
+                p.id,
+                p.publicPlayerId,
+                p.username,
+                p.avatarText,
+                p.coinBalance,
+                p.createdAt,
+                p.matchesPlayed,
+                p.matchesWon,
+                p.matchesTied,
+                p.totalCharactersPurchased,
+                p.totalTeamPoints,
+              ]
+            );
+          } catch (seedErr: any) {
+            console.error(`[ProfileManager] Migration notice for profile ${p.id}:`, seedErr.message);
+          }
+        }
+        console.log(`[ProfileManager] Existing player profiles successfully migrated to PostgreSQL.`);
+      }
+
+      console.log(`[ProfileManager] Loaded ${this.profilesMap.size} player profiles.`);
+    } catch (err: any) {
+      console.error('[ProfileManager] Error preloading profiles from database:', err.message);
+    }
+  }
+
+  public async loadProfileFromDatabase(playerId: string): Promise<PlayerProfile | null> {
+    const db = DatabasePool.getInstance();
+    if (!db.isDatabaseConnected) return null;
+
+    try {
+      const res = await db.query(
+        `SELECT id, public_player_id, username, avatar_text, coin_balance, created_at,
+                matches_played, matches_won, matches_tied, total_characters_purchased, total_team_points
+         FROM player_profiles WHERE id = $1`,
+        [playerId]
+      );
+      if (res.rows.length === 0) return null;
+      const row = res.rows[0];
+      const profile: PlayerProfile = {
+        id: row.id,
+        publicPlayerId: row.public_player_id,
+        username: row.username,
+        avatarText: row.avatar_text || '⚡',
+        createdAt: row.created_at ? new Date(row.created_at).toISOString() : new Date().toISOString(),
+        matchesPlayed: row.matches_played || 0,
+        matchesWon: row.matches_won || 0,
+        matchesTied: row.matches_tied || 0,
+        totalCharactersPurchased: row.total_characters_purchased || 0,
+        totalTeamPoints: row.total_team_points || 0,
+        coinBalance: row.coin_balance ?? 500,
+        categoriesPlayed: new Set<string>(),
+      };
+      this.profilesMap.set(profile.id, profile);
+      this.publicPlayerIdToIdMap.set(profile.publicPlayerId, profile.id);
+      this.usernameToIdMap.set(profile.username.toLowerCase(), profile.id);
+      return profile;
+    } catch (err: any) {
+      console.error(`[ProfileManager] Error loading profile ${playerId} from database:`, err.message);
+      return null;
+    }
+  }
+
+  public saveProfileToDatabase(profile: PlayerProfile): void {
+    const db = DatabasePool.getInstance();
+    if (!db.isDatabaseConnected) return;
+
+    db.query(
+      `INSERT INTO player_profiles (id, public_player_id, username, avatar_text, coin_balance, created_at,
+                                    matches_played, matches_won, matches_tied, total_characters_purchased, total_team_points)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+       ON CONFLICT (id) DO UPDATE SET
+         username = EXCLUDED.username,
+         avatar_text = EXCLUDED.avatar_text,
+         coin_balance = EXCLUDED.coin_balance,
+         matches_played = EXCLUDED.matches_played,
+         matches_won = EXCLUDED.matches_won,
+         matches_tied = EXCLUDED.matches_tied,
+         total_characters_purchased = EXCLUDED.total_characters_purchased,
+         total_team_points = EXCLUDED.total_team_points`,
+      [
+        profile.id,
+        profile.publicPlayerId,
+        profile.username,
+        profile.avatarText,
+        profile.coinBalance ?? 500,
+        profile.createdAt,
+        profile.matchesPlayed || 0,
+        profile.matchesWon || 0,
+        profile.matchesTied || 0,
+        profile.totalCharactersPurchased || 0,
+        profile.totalTeamPoints || 0,
+      ]
+    ).catch((err: any) => {
+      console.error(`[ProfileManager] Database save error for profile ${profile.id}:`, err.message);
+    });
+  }
+
   /**
-   * Generates a permanent, unique, non-sequential public Player ID (e.g., PB-A7K9X2).
+   * Generates a permanent, unique public OCT-TION Player ID (e.g., OCT-10427).
    * Excludes easily confused characters (0, O, 1, I).
    */
   public generatePublicPlayerId(): string {
     const charset = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
     let id = '';
     do {
-      id = 'PB-';
-      const bytes = randomBytes(6);
-      for (let i = 0; i < 6; i++) {
+      id = 'OCT-';
+      const bytes = randomBytes(5);
+      for (let i = 0; i < 5; i++) {
         id += charset[bytes[i] % charset.length];
       }
     } while (this.publicPlayerIdToIdMap.has(id));
@@ -114,8 +321,18 @@ export class ProfileManager {
 
     let username = requestedUsername ? requestedUsername.trim() : '';
     if (!username || !this.isUsernameAvailable(username, playerId)) {
-      const baseName = username ? username.replace(/[^a-zA-Z0-9_]/g, '') : `Player_${playerId.replace(/[^a-zA-Z0-9]/g, '').substring(0, 6) || randomBytes(3).toString('hex').toUpperCase()}`;
-      let candidate = baseName.length >= 3 ? baseName : `Player_${randomBytes(3).toString('hex').toUpperCase()}`;
+      let baseName = username ? username.replace(/[^a-zA-Z0-9_]/g, '') : '';
+      if (!baseName || baseName.length < 3) {
+        if (playerId.startsWith('pb_guest_')) {
+          const suffix = playerId.replace('pb_guest_', '').slice(-4).toUpperCase() || randomBytes(2).toString('hex').toUpperCase();
+          baseName = `Guest_${suffix}`;
+        } else {
+          const cleanId = playerId.replace(/[^a-zA-Z0-9]/g, '');
+          const suffix = cleanId.slice(-4).toUpperCase() || randomBytes(2).toString('hex').toUpperCase();
+          baseName = `Player_${suffix}`;
+        }
+      }
+      let candidate = baseName;
       let count = 1;
       while (this.usernameToIdMap.has(candidate.toLowerCase())) {
         candidate = `${baseName}_${count++}`;
@@ -144,6 +361,8 @@ export class ProfileManager {
     this.profilesMap.set(playerId, profile);
     this.publicPlayerIdToIdMap.set(publicPlayerId, playerId);
     this.usernameToIdMap.set(username.toLowerCase(), playerId);
+    this.saveProfileToDatabase(profile);
+    this.saveOfflineCache();
     return profile;
   }
 
@@ -183,6 +402,8 @@ export class ProfileManager {
     }
 
     this.usernameToIdMap.set(clean.toLowerCase(), playerId);
+    this.saveProfileToDatabase(profile);
+    this.saveOfflineCache();
     return { success: true, profile };
   }
 
@@ -216,7 +437,11 @@ export class ProfileManager {
   }
 
   public getProfileByPublicId(publicId: string): PlayerProfile | undefined {
-    const internalId = this.publicPlayerIdToIdMap.get(publicId.trim().toUpperCase());
+    const clean = publicId.trim().toUpperCase();
+    let internalId = this.publicPlayerIdToIdMap.get(clean);
+    if (!internalId && !clean.startsWith('OCT-') && !clean.startsWith('PB-')) {
+      internalId = this.publicPlayerIdToIdMap.get(`OCT-${clean}`) || this.publicPlayerIdToIdMap.get(`PB-${clean}`);
+    }
     if (!internalId) return undefined;
     return this.profilesMap.get(internalId);
   }
@@ -237,10 +462,11 @@ export class ProfileManager {
     success: boolean;
     isDuplicate: boolean;
     newlyUnlocked: Record<string, string[]>;
+    coinRewards: Record<string, { amount: number; balanceAfter: number; reason: string }>;
   } {
     if (this.processedMatchIds.has(match.matchId)) {
       console.log(`[ProfileManager] Match ${match.matchId} already processed (idempotent skip).`);
-      return { success: true, isDuplicate: true, newlyUnlocked: {} };
+      return { success: true, isDuplicate: true, newlyUnlocked: {}, coinRewards: {} };
     }
 
     this.processedMatchIds.add(match.matchId);
@@ -271,47 +497,97 @@ export class ProfileManager {
     }
 
     // Award virtual coins idempotently for completed match
-    this.awardMatchCoins(match.matchId, match.winnerId, match.participants);
+    const rewardsMap = this.awardMatchCoins(match.matchId, match.winnerId, match.participants, {
+      isAbandoned: match.isAbandoned,
+    });
 
-    return { success: true, isDuplicate: false, newlyUnlocked: newlyUnlockedMap };
+    const coinRewards: Record<string, { amount: number; balanceAfter: number; reason: string }> = {};
+    for (const [playerId, reward] of rewardsMap.entries()) {
+      coinRewards[playerId] = reward;
+    }
+
+    return { success: true, isDuplicate: false, newlyUnlocked: newlyUnlockedMap, coinRewards };
   }
 
   /**
-   * Idempotently awards virtual coins for a completed match.
-   * Winner receives 150 coins, runner-up receives 75 coins, and finishing participants receive 25 coins.
+   * Idempotently awards/penalizes virtual coins for a completed match.
+   * Winner receives +200 coins, loser receives -50 coins (with minimum 0 balance guarantee),
+   * eligible participants receive +25 coins completion reward.
+   * Prevents duplicate match crediting (idempotence) and reward farming on abandoned matches.
    */
-  public async awardMatchCoins(
+  public awardMatchCoins(
     matchId: string,
     winnerId: string,
-    participants: { playerId: string; rank: number; username?: string }[]
-  ): Promise<Map<string, { amount: number; balanceAfter: number }>> {
-    const rewardsMap = new Map<string, { amount: number; balanceAfter: number }>();
+    participants: { playerId: string; rank: number; username?: string; isAbandoned?: boolean; [key: string]: any }[],
+    options?: { isAbandoned?: boolean; economy?: Partial<MatchEconomyConfig> }
+  ): Map<string, { amount: number; balanceAfter: number; reason: string }> {
+    const rewardsMap = new Map<string, { amount: number; balanceAfter: number; reason: string }>();
     if (this.processedCoinMatchIds.has(matchId)) {
       return rewardsMap;
     }
     this.processedCoinMatchIds.add(matchId);
 
+    const economy: MatchEconomyConfig = {
+      ...DEFAULT_MATCH_ECONOMY,
+      ...(options?.economy || {}),
+    };
+
+    // Prevent reward farming on abandoned matches or matches with insufficient participants
+    if (options?.isAbandoned || participants.length < economy.minParticipants) {
+      console.log(`[ProfileManager] Match ${matchId} abandoned or has < ${economy.minParticipants} participants. Skipping coin economy.`);
+      return rewardsMap;
+    }
+
     const db = DatabasePool.getInstance();
+    const maxRank = Math.max(...participants.map((p) => p.rank));
 
     for (const p of participants) {
-      const profile = this.getOrCreateProfile(p.playerId, p.username);
-      let amount = 25; // Participation award for completed match
-      let reason = 'MATCH_PARTICIPATION_REWARD';
-
-      if (p.rank === 1) {
-        amount = 150; // Winner reward
-        reason = 'MATCH_WIN_REWARD';
-      } else if (p.rank === 2) {
-        amount = 75; // Runner-up
-        reason = 'MATCH_RUNNER_UP_REWARD';
+      // Disconnected or early abandoners do not receive rewards
+      if (p.isAbandoned) {
+        continue;
       }
 
-      profile.coinBalance = (profile.coinBalance ?? 500) + amount;
+      const profile = this.getOrCreateProfile(p.playerId, p.username);
+      let amount = 0;
+      let reason = 'MATCH_COMPLETION_REWARD';
+
+      if (p.rank === 1 || p.role === 'winner') {
+        amount = economy.winnerReward; // +150
+        reason = 'MATCH_WIN_REWARD';
+      } else if (p.isRunnerUp || p.role === 'runner_up' || (p.rank === 2 && maxRank > 2 && !p.isLoser && p.role !== 'loser')) {
+        amount = economy.runnerUpReward; // +75
+        reason = 'MATCH_RUNNER_UP_REWARD';
+      } else if (p.isLoser || p.role === 'loser' || (p.rank === maxRank && maxRank > 1 && !p.isRunnerUp && p.role !== 'runner_up')) {
+        amount = economy.loserPenalty; // -50
+        reason = 'MATCH_LOSS_PENALTY';
+      } else {
+        amount = economy.completionReward; // +25
+        reason = 'MATCH_COMPLETION_REWARD';
+      }
+
+      // Protected 500-coin starting balance floor enforcement:
+      // - Every new player account starts with 500 coins.
+      // - The initial 500 coins are a protected, non-loss balance.
+      // - Players must never have fewer than 500 coins because of match losses or losing-match penalties.
+      // - Losing, disconnecting, leaving a match, or failing to win must not deduct coins below the protected 500-coin floor.
+      // - Never reset an existing player's earned balance to 500.
+      const currentBalance = Math.max(
+        economy.protectedStartingBalance,
+        profile.coinBalance ?? economy.protectedStartingBalance
+      );
+      const targetBalance = currentBalance + amount;
+      const finalBalance = amount < 0
+        ? Math.max(economy.protectedStartingBalance, targetBalance)
+        : Math.max(currentBalance, targetBalance);
+      const actualDelta = finalBalance - currentBalance;
+
+      profile.coinBalance = finalBalance;
+
       const txId = 'ctx_' + randomBytes(16).toString('hex');
       const tx: CoinTransactionDTO = {
         id: txId,
         playerId: p.playerId,
-        amount,
+        amount: actualDelta,
         balanceAfter: profile.coinBalance,
         reason,
         referenceId: matchId,
@@ -319,25 +595,26 @@ export class ProfileManager {
       };
 
       this.coinTransactions.unshift(tx);
-      rewardsMap.set(p.playerId, { amount, balanceAfter: profile.coinBalance });
+      rewardsMap.set(p.playerId, { amount: actualDelta, balanceAfter: profile.coinBalance, reason });
 
       if (db.isDatabaseConnected) {
-        try {
-          await db.query(
+        db.withTransaction(async (client) => {
+          await client.query(
             `INSERT INTO player_profiles (id, public_player_id, username, avatar_text, coin_balance, created_at)
              VALUES ($1, $2, $3, $4, $5, $6)
-             ON CONFLICT (id) DO UPDATE SET coin_balance = $5`,
+             ON CONFLICT (id) DO UPDATE SET coin_balance = GREATEST(500, $5)`,
             [profile.id, profile.publicPlayerId, profile.username, profile.avatarText, profile.coinBalance, new Date().toISOString()]
           );
-          await db.query(
+
+          await client.query(
             `INSERT INTO coin_transactions (id, player_id, amount, balance_after, reason, reference_id, created_at)
              VALUES ($1, $2, $3, $4, $5, $6, $7)
              ON CONFLICT (player_id, reference_id, reason) DO NOTHING`,
-            [txId, p.playerId, amount, profile.coinBalance, reason, matchId, tx.createdAt]
+            [txId, p.playerId, actualDelta, profile.coinBalance, reason, matchId, tx.createdAt]
           );
-        } catch (err: any) {
-          console.error(`[ProfileManager] Database error saving coin transaction for ${p.playerId}:`, err.message);
-        }
+        }).catch((err: any) => {
+          console.error(`[ProfileManager] Database transaction error saving match coins for ${p.playerId}:`, err.message);
+        });
       }
     }
 
@@ -590,6 +867,7 @@ export class ProfileManager {
 
   public clearAllData(): void {
     this.profilesMap.clear();
+    this.publicPlayerIdToIdMap.clear();
     this.usernameToIdMap.clear();
     this.completedMatches = [];
     this.matchesMap.clear();

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import '../models/room_model.dart';
 import '../models/auction_state_model.dart';
@@ -13,8 +14,11 @@ class SocketService {
 
   SocketService._internal();
 
+  static const String _prefServerUrlKey = 'powerbid_saved_server_url';
+
   io.Socket? _socket;
   String _serverUrl = AppConfig.defaultServerUrl;
+  int _fallbackAttemptIndex = 0;
 
   final ValueNotifier<bool> isConnectedNotifier = ValueNotifier<bool>(false);
   final ValueNotifier<RoomModel?> currentRoomNotifier = ValueNotifier<RoomModel?>(null);
@@ -26,11 +30,37 @@ class SocketService {
       ValueNotifier<int>(0);
 
   String? get socketId => _socket?.id;
+  io.Socket? get socket => _socket;
+  String? get currentRoomCode => currentRoomNotifier.value?.roomCode;
   String get serverUrl => _serverUrl;
+  bool get isConnected => _socket != null && _socket!.connected;
 
-  void updateServerUrl(String url) {
-    if (url.trim().isNotEmpty) {
-      _serverUrl = url.trim();
+  Future<void> init() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedUrl = prefs.getString(_prefServerUrlKey);
+      if (savedUrl != null &&
+          savedUrl.trim().isNotEmpty &&
+          savedUrl != 'https://api.powerbid.game') {
+        _serverUrl = savedUrl.trim();
+        debugPrint('[SocketService] Loaded persisted server URL: $_serverUrl');
+      } else {
+        _serverUrl = AppConfig.defaultServerUrl;
+      }
+    } catch (e) {
+      debugPrint('[SocketService] Could not read persisted server URL: $e');
+    }
+    connect();
+  }
+
+  void updateServerUrl(String url) async {
+    final clean = url.trim();
+    if (clean.isNotEmpty) {
+      _serverUrl = clean;
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(_prefServerUrlKey, clean);
+      } catch (_) {}
       disconnect();
       connect();
     }
@@ -56,6 +86,12 @@ class SocketService {
     if (AuthService.instance.sessionToken != null) {
       authData['token'] = AuthService.instance.sessionToken;
     }
+    if (AuthService.instance.currentUsername != null &&
+        AuthService.instance.currentUsername!.isNotEmpty) {
+      authData['username'] = AuthService.instance.currentUsername;
+    } else {
+      authData['username'] = AuthService.instance.defaultDisplayName;
+    }
 
     _socket = io.io(
       _serverUrl,
@@ -73,8 +109,32 @@ class SocketService {
       debugPrint('[SocketService] Connected to server: $_serverUrl (ID: ${_socket!.id})');
       isConnectedNotifier.value = true;
       errorNotifier.value = null;
+      _fallbackAttemptIndex = 0;
       fetchNotifications();
       getCoinBalance();
+      getPlayerProfile().then((prof) {
+        if (prof != null) {
+          if (prof['coinBalance'] != null) {
+            AuthService.instance.updateCoinBalance(prof['coinBalance'] as int);
+          }
+          if (prof['username'] != null) {
+            final uname = (prof['username'] as String).trim();
+            final isGeneric = uname.isEmpty ||
+                uname == 'GuestPlayer' ||
+                uname.startsWith('Guest_') ||
+                uname.startsWith('Player_');
+            final hasLocalCustom = AuthService.instance.currentUsername != null &&
+                AuthService.instance.currentUsername!.trim().isNotEmpty &&
+                !AuthService.instance.currentUsername!.startsWith('Guest_') &&
+                !AuthService.instance.currentUsername!.startsWith('Player_');
+            if (!isGeneric && uname.isNotEmpty) {
+              AuthService.instance.setUsername(uname);
+            } else if (hasLocalCustom) {
+              updateUsername(AuthService.instance.currentUsername!.trim());
+            }
+          }
+        }
+      }).catchError((_) {});
     });
 
     _socket!.on('new_notification', (data) {
@@ -88,9 +148,17 @@ class SocketService {
     });
 
     _socket!.onConnectError((err) {
-      debugPrint('[SocketService] Connection error: $err');
+      debugPrint('[SocketService] Connection error to $_serverUrl: $err');
       isConnectedNotifier.value = false;
       errorNotifier.value = 'Cannot connect to server at $_serverUrl';
+      if (_fallbackAttemptIndex < AppConfig.localFallbackCandidates.length) {
+        final nextCandidate = AppConfig.localFallbackCandidates[_fallbackAttemptIndex];
+        _fallbackAttemptIndex++;
+        if (nextCandidate != _serverUrl) {
+          debugPrint('[SocketService] Automatically rotating to fallback server candidate: $nextCandidate');
+          updateServerUrl(nextCandidate);
+        }
+      }
     });
 
     // Room state events
@@ -162,6 +230,13 @@ class SocketService {
       }
     });
 
+    _socket!.on('coin_balance_update', (data) {
+      if (data != null && data is Map && data['coinBalance'] != null) {
+        final newBalance = data['coinBalance'] as int;
+        AuthService.instance.updateCoinBalance(newBalance);
+      }
+    });
+
     _socket!.on('auction_completed', (data) {
       if (data != null) {
         final state = data['roomState'] != null
@@ -173,6 +248,21 @@ class SocketService {
         if (state != null) {
           auctionNotifier.value = state;
         }
+
+        // Process coinRewards if included in auction_completed
+        if (data is Map && data['coinRewards'] != null && data['coinRewards'] is Map) {
+          final currentSocketId = socketId;
+          final currentProfileId = AuthService.instance.effectivePlayerId;
+          final rewards = data['coinRewards'] as Map;
+          final myReward = (currentProfileId.isNotEmpty ? rewards[currentProfileId] : null) ??
+              (currentSocketId != null ? rewards[currentSocketId] : null);
+          if (myReward != null && myReward is Map && myReward['balanceAfter'] != null) {
+            AuthService.instance.updateCoinBalance(myReward['balanceAfter'] as int);
+          }
+        }
+
+        // Re-sync authoritative coin balance directly from server
+        getCoinBalance();
       }
     });
 
@@ -181,6 +271,9 @@ class SocketService {
 
   void disconnect() {
     _socket?.disconnect();
+    _socket?.io.close();
+    _socket?.close();
+    _socket?.destroy();
     _socket?.dispose();
     _socket = null;
     isConnectedNotifier.value = false;
@@ -219,15 +312,22 @@ class SocketService {
   }
 
   // Step 6 API Methods
-  Future<Map<String, dynamic>?> getPlayerProfile({String? playerId}) async {
+  Future<Map<String, dynamic>?> getPlayerProfile({String? playerId, String? username}) async {
     connect();
     if (!_socket!.connected) await _waitForConnection();
 
     final completer = Completer<Map<String, dynamic>?>();
+    final effectiveUsername = username ??
+        AuthService.instance.currentUsername ??
+        AuthService.instance.defaultDisplayName;
+    final effectiveId = playerId ?? (AuthService.instance.effectivePlayerId.isNotEmpty ? AuthService.instance.effectivePlayerId : null);
 
     _socket!.emitWithAck(
       'get_player_profile',
-      {'playerId': playerId},
+      {
+        'playerId': effectiveId,
+        'username': effectiveUsername,
+      },
       ack: (response) {
         if (response != null && response['success'] == true && response['profile'] != null) {
           completer.complete(Map<String, dynamic>.from(response['profile'] as Map));
@@ -366,8 +466,10 @@ class SocketService {
   Future<RoomModel> createRoom({
     required String username,
     required String category,
+    String? topic,
     required String gameMode,
     required int itemCount,
+    int timerDuration = 15,
   }) async {
     connect();
 
@@ -382,8 +484,10 @@ class SocketService {
       {
         'username': username,
         'category': category,
+        if (topic != null) 'topic': topic,
         'gameMode': gameMode,
         'itemCount': itemCount,
+        'timerDuration': timerDuration,
       },
       ack: (response) {
         if (response != null && response['success'] == true) {
@@ -517,6 +621,7 @@ class SocketService {
   Future<RoomModel> updateRoomSettings({
     required String roomCode,
     String? category,
+    String? topic,
     int? itemCount,
     int? timerDuration,
   }) {
@@ -532,6 +637,7 @@ class SocketService {
       {
         'roomCode': roomCode,
         if (category != null) 'category': category,
+        if (topic != null) 'topic': topic,
         if (itemCount != null) 'itemCount': itemCount,
         if (timerDuration != null) 'timerDuration': timerDuration,
       },
@@ -1040,4 +1146,219 @@ class SocketService {
     );
     return completer.future.timeout(const Duration(seconds: 3), onTimeout: () => null);
   }
+
+  Future<Map<String, dynamic>> linkGoogleAccount({
+    required String guestPlayerId,
+    required String idToken,
+  }) async {
+    if (_socket == null || !_socket!.connected) {
+      connect();
+      for (int i = 0; i < 6; i++) {
+        if (_socket != null && _socket!.connected) break;
+        await Future.delayed(const Duration(milliseconds: 500));
+      }
+    }
+    if (_socket == null || !_socket!.connected) {
+      return {
+        'success': false,
+        'error': 'Not connected to game server at $_serverUrl. Please ensure the server is online and your device is on the same network.',
+        'isNetworkError': true,
+      };
+    }
+    final completer = Completer<Map<String, dynamic>>();
+    _socket!.emitWithAck(
+      'link_google_account',
+      {
+        'guestPlayerId': guestPlayerId,
+        'idToken': idToken.trim(),
+      },
+      ack: (data) {
+        if (data != null && data is Map) {
+          completer.complete(Map<String, dynamic>.from(data));
+        } else {
+          completer.complete({'success': false, 'error': 'Invalid server response.'});
+        }
+      },
+    );
+    return completer.future.timeout(
+      const Duration(seconds: 10),
+      onTimeout: () => {'success': false, 'error': 'Google linking timed out.', 'isNetworkError': true},
+    );
+  }
+
+  Future<Map<String, dynamic>> linkFacebookAccount({
+    required String guestPlayerId,
+    required String accessToken,
+  }) async {
+    if (_socket == null || !_socket!.connected) {
+      return {'success': false, 'error': 'Not connected to server.'};
+    }
+    final completer = Completer<Map<String, dynamic>>();
+    _socket!.emitWithAck(
+      'link_facebook_account',
+      {
+        'guestPlayerId': guestPlayerId,
+        'accessToken': accessToken.trim(),
+      },
+      ack: (data) {
+        if (data != null && data is Map) {
+          completer.complete(Map<String, dynamic>.from(data));
+        } else {
+          completer.complete({'success': false, 'error': 'Invalid server response.'});
+        }
+      },
+    );
+    return completer.future.timeout(
+      const Duration(seconds: 10),
+      onTimeout: () => {'success': false, 'error': 'Facebook linking timed out.'},
+    );
+  }
+
+  Future<Map<String, dynamic>> loginGoogleAccount({
+    required String idToken,
+  }) async {
+    if (_socket == null || !_socket!.connected) {
+      connect();
+      for (int i = 0; i < 6; i++) {
+        if (_socket != null && _socket!.connected) break;
+        await Future.delayed(const Duration(milliseconds: 500));
+      }
+    }
+    if (_socket == null || !_socket!.connected) {
+      return {
+        'success': false,
+        'error': 'Not connected to game server at $_serverUrl. Please ensure the server is online and your device is on the same network.',
+        'isNetworkError': true,
+      };
+    }
+    final completer = Completer<Map<String, dynamic>>();
+    _socket!.emitWithAck(
+      'login_google_account',
+      {'idToken': idToken.trim()},
+      ack: (data) {
+        if (data != null && data is Map) {
+          completer.complete(Map<String, dynamic>.from(data));
+        } else {
+          completer.complete({'success': false, 'error': 'Invalid server response.'});
+        }
+      },
+    );
+    return completer.future.timeout(
+      const Duration(seconds: 10),
+      onTimeout: () => {'success': false, 'error': 'Google login timed out.', 'isNetworkError': true},
+    );
+  }
+
+  Future<Map<String, dynamic>> loginFacebookAccount({
+    required String accessToken,
+  }) async {
+    if (_socket == null || !_socket!.connected) {
+      return {'success': false, 'error': 'Not connected to server.'};
+    }
+    final completer = Completer<Map<String, dynamic>>();
+    _socket!.emitWithAck(
+      'login_facebook_account',
+      {'accessToken': accessToken.trim()},
+      ack: (data) {
+        if (data != null && data is Map) {
+          completer.complete(Map<String, dynamic>.from(data));
+        } else {
+          completer.complete({'success': false, 'error': 'Invalid server response.'});
+        }
+      },
+    );
+    return completer.future.timeout(
+      const Duration(seconds: 10),
+      onTimeout: () => {'success': false, 'error': 'Facebook login timed out.'},
+    );
+  }
+
+  Future<Map<String, dynamic>?> getAccountStatus([String? playerId]) async {
+    if (_socket == null || !_socket!.connected) return null;
+    final completer = Completer<Map<String, dynamic>?>();
+    _socket!.emitWithAck(
+      'get_account_status',
+      {if (playerId != null) 'playerId': playerId},
+      ack: (data) {
+        if (data != null && data is Map && data['success'] == true && data['status'] != null) {
+          completer.complete(Map<String, dynamic>.from(data['status'] as Map));
+        } else {
+          completer.complete(null);
+        }
+      },
+    );
+    return completer.future.timeout(const Duration(seconds: 5), onTimeout: () => null);
+  }
+
+  /// Retrieves available in-game coin character packs and preview characters
+  Future<List<Map<String, dynamic>>> getCharacterPacks() async {
+    if (_socket == null || !_socket!.connected) return [];
+    final completer = Completer<List<Map<String, dynamic>>>();
+    _socket!.emitWithAck(
+      'get_character_packs',
+      {},
+      ack: (data) {
+        if (data != null && data is Map && data['success'] == true && data['packs'] is List) {
+          final list = (data['packs'] as List)
+              .map((p) => Map<String, dynamic>.from(p as Map))
+              .toList();
+          completer.complete(list);
+        } else {
+          completer.complete([]);
+        }
+      },
+    );
+    return completer.future.timeout(const Duration(seconds: 5), onTimeout: () => []);
+  }
+
+  /// Purchases a character pack with virtual in-game coins
+  Future<Map<String, dynamic>> purchaseCharacterPack(
+    String packId, {
+    String? purchaseId,
+  }) async {
+    if (_socket == null || !_socket!.connected) {
+      return {'success': false, 'error': 'Not connected to server.'};
+    }
+    final completer = Completer<Map<String, dynamic>>();
+    _socket!.emitWithAck(
+      'purchase_character_pack',
+      {
+        'packId': packId.trim(),
+        if (purchaseId != null) 'purchaseId': purchaseId.trim(),
+      },
+      ack: (data) {
+        if (data != null && data is Map) {
+          completer.complete(Map<String, dynamic>.from(data));
+        } else {
+          completer.complete({'success': false, 'error': 'Invalid server response.'});
+        }
+      },
+    );
+    return completer.future.timeout(
+      const Duration(seconds: 8),
+      onTimeout: () => {'success': false, 'error': 'Purchase timed out.'},
+    );
+  }
+
+  /// Retrieves the list of characters unlocked by a player
+  Future<List<Map<String, dynamic>>> getUnlockedCharacters([String? playerId]) async {
+    if (_socket == null || !_socket!.connected) return [];
+    final completer = Completer<List<Map<String, dynamic>>>();
+    _socket!.emitWithAck(
+      'get_unlocked_characters',
+      {if (playerId != null) 'playerId': playerId},
+      ack: (data) {
+        if (data != null && data is Map && data['success'] == true && data['unlockedCharacters'] is List) {
+          final list = (data['unlockedCharacters'] as List)
+              .map((u) => Map<String, dynamic>.from(u as Map))
+              .toList();
+          completer.complete(list);
+        } else {
+          completer.complete([]);
+        }
+      },
+    );
+    return completer.future.timeout(const Duration(seconds: 5), onTimeout: () => []);
+  }
 }
+

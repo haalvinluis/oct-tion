@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../theme/app_theme.dart';
 import '../models/auction_state_model.dart';
 import '../models/player_model.dart';
 import '../services/socket_service.dart';
 import '../services/settings_service.dart';
 import '../services/audio_service.dart';
-import '../widgets/custom_button.dart';
-import '../widgets/stat_badge.dart';
+import '../services/voice_chat_service.dart';
 import 'results_screen.dart';
 
 class AuctionScreen extends StatefulWidget {
@@ -21,20 +21,55 @@ class AuctionScreen extends StatefulWidget {
   State<AuctionScreen> createState() => _AuctionScreenState();
 }
 
-class _AuctionScreenState extends State<AuctionScreen> {
+class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProviderStateMixin {
   bool _isActionBusy = false;
   String? _lastLeadingBidderId;
   String? _lastPhase;
   int _lastTimerSeconds = -1;
+  int _selectedBidIncrement = 25;
+
+  late AnimationController _pulseController;
+  late Animation<double> _pulseAnimation;
 
   @override
   void initState() {
     super.initState();
+
+    // 1. Force LANDSCAPE mode exclusively for the Live Auction Game
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+
+    // 2. Enable immersive sticky fullscreen UI for unobstructed horizontal gaming
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
+    // 3. Initialize in-game voice chat signaling
+    VoiceChatService.instance.init(SocketService.instance.currentRoomCode);
+
+    // 4. Initialize animation controller for countdown pulse
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    )..repeat(reverse: true);
+    _pulseAnimation = Tween<double>(begin: 0.95, end: 1.05).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+
     SocketService.instance.auctionNotifier.addListener(_onAuctionStateChanged);
   }
 
   @override
   void dispose() {
+    // RESTORE PORTRAIT mode immediately when leaving the live game
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+    VoiceChatService.instance.leaveVoiceChat();
+    _pulseController.dispose();
     SocketService.instance.auctionNotifier.removeListener(_onAuctionStateChanged);
     super.dispose();
   }
@@ -77,7 +112,7 @@ class _AuctionScreenState extends State<AuctionScreen> {
       _lastPhase = state.phase;
     }
 
-    // Match Completed
+    // Match Completed -> Navigate to Results Screen (which restores portrait mode via dispose)
     if (state.phase == 'COMPLETED' && mounted) {
       if (state.standings.isNotEmpty) {
         final winner = state.standings.first;
@@ -101,12 +136,11 @@ class _AuctionScreenState extends State<AuctionScreen> {
 
   Future<void> _placeBid(int nextBidAmount) async {
     final settings = SettingsService();
-
-    // Check if confirm bid dialog is enabled
     final state = SocketService.instance.auctionNotifier.value;
     final currentSocketId = SocketService.instance.socketId;
+    final sessionToken = SocketService.instance.sessionToken;
     final myPlayer = state?.players.firstWhere(
-      (p) => p.id == currentSocketId,
+      (p) => (sessionToken != null && p.sessionToken == sessionToken) || p.id == currentSocketId,
       orElse: () => const PlayerModel(id: '', name: 'You', budget: 1000),
     );
 
@@ -114,20 +148,21 @@ class _AuctionScreenState extends State<AuctionScreen> {
       final confirm = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          backgroundColor: AppTheme.surface,
-          title: const Text('Confirm High Bid', style: TextStyle(color: AppTheme.textPrimary)),
+          backgroundColor: AppTheme.cardBackground,
+          title: const Text('Confirm High Bid', style: TextStyle(color: AppTheme.warmCream)),
           content: Text(
-            'Are you sure you want to place a bid of \$$nextBidAmount? (This represents over 50% of your remaining budget \$${myPlayer.budget}).',
-            style: const TextStyle(color: AppTheme.textSecondary),
+            'Place bid of \$$nextBidAmount? Over 50% of your remaining budget (\$${myPlayer.budget}).',
+            style: const TextStyle(color: AppTheme.mutedText),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('CANCEL', style: TextStyle(color: AppTheme.textSecondary)),
+              child: const Text('CANCEL', style: TextStyle(color: AppTheme.mutedText)),
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.champagneGold),
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('CONFIRM BID'),
+              child: const Text('CONFIRM BID', style: TextStyle(color: AppTheme.mainBackground, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -172,7 +207,7 @@ class _AuctionScreenState extends State<AuctionScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('You passed on this item.'),
-          backgroundColor: AppTheme.surfaceLight,
+          backgroundColor: AppTheme.selectedCard,
           duration: Duration(seconds: 1),
         ),
       );
@@ -199,21 +234,21 @@ class _AuctionScreenState extends State<AuctionScreen> {
       final confirm = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          backgroundColor: AppTheme.surface,
-          title: const Text('Leave Match?', style: TextStyle(color: AppTheme.textPrimary)),
+          backgroundColor: AppTheme.cardBackground,
+          title: const Text('Leave Match?', style: TextStyle(color: AppTheme.warmCream)),
           content: const Text(
-            'Are you sure you want to forfeit and leave the active auction match?',
-            style: TextStyle(color: AppTheme.textSecondary),
+            'Are you sure you want to forfeit and leave the active auction room?',
+            style: TextStyle(color: AppTheme.mutedText),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('CANCEL', style: TextStyle(color: AppTheme.textSecondary)),
+              child: const Text('CANCEL', style: TextStyle(color: AppTheme.mutedText)),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: AppTheme.error),
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('LEAVE MATCH'),
+              child: const Text('LEAVE MATCH', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -222,6 +257,78 @@ class _AuctionScreenState extends State<AuctionScreen> {
     }
     await SocketService.instance.leaveRoom();
     return true;
+  }
+
+  void _showQuickChatDialog() {
+    final quickMessages = [
+      'Good luck all! 🎮',
+      'Nice bid! 👏',
+      'Passing this round! ✋',
+      'All in on this one! 💰',
+      'Going once, going twice! ⏳',
+      'GG well played! 🏆',
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppTheme.cardBackground,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Quick Room Reactions',
+                    style: TextStyle(
+                      fontFamily: AppTheme.fontFamily,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.champagneGold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close_rounded, color: AppTheme.mutedText, size: 20),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: quickMessages.map((msg) {
+                  return ActionChip(
+                    backgroundColor: AppTheme.selectedCard,
+                    side: BorderSide(color: AppTheme.champagneGold.withValues(alpha: 0.3)),
+                    label: Text(msg, style: const TextStyle(color: AppTheme.warmCream, fontSize: 12)),
+                    onPressed: () {
+                      VoiceChatService.instance.sendChatMessage(msg);
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Sent: $msg'),
+                          duration: const Duration(milliseconds: 900),
+                          backgroundColor: AppTheme.selectedCard,
+                        ),
+                      );
+                    },
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -235,18 +342,22 @@ class _AuctionScreenState extends State<AuctionScreen> {
         final leadingBidderName = state?.leadingBidderName ?? 'None';
         final isBiddingOpen = state?.phase == 'BIDDING';
         final currentSocketId = SocketService.instance.socketId;
+        final sessionToken = SocketService.instance.sessionToken;
 
         final myPlayer = state?.players.firstWhere(
-          (p) => p.id == currentSocketId,
+          (p) => (sessionToken != null && p.sessionToken == sessionToken) || p.id == currentSocketId,
           orElse: () => const PlayerModel(id: '', name: 'You', budget: 1000),
         );
 
         final myRemainingBudget = myPlayer?.budget ?? 1000;
-        final hasPassed = state?.passedPlayerIds.contains(currentSocketId) ?? false;
-        final isLeading = state?.leadingBidderId == currentSocketId;
-        final gameModeStr = (state?.gameMode == 'POWER_COMPARISON')
-            ? 'Mode A: Power Comparison'
-            : 'Mode B: Team Challenge';
+        final hasPassed = (myPlayer != null && myPlayer.id.isNotEmpty && state?.passedPlayerIds.contains(myPlayer.id) == true) ||
+            (currentSocketId != null && state?.passedPlayerIds.contains(currentSocketId) == true);
+        final isLeading = (myPlayer != null && myPlayer.id.isNotEmpty && state?.leadingBidderId == myPlayer.id) ||
+            (currentSocketId != null && state?.leadingBidderId == currentSocketId);
+
+        final calculatedNextBid = currentBid > 0 ? (currentBid + _selectedBidIncrement) : (currentItem?.basePrice ?? 100);
+        final effectiveNextBid = calculatedNextBid < minNextBid ? minNextBid : calculatedNextBid;
+        final canAffordBid = myRemainingBudget >= effectiveNextBid;
 
         return PopScope(
           canPop: false,
@@ -258,284 +369,786 @@ class _AuctionScreenState extends State<AuctionScreen> {
             }
           },
           child: Scaffold(
-          appBar: AppBar(
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('PowerBid Live Arena', style: const TextStyle(fontSize: 16)),
-                Text(gameModeStr, style: const TextStyle(fontSize: 11, color: AppTheme.accent)),
-              ],
-            ),
-            actions: [
-              Container(
-                margin: const EdgeInsets.only(right: 16),
-                child: Chip(
-                  avatar: const Icon(Icons.tag_rounded, size: 14, color: AppTheme.accent),
-                  label: Text('Item ${(state?.currentItemIndex ?? 0) + 1}/${state?.totalItems ?? 0}'),
-                  backgroundColor: AppTheme.surfaceLight,
-                  labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                ),
-              ),
-            ],
-          ),
-          body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
+            backgroundColor: AppTheme.mainBackground,
+            body: SafeArea(
               child: Column(
                 children: [
-                  // Progress & Timer Header
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: AppTheme.surface,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: AppTheme.surfaceLight),
-                        ),
-                        child: Text(
-                          'ITEM ${(state?.currentItemIndex ?? 0) + 1} OF ${state?.totalItems ?? 10}',
-                          style: const TextStyle(
-                            color: AppTheme.accent,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
+                  // 1. TOP HORIZONTAL HUD BAR
+                  _buildTopHorizontalHUD(state),
+
+                  // 2. MAIN LANDSCAPE ARENA (3-Column Layout: Players | Reveal | Bidding)
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Left Column: Room Players & Live Microphone Presence
+                          SizedBox(
+                            width: 200,
+                            child: _buildPlayerRosterPanel(state, currentSocketId, sessionToken),
                           ),
-                        ),
-                      ),
-                      // Server Countdown Timer Badge
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: AppTheme.surface,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: (state?.timerSecondsRemaining ?? 15) <= 5
-                                ? AppTheme.error
-                                : AppTheme.warning,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.timer_rounded,
-                              color: (state?.timerSecondsRemaining ?? 15) <= 5
-                                  ? AppTheme.error
-                                  : AppTheme.warning,
-                              size: 16,
+                          const SizedBox(width: 10),
+
+                          // Center Column: Cinematic Random Character Reveal Area
+                          Expanded(
+                            child: _buildCenterCharacterRevealArea(
+                              state,
+                              currentItem,
+                              currentBid,
+                              leadingBidderName,
+                              isLeading,
+                              hasPassed,
                             ),
-                            const SizedBox(width: 6),
-                            Text(
-                              '${state?.timerSecondsRemaining ?? 15}s',
-                              style: TextStyle(
-                                color: (state?.timerSecondsRemaining ?? 15) <= 5
-                                    ? AppTheme.error
-                                    : AppTheme.warning,
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                              ),
+                          ),
+                          const SizedBox(width: 10),
+
+                          // Right Column: Live Bidding Controls & Quick Increments
+                          SizedBox(
+                            width: 220,
+                            child: _buildBiddingControlPanel(
+                              isBiddingOpen: isBiddingOpen,
+                              hasPassed: hasPassed,
+                              isLeading: isLeading,
+                              canAffordBid: canAffordBid,
+                              myRemainingBudget: myRemainingBudget,
+                              effectiveNextBid: effectiveNextBid,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Phase Banner
-                  if (state?.phase == 'ITEM_ANNOUNCED')
-                    _buildStatusBanner('GET READY FOR NEXT ITEM', AppTheme.accent)
-                  else if (state?.phase == 'SOLD')
-                    _buildStatusBanner('SOLD TO $leadingBidderName FOR \$$currentBid!', AppTheme.success)
-                  else if (state?.phase == 'UNSOLD')
-                    _buildStatusBanner('ITEM UNSOLD (NO BIDS)', AppTheme.warning),
-
-                  const Spacer(),
-
-                  // Text-Only Item Card
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: AppTheme.surface,
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: AppTheme.primary, width: 2),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppTheme.primary.withOpacity(0.2),
-                          blurRadius: 24,
-                          spreadRadius: 4,
-                        ),
-                      ],
                     ),
-                    child: Column(
-                      children: [
-                        Text(
-                          (currentItem?.category ?? 'CATALOG').toUpperCase(),
-                          style: const TextStyle(
-                            color: AppTheme.textSecondary,
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 2.0,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          currentItem?.displayName ?? 'Auction Item',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: AppTheme.textPrimary,
-                            fontSize: 26,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'Base Price: \$${currentItem?.basePrice ?? 0}',
-                          style: const TextStyle(
-                            color: AppTheme.accent,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const Spacer(),
-
-                  // Live Bidding Stats Grid
-                  Row(
-                    children: [
-                      Expanded(
-                        child: StatBadge(
-                          label: 'CURRENT BID',
-                          value: currentBid > 0 ? '\$$currentBid' : 'No Bids',
-                          icon: Icons.gavel_rounded,
-                          color: AppTheme.accent,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: StatBadge(
-                          label: 'HIGHEST BIDDER',
-                          value: leadingBidderName,
-                          icon: Icons.person_pin_rounded,
-                          color: AppTheme.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-
-                  // User Budget & Pass Indicator
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: AppTheme.surface,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: AppTheme.surfaceLight),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(Icons.account_balance_wallet_rounded, color: AppTheme.success, size: 20),
-                            const SizedBox(width: 10),
-                            Text(
-                              hasPassed ? 'STATUS: PASSED ON ITEM' : 'YOUR REMAINING BUDGET',
-                              style: TextStyle(
-                                color: hasPassed ? AppTheme.warning : AppTheme.textSecondary,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          '\$$myRemainingBudget',
-                          style: const TextStyle(
-                            color: AppTheme.success,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Action Controls Row (PASS & BID Buttons)
-                  Row(
-                    children: [
-                      // PASS Button
-                      Expanded(
-                        flex: 2,
-                        child: OutlinedButton.icon(
-                          onPressed: (isBiddingOpen && !hasPassed && !_isActionBusy) ? _passItem : null,
-                          icon: const Icon(Icons.block_rounded, size: 18),
-                          label: const Text('PASS'),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.redAccent,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            side: const BorderSide(color: Colors.redAccent),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-
-                      // BID Button
-                      Expanded(
-                        flex: 3,
-                        child: CustomButton(
-                          label: isLeading
-                              ? 'YOU ARE HIGHEST (\$$currentBid)'
-                              : (minNextBid <= myRemainingBudget
-                                  ? 'BID \$$minNextBid'
-                                  : 'INSUFFICIENT BUDGET'),
-                          icon: Icons.gavel_rounded,
-                          isLoading: _isActionBusy,
-                          onPressed: (isBiddingOpen &&
-                                  !hasPassed &&
-                                  !isLeading &&
-                                  minNextBid <= myRemainingBudget)
-                              ? () => _placeBid(minNextBid)
-                              : null,
-                        ),
-                      ),
-                    ],
                   ),
                 ],
               ),
             ),
           ),
-        ),
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
 
-  Widget _buildStatusBanner(String title, Color color) {
+  // ==================== Top Horizontal HUD Bar ====================
+  Widget _buildTopHorizontalHUD(AuctionStateModel? state) {
+    final timerSeconds = state?.timerSecondsRemaining ?? 15;
+    final isUrgent = timerSeconds <= 5 && (state?.phase == 'BIDDING');
+
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      height: 48,
+      padding: const EdgeInsets.symmetric(horizontal: 14),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withOpacity(0.5)),
+        color: AppTheme.secondaryBackground,
+        border: const Border(bottom: BorderSide(color: AppTheme.surfaceBorder, width: 1)),
       ),
-      child: Text(
-        title,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          color: color,
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1.0,
-        ),
+      child: Row(
+        children: [
+          // Leave Match Button
+          InkWell(
+            onTap: () async {
+              final shouldLeave = await _handleLeaveMatch(context);
+              if (shouldLeave && mounted) Navigator.of(context).pop();
+            },
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppTheme.error.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: AppTheme.error.withValues(alpha: 0.4)),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.exit_to_app_rounded, color: AppTheme.error, size: 14),
+                  SizedBox(width: 4),
+                  Text('Leave', style: TextStyle(color: AppTheme.error, fontSize: 11, fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+
+          // OCT-TION Arena Title Badge
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: AppTheme.cardBackground,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: AppTheme.goldBorder),
+            ),
+            child: const Row(
+              children: [
+                Icon(Icons.gavel_rounded, color: AppTheme.champagneGold, size: 14),
+                SizedBox(width: 5),
+                Text(
+                  'OCT-TION Arena',
+                  style: TextStyle(
+                    fontFamily: AppTheme.fontFamily,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.champagneGold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+
+          // Round & Catalogue Badge
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: AppTheme.cardBackground,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: AppTheme.goldBorder),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.casino_rounded, color: AppTheme.champagneGold, size: 14),
+                const SizedBox(width: 6),
+                Text(
+                  'Item ${(state?.currentItemIndex ?? 0) + 1}/${state?.totalItems ?? 10}',
+                  style: const TextStyle(
+                    fontFamily: AppTheme.fontFamily,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.champagneGold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Spacer(),
+
+          // Countdown Timer with Urgency Pulse
+          AnimatedBuilder(
+            animation: _pulseAnimation,
+            builder: (context, child) {
+              return Transform.scale(
+                scale: isUrgent ? _pulseAnimation.value : 1.0,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: isUrgent ? AppTheme.error.withValues(alpha: 0.25) : AppTheme.cardBackground,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isUrgent ? AppTheme.error : AppTheme.champagneGold,
+                      width: isUrgent ? 2 : 1,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.timer_rounded,
+                        color: isUrgent ? AppTheme.error : AppTheme.champagneGold,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        '${timerSeconds}s',
+                        style: TextStyle(
+                          fontFamily: AppTheme.fontFamily,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w900,
+                          color: isUrgent ? Colors.redAccent : AppTheme.warmCream,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          const Spacer(),
+
+          // Quick Chat / Reaction Button
+          IconButton(
+            icon: const Icon(Icons.chat_bubble_outline_rounded, color: AppTheme.champagneGold, size: 20),
+            tooltip: 'Quick Chat Reactions',
+            onPressed: _showQuickChatDialog,
+          ),
+          const SizedBox(width: 6),
+
+          // In-Game Microphone Voice Chat Toggle Button
+          ValueListenableBuilder<bool>(
+            valueListenable: VoiceChatService.instance.isMicMutedNotifier,
+            builder: (context, isMuted, _) {
+              return GestureDetector(
+                onTap: () async {
+                  final unmuted = await VoiceChatService.instance.toggleMic();
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(unmuted ? 'Microphone Live 🎙️' : 'Microphone Muted 🔇'),
+                      duration: const Duration(milliseconds: 900),
+                      backgroundColor: unmuted ? Colors.green.shade800 : AppTheme.cardBackground,
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: isMuted ? AppTheme.cardBackground : Colors.green.shade900.withValues(alpha: 0.4),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: isMuted ? AppTheme.surfaceBorder : Colors.greenAccent,
+                      width: 1.2,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        isMuted ? Icons.mic_off_rounded : Icons.mic_rounded,
+                        color: isMuted ? AppTheme.mutedText : Colors.greenAccent,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        isMuted ? 'Muted' : 'Mic Live',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: isMuted ? AppTheme.mutedText : Colors.greenAccent,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ==================== Left Column: Player Roster & Voice Status ====================
+  Widget _buildPlayerRosterPanel(AuctionStateModel? state, String? currentSocketId, String? sessionToken) {
+    final players = state?.players ?? [];
+
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: AppTheme.cardBackground,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppTheme.surfaceBorder),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'PLAYERS (${players.length}/8)',
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
+                  color: AppTheme.champagneGold,
+                ),
+              ),
+              const Icon(Icons.groups_rounded, color: AppTheme.mutedText, size: 14),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Expanded(
+            child: ValueListenableBuilder<Map<String, PlayerVoiceState>>(
+              valueListenable: VoiceChatService.instance.playerStatesNotifier,
+              builder: (context, voiceStates, _) {
+                return ListView.builder(
+                  itemCount: players.length,
+                  itemBuilder: (context, index) {
+                    final p = players[index];
+                    final isMe = (sessionToken != null && p.sessionToken == sessionToken) || p.id == currentSocketId;
+                    final isLeadingThisPlayer = state?.leadingBidderId == p.id;
+                    final hasPassedThisPlayer = state?.passedPlayerIds.contains(p.id) == true;
+                    final voiceState = voiceStates[p.id];
+                    final isSpeaking = voiceState?.isSpeaking == true;
+                    final isMuted = voiceState?.isMuted ?? true;
+                    final isLocallyMuted = VoiceChatService.instance.isPlayerLocallyMuted(p.id);
+
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 6),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: isLeadingThisPlayer
+                            ? AppTheme.selectedCard
+                            : (isMe ? AppTheme.mainBackground : AppTheme.secondaryBackground),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: isLeadingThisPlayer
+                              ? AppTheme.champagneGold
+                              : (isMe ? AppTheme.goldBorder : AppTheme.surfaceBorder),
+                          width: isLeadingThisPlayer ? 1.5 : 0.8,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          // Small Player Medallion
+                          CircleAvatar(
+                            radius: 12,
+                            backgroundColor: isLeadingThisPlayer ? AppTheme.champagneGold : AppTheme.secondaryBackground,
+                            child: Text(
+                              p.name.isNotEmpty ? p.name[0].toUpperCase() : '?',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: isLeadingThisPlayer ? AppTheme.mainBackground : AppTheme.warmCream,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+
+                          // Name and Budget
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        isMe ? '${p.name} (You)' : p.name,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: isMe || isLeadingThisPlayer ? FontWeight.bold : FontWeight.normal,
+                                          color: isLeadingThisPlayer ? AppTheme.champagneGold : AppTheme.warmCream,
+                                        ),
+                                      ),
+                                    ),
+                                    if (hasPassedThisPlayer)
+                                      const Text(
+                                        'PASS',
+                                        style: TextStyle(color: Colors.redAccent, fontSize: 8, fontWeight: FontWeight.bold),
+                                      ),
+                                  ],
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  '\$${p.budget} • ${p.acquiredItems.length} Won',
+                                  style: const TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppTheme.mutedText,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          // In-Game Voice Status for this player (Muted/Speaking/Local Mute Toggle)
+                          if (!isMe)
+                            GestureDetector(
+                              onTap: () {
+                                VoiceChatService.instance.toggleMuteOtherPlayer(p.id);
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 4),
+                                child: Icon(
+                                  isLocallyMuted
+                                      ? Icons.volume_off_rounded
+                                      : (isSpeaking ? Icons.graphic_eq_rounded : (isMuted ? Icons.mic_off_rounded : Icons.mic_rounded)),
+                                  size: 13,
+                                  color: isLocallyMuted
+                                      ? Colors.redAccent
+                                      : (isSpeaking ? Colors.greenAccent : AppTheme.mutedText),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ==================== Center Column: Random Character Reveal ====================
+  Widget _buildCenterCharacterRevealArea(
+    AuctionStateModel? state,
+    dynamic currentItem,
+    int currentBid,
+    String leadingBidderName,
+    bool isLeading,
+    bool hasPassed,
+  ) {
+    final itemName = currentItem?.displayName ?? currentItem?.name ?? 'Mystery Character';
+    final phase = state?.phase ?? 'BIDDING';
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppTheme.cardBackground,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.goldBorder, width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.champagneGold.withValues(alpha: 0.1),
+            blurRadius: 12,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Reveal Card Medallion & Name
+          Expanded(
+            child: Row(
+              children: [
+                // Character Portrait Medallion
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF40171B), Color(0xFFD6AD70), Color(0xFFA9824C)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    border: Border.all(color: AppTheme.champagneGold, width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.champagneGold.withValues(alpha: 0.25),
+                        blurRadius: 14,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Icon(
+                      phase == 'SOLD' ? Icons.check_circle_rounded : Icons.person_rounded,
+                      color: AppTheme.warmCream,
+                      size: 54,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+
+                // Character Details
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 4,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: AppTheme.mainBackground,
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(color: AppTheme.goldBorder, width: 0.8),
+                            ),
+                            child: Text(
+                              'ITEM ${(state?.currentItemIndex ?? 0) + 1}',
+                              style: const TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.champagneGold,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: AppTheme.selectedCard,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              phase == 'SOLD' ? 'SOLD' : (phase == 'UNSOLD' ? 'UNSOLD' : 'LIVE AUCTION'),
+                              style: TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                                color: phase == 'SOLD' ? Colors.greenAccent : (phase == 'UNSOLD' ? Colors.redAccent : AppTheme.warmCream),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        itemName,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontFamily: AppTheme.fontFamily,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w900,
+                          color: AppTheme.warmCream,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Base: \$${currentItem?.basePrice ?? 100} • Mystery Points Protected',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: AppTheme.mutedText,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Highest Bid Banner
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: isLeading ? AppTheme.selectedCard : AppTheme.mainBackground,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isLeading ? AppTheme.champagneGold : AppTheme.surfaceBorder,
+                width: isLeading ? 1.5 : 1,
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'HIGHEST BID',
+                        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppTheme.mutedText),
+                      ),
+                      Text(
+                        '\$$currentBid',
+                        style: const TextStyle(
+                          fontFamily: AppTheme.fontFamily,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900,
+                          color: AppTheme.champagneGold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      const Text(
+                        'LEADING BIDDER',
+                        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppTheme.mutedText),
+                      ),
+                    Row(
+                      children: [
+                        if (isLeading)
+                          const Padding(
+                            padding: EdgeInsets.only(right: 4),
+                            child: Icon(Icons.star_rounded, color: AppTheme.champagneGold, size: 14),
+                          ),
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 120),
+                          child: Text(
+                            isLeading ? 'You (Leading)' : leadingBidderName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: AppTheme.fontFamily,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: isLeading ? AppTheme.champagneGold : AppTheme.warmCream,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ==================== Right Column: Live Bidding Controls ====================
+  Widget _buildBiddingControlPanel({
+    required bool isBiddingOpen,
+    required bool hasPassed,
+    required bool isLeading,
+    required bool canAffordBid,
+    required int myRemainingBudget,
+    required int effectiveNextBid,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      decoration: BoxDecoration(
+        color: AppTheme.cardBackground,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppTheme.surfaceBorder),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Remaining Budget Header
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            decoration: BoxDecoration(
+              color: AppTheme.mainBackground,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: AppTheme.goldBorder),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Flexible(
+                  child: Text(
+                    'Your Coins',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: AppTheme.mutedText, fontSize: 11),
+                  ),
+                ),
+                Flexible(
+                  child: Text(
+                    '\$$myRemainingBudget',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontFamily: AppTheme.fontFamily,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w900,
+                      color: AppTheme.champagneGold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          // Quick Increment Selectors (+$25, +$50, +$100)
+          Row(
+            children: [25, 50, 100].map((inc) {
+              final isSelected = _selectedBidIncrement == inc;
+              return Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedBidIncrement = inc;
+                    });
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 2),
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    decoration: BoxDecoration(
+                      color: isSelected ? AppTheme.selectedCard : AppTheme.secondaryBackground,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: isSelected ? AppTheme.champagneGold : AppTheme.surfaceBorder,
+                        width: isSelected ? 1.5 : 1,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '+$inc',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: isSelected ? AppTheme.champagneGold : AppTheme.warmCream,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+          const Spacer(),
+
+          // Place Bid Button (Gold Gradient)
+          GestureDetector(
+            onTap: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid || _isActionBusy)
+                ? null
+                : () => _placeBid(effectiveNextBid),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              height: 48,
+              decoration: BoxDecoration(
+                gradient: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid)
+                    ? null
+                    : AppTheme.goldButtonGradient,
+                color: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid)
+                    ? AppTheme.secondaryBackground
+                    : null,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid)
+                      ? AppTheme.surfaceBorder
+                      : AppTheme.champagneGold,
+                ),
+                boxShadow: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid)
+                    ? null
+                    : [
+                        BoxShadow(
+                          color: AppTheme.champagneGold.withValues(alpha: 0.28),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+              ),
+              child: Center(
+                child: _isActionBusy
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.mainBackground),
+                      )
+                    : Text(
+                        isLeading
+                            ? 'HIGHEST BIDDER'
+                            : (hasPassed ? 'PASSED' : 'BID \$$effectiveNextBid'),
+                        style: TextStyle(
+                          fontFamily: AppTheme.fontFamily,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 0.5,
+                          color: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid)
+                              ? AppTheme.mutedText
+                              : AppTheme.darkMaroonText,
+                        ),
+                      ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+
+          // Pass Button
+          OutlinedButton(
+            onPressed: (!isBiddingOpen || hasPassed || isLeading || _isActionBusy)
+                ? null
+                : _passItem,
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.redAccent,
+              side: BorderSide(
+                color: (hasPassed || !isBiddingOpen) ? AppTheme.surfaceBorder : Colors.redAccent.withValues(alpha: 0.5),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            child: const Text('PASS ROUND', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+          ),
+        ],
       ),
     );
   }

@@ -1,6 +1,6 @@
-# PowerBid Mobile Client (Android)
+# OCT-TION Mobile Client (Android)
 
-The official Flutter Android client for **PowerBid**, an online multiplayer auction bidding game.
+The official Flutter Android client for **OCT-TION — Bid • Win • Rule**, an online multiplayer auction bidding game.
 
 ## Getting Started
 

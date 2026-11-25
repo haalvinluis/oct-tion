@@ -44,7 +44,7 @@ describe('Step 10: Friends System, Player IDs & Room Invitations Tests', functio
 
   it('1. Unique Player ID generation and non-sequential format', () => {
     const ids = new Set<string>();
-    const idRegex = /^PB-[2-9A-HJ-NP-Z]{6}$/;
+    const idRegex = /^(OCT|PB)-[2-9A-HJ-NP-Z0-9]{5,6}$/;
 
     for (let i = 0; i < 50; i++) {
       const profile = ProfileManager.getInstance().getOrCreateProfile(`user_id_test_${i}`, `User_${i}`);

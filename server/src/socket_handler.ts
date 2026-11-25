@@ -1,58 +1,102 @@
 import { Server, Socket } from 'socket.io';
-import { RoomManager } from './room_manager';
+import {
+  RoomManager,
+  SUPPORTED_TIMER_DURATIONS,
+  DEFAULT_TIMER_DURATION,
+  SUPPORTED_ITEM_COUNTS,
+  isValidItemCount,
+} from './room_manager';
 import { CharacterDatabase } from './database/db';
 import { ProfileManager } from './database/profile_manager';
 import { FriendsManager } from './friends_manager';
 import { SecurityMiddleware } from './security_middleware';
 import { AuthManager } from './database/auth_manager';
+import { PackManager } from './database/pack_manager';
 
 export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
-  io.on('connection', (socket: Socket) => {
-    console.log(`[Socket] Connected: ${socket.id}`);
-
-    // Check handshake auth for persistent guest UUID or session token
-    const handshakeAuth = socket.handshake.auth || {};
-    if (handshakeAuth.guestPlayerId && typeof handshakeAuth.guestPlayerId === 'string') {
-      const sanitizedGuestId = SecurityMiddleware.sanitizeString(handshakeAuth.guestPlayerId, 64);
-      (socket as any).guestPlayerId = sanitizedGuestId;
-      FriendsManager.getInstance().registerUserSocket(sanitizedGuestId, socket.id);
-    } else {
-      FriendsManager.getInstance().registerUserSocket(socket.id, socket.id);
-    }
-
-    if (handshakeAuth.token && typeof handshakeAuth.token === 'string') {
-      AuthManager.getInstance().validateSession(handshakeAuth.token).then((session) => {
+  io.use(async (socket: Socket, next) => {
+    try {
+      const handshakeAuth = socket.handshake.auth || {};
+      if (handshakeAuth.token && typeof handshakeAuth.token === 'string') {
+        const session = await AuthManager.getInstance().validateSession(handshakeAuth.token);
         if (session) {
           (socket as any).authenticatedAccountId = session.accountId;
           (socket as any).authenticatedProfileId = session.profileId;
-          FriendsManager.getInstance().registerUserSocket(session.profileId, socket.id);
         }
-      });
+      }
+      if (handshakeAuth.guestPlayerId && typeof handshakeAuth.guestPlayerId === 'string') {
+        const sanitizedGuestId = SecurityMiddleware.sanitizeString(handshakeAuth.guestPlayerId, 64);
+        (socket as any).guestPlayerId = sanitizedGuestId;
+        if (!ProfileManager.getInstance().getProfileById(sanitizedGuestId)) {
+          await ProfileManager.getInstance().loadProfileFromDatabase(sanitizedGuestId);
+        }
+      }
+      if (handshakeAuth.username && typeof handshakeAuth.username === 'string') {
+        const sanitizedUsername = SecurityMiddleware.sanitizeString(handshakeAuth.username, 20);
+        (socket as any).handshakeUsername = sanitizedUsername;
+      }
+      next();
+    } catch {
+      next();
     }
+  });
+
+  io.on('connection', (socket: Socket) => {
+    console.log(`[Socket] Connected: ${socket.id}`);
+
+    const effectiveId = (socket as any).authenticatedProfileId || (socket as any).guestPlayerId || socket.id;
+    FriendsManager.getInstance().registerUserSocket(effectiveId, socket.id);
 
     // Client requests category catalog list & counts
-    socket.on('get_categories', (_data, ack) => {
+    socket.on('get_categories', (data, ack) => {
       const rateCheck = SecurityMiddleware.checkGeneralApiLimit(socket.id, 60, 10000);
       if (!rateCheck.allowed) {
         if (typeof ack === 'function') ack({ success: false, error: 'Too many catalog requests.' });
         return;
       }
 
-      const summaries = CharacterDatabase.getInstance().getCategorySummaryList().map((c) => ({
+      const includeAll = data && data.includeAll === true;
+      const list = includeAll
+        ? CharacterDatabase.getInstance().getAllTopicSummaryList()
+        : CharacterDatabase.getInstance().getCategorySummaryList();
+
+      const summaries = list.map((c) => ({
         id: c.id,
         name: c.name,
+        parentCategoryId: c.parentCategoryId,
         actualCount: c.actualCount,
         targetCount: c.targetCount,
         isEnough5: c.isEnough5,
+        isEnough8: c.isEnough8,
         isEnough10: c.isEnough10,
         isEnough25: c.isEnough25,
       }));
       if (typeof ack === 'function') ack({ success: true, categories: summaries });
     });
 
+    socket.on('get_topics', (_data, ack) => {
+      const summaries = CharacterDatabase.getInstance().getAllTopicSummaryList().map((c) => ({
+        id: c.id,
+        name: c.name,
+        parentCategoryId: c.parentCategoryId,
+        actualCount: c.actualCount,
+        targetCount: c.targetCount,
+        isEnough5: c.isEnough5,
+        isEnough8: c.isEnough8,
+        isEnough10: c.isEnough10,
+        isEnough25: c.isEnough25,
+      }));
+      if (typeof ack === 'function') ack({ success: true, topics: summaries });
+    });
+
     const getEffectivePlayerId = (explicitId?: string): string => {
       if (explicitId && typeof explicitId === 'string' && explicitId.trim().length > 0) {
-        return explicitId.trim();
+        const clean = explicitId.trim();
+        if (clean.startsWith('acc_')) {
+          const authProfile = (socket as any).authenticatedProfileId;
+          if (authProfile) return authProfile;
+        }
+        return clean;
       }
       return (socket as any).authenticatedProfileId || (socket as any).guestPlayerId || socket.id;
     };
@@ -67,6 +111,21 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
         }
 
         const targetId = getEffectivePlayerId(data?.playerId);
+        const incomingUsername = (data?.username && typeof data.username === 'string')
+          ? data.username.trim()
+          : (socket as any).handshakeUsername;
+
+        if (incomingUsername && incomingUsername.length >= 3) {
+          const sanitized = SecurityMiddleware.sanitizeString(incomingUsername, 20);
+          const isGeneric = sanitized.startsWith('Guest_') || sanitized.startsWith('Player_') || sanitized === 'GuestPlayer';
+          if (!isGeneric) {
+            const existing = ProfileManager.getInstance().getProfileById(targetId);
+            if (!existing || !existing.username || existing.username.startsWith('Guest_') || existing.username.startsWith('Player_') || existing.username === 'GuestPlayer') {
+              ProfileManager.getInstance().updateUsername(targetId, sanitized);
+            }
+          }
+        }
+
         const profile = ProfileManager.getInstance().getProfileDTO(targetId);
         if (typeof ack === 'function') ack({ success: true, profile });
       } catch (err: any) {
@@ -192,25 +251,71 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
           return;
         }
 
-        const { username, category, gameMode, itemCount, timerDuration } = data || {};
+        const { username, category, topic, gameMode, itemCount, timerDuration } = data || {};
         if (!username || !category || !itemCount) {
           const errResponse = { success: false, error: 'Missing required create parameters.' };
           if (typeof ack === 'function') ack(errResponse);
           return;
         }
 
-        const sanitizedUsername = SecurityMiddleware.sanitizeString(username, 20);
+        const parsedItemCount = Number(itemCount);
+        if (parsedItemCount === 25) {
+          const errResponse = {
+            success: false,
+            error: 'Match size 25 items is not supported. Supported match sizes are 5, 8, and 10 items.',
+          };
+          if (typeof ack === 'function') ack(errResponse);
+          return;
+        }
 
-        // Ensure profile exists or update requested username
-        ProfileManager.getInstance().getOrCreateProfile(socket.id, sanitizedUsername);
+        if (!isValidItemCount(parsedItemCount)) {
+          const errResponse = {
+            success: false,
+            error: `Match size must be one of: ${SUPPORTED_ITEM_COUNTS.join(', ')} items.`,
+          };
+          if (typeof ack === 'function') ack(errResponse);
+          return;
+        }
+
+        let parsedTimer: number = DEFAULT_TIMER_DURATION;
+        if (timerDuration !== undefined && timerDuration !== null) {
+          parsedTimer = Number(timerDuration);
+          if (!SUPPORTED_TIMER_DURATIONS.includes(parsedTimer as any)) {
+            const errResponse = {
+              success: false,
+              error: `Timer duration must be one of: ${SUPPORTED_TIMER_DURATIONS.join(', ')} seconds.`,
+            };
+            if (typeof ack === 'function') ack(errResponse);
+            return;
+          }
+        }
+
+        const sanitizedUsername = SecurityMiddleware.sanitizeString(username, 20);
+        const effectivePlayerId = getEffectivePlayerId();
+        const existingProfile = ProfileManager.getInstance().getProfileById(effectivePlayerId);
+
+        // Authoritative display name resolution:
+        // Prioritize existing saved username if client sent generic default or empty
+        let chosenName = sanitizedUsername;
+        const isGenericDefault =
+          !chosenName || chosenName === 'Player1' || chosenName === 'Player_1' || chosenName === 'HostPlayer';
+        if (isGenericDefault && existingProfile && existingProfile.username) {
+          chosenName = existingProfile.username;
+        } else if (!chosenName) {
+          const fallbackSuffix = effectivePlayerId.replace(/[^a-zA-Z0-9]/g, '').slice(-4) || 'User';
+          chosenName = `Player_${fallbackSuffix}`;
+        }
+        ProfileManager.getInstance().getOrCreateProfile(effectivePlayerId, chosenName);
 
         const { roomState, player } = roomManager.createRoom(
           socket.id,
-          sanitizedUsername,
+          chosenName,
           category,
           gameMode || 'AUCTION_TEAM_CHALLENGE',
           itemCount,
-          timerDuration ?? 15
+          parsedTimer,
+          effectivePlayerId,
+          topic
         );
 
         await socket.join(roomState.roomCode);
@@ -223,7 +328,7 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
         };
 
         console.log(
-          `[Room Created] Code: ${roomState.roomCode} (${roomState.gameMode}) by ${username} (${socket.id})`
+          `[Room Created] Code: ${roomState.roomCode} (${roomState.gameMode}) by ${chosenName} (${socket.id})`
         );
 
         if (typeof ack === 'function') ack(response);
@@ -238,14 +343,51 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
     // Step 7: Update Room Settings (Host only, LOBBY phase only)
     socket.on('update_room_settings', (data, ack) => {
       try {
-        const { roomCode, category, itemCount, timerDuration } = data || {};
+        const { roomCode, category, topic, itemCount, timerDuration } = data || {};
         if (!roomCode || !SecurityMiddleware.isValidRoomCode(roomCode)) {
           if (typeof ack === 'function') ack({ success: false, error: 'Invalid room code format.' });
           return;
         }
 
+        if (itemCount !== undefined && itemCount !== null) {
+          const parsedItemCount = Number(itemCount);
+          if (parsedItemCount === 25) {
+            if (typeof ack === 'function') {
+              ack({
+                success: false,
+                error: 'Match size 25 items is not supported. Supported match sizes are 5, 8, and 10 items.',
+              });
+            }
+            return;
+          }
+
+          if (!isValidItemCount(parsedItemCount)) {
+            if (typeof ack === 'function') {
+              ack({
+                success: false,
+                error: `Match size must be one of: ${SUPPORTED_ITEM_COUNTS.join(', ')} items.`,
+              });
+            }
+            return;
+          }
+        }
+
+        if (timerDuration !== undefined && timerDuration !== null) {
+          const parsedTimer = Number(timerDuration);
+          if (!SUPPORTED_TIMER_DURATIONS.includes(parsedTimer as any)) {
+            if (typeof ack === 'function') {
+              ack({
+                success: false,
+                error: `Timer duration must be one of: ${SUPPORTED_TIMER_DURATIONS.join(', ')} seconds.`,
+              });
+            }
+            return;
+          }
+        }
+
         const roomState = roomManager.updateRoomSettings(socket.id, roomCode, {
           category,
+          topic,
           itemCount,
           timerDuration,
         });
@@ -254,6 +396,37 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
         io.to(roomState.roomCode).emit('room_state', roomState);
       } catch (err: any) {
         console.error(`[update_room_settings error]`, err.message);
+        if (typeof ack === 'function') ack({ success: false, error: err.message });
+      }
+    });
+
+    // Server-authoritative bidding timeout event (safe from client spoofing or duplicates)
+    socket.on('bidding_timeout', (data, ack) => {
+      try {
+        const { roomCode } = data || {};
+        if (!roomCode || !SecurityMiddleware.isValidRoomCode(roomCode)) {
+          if (typeof ack === 'function') ack({ success: false, error: 'Invalid room code format.' });
+          return;
+        }
+
+        const engine = roomManager.getAuctionEngine(roomCode);
+        if (!engine) {
+          if (typeof ack === 'function') ack({ success: false, error: 'Auction engine not active for room.' });
+          return;
+        }
+
+        // Validate that server-authoritative deadline has actually elapsed
+        const now = Date.now();
+        if (now >= engine.turnDeadline || engine.timerSecondsRemaining <= 0) {
+          engine.finalizeItemSale();
+          if (typeof ack === 'function') ack({ success: true });
+        } else {
+          if (typeof ack === 'function') {
+            ack({ success: false, error: 'Server bidding deadline has not elapsed yet.' });
+          }
+        }
+      } catch (err: any) {
+        console.error(`[bidding_timeout error]`, err.message);
         if (typeof ack === 'function') ack({ success: false, error: err.message });
       }
     });
@@ -286,14 +459,27 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
         }
 
         const sanitizedUsername = SecurityMiddleware.sanitizeString(username, 20);
+        const effectivePlayerId = getEffectivePlayerId();
+        const existingProfile = ProfileManager.getInstance().getProfileById(effectivePlayerId);
 
-        // Ensure profile exists or update requested username
-        ProfileManager.getInstance().getOrCreateProfile(socket.id, sanitizedUsername);
+        // Authoritative display name resolution:
+        // Prioritize existing saved username if client sent generic default or empty
+        let chosenName = sanitizedUsername;
+        const isGenericDefault =
+          !chosenName || chosenName === 'Player1' || chosenName === 'Player_1' || chosenName === 'Player';
+        if (isGenericDefault && existingProfile && existingProfile.username) {
+          chosenName = existingProfile.username;
+        } else if (!chosenName) {
+          const fallbackSuffix = effectivePlayerId.replace(/[^a-zA-Z0-9]/g, '').slice(-4) || 'User';
+          chosenName = `Player_${fallbackSuffix}`;
+        }
+        ProfileManager.getInstance().getOrCreateProfile(effectivePlayerId, chosenName);
 
         const { roomState, player } = roomManager.joinRoom(
           socket.id,
-          sanitizedUsername,
-          roomCode
+          chosenName,
+          roomCode,
+          effectivePlayerId
         );
 
         await socket.join(roomState.roomCode);
@@ -305,7 +491,7 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
           roomState,
         };
 
-        console.log(`[Room Joined] Code: ${roomState.roomCode}, Player: ${sanitizedUsername} (${socket.id})`);
+        console.log(`[Room Joined] Code: ${roomState.roomCode}, Player: ${chosenName} (${socket.id})`);
 
         if (typeof ack === 'function') ack(response);
         socket.to(roomState.roomCode).emit('player_joined', { player, roomState });
@@ -444,7 +630,23 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
     // Client requests current auction state
     socket.on('request_auction_state', (data, ack) => {
       const { roomCode } = data || {};
-      const engine = roomManager.getAuctionEngine(roomCode);
+      if (!roomCode || typeof roomCode !== 'string') {
+        if (typeof ack === 'function') ack({ success: false, error: 'Room code is required.' });
+        return;
+      }
+      const normalizedCode = roomCode.trim().toUpperCase();
+      const room = roomManager.getRoom(normalizedCode);
+      if (!room) {
+        if (typeof ack === 'function') ack({ success: false, error: 'Room not found.' });
+        return;
+      }
+      const effectiveId = getEffectivePlayerId();
+      const isMember = room.players.some((p) => p.id === socket.id || (p.profileId && p.profileId === effectiveId));
+      if (!isMember) {
+        if (typeof ack === 'function') ack({ success: false, error: 'Unauthorized: not a member of this room.' });
+        return;
+      }
+      const engine = room.auctionEngine;
       if (engine && typeof ack === 'function') {
         ack({ success: true, roomState: engine.getAuctionStateDTO() });
       } else if (typeof ack === 'function') {
@@ -474,6 +676,74 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
             io.to(roomState.roomCode).emit('room_state', roomState);
           }
         }
+        if (typeof ack === 'function') ack({ success: true });
+      } catch (err: any) {
+        if (typeof ack === 'function') ack({ success: false, error: err.message });
+      }
+    });
+
+    // ==================== In-Game Voice Chat & Signaling Handlers ====================
+
+    // Update player microphone status (muted/unmuted/speaking)
+    socket.on('voice_mic_state', (data) => {
+      try {
+        const { roomCode, isMuted, isSpeaking } = data || {};
+        if (!roomCode || typeof roomCode !== 'string') return;
+        const normalizedCode = roomCode.trim().toUpperCase();
+        const effectiveId = getEffectivePlayerId();
+
+        io.to(normalizedCode).emit('player_mic_state_changed', {
+          socketId: socket.id,
+          playerId: effectiveId,
+          isMuted: isMuted !== false,
+          isSpeaking: isSpeaking === true,
+          timestamp: Date.now(),
+        });
+      } catch (err: any) {
+        console.error('[voice_mic_state error]', err.message);
+      }
+    });
+
+    // WebRTC P2P Voice signaling relay
+    socket.on('voice_signal', (data) => {
+      try {
+        const { roomCode, targetSocketId, signalData } = data || {};
+        if (!roomCode || !targetSocketId || !signalData) return;
+        const effectiveId = getEffectivePlayerId();
+
+        io.to(targetSocketId).emit('voice_signal_received', {
+          fromSocketId: socket.id,
+          fromPlayerId: effectiveId,
+          signalData,
+        });
+      } catch (err: any) {
+        console.error('[voice_signal error]', err.message);
+      }
+    });
+
+    // In-game live room chat / quick reactions
+    socket.on('send_room_chat', (data, ack) => {
+      try {
+        const { roomCode, message } = data || {};
+        if (!roomCode || !message || typeof message !== 'string') {
+          if (typeof ack === 'function') ack({ success: false, error: 'Message is required.' });
+          return;
+        }
+        const normalizedCode = roomCode.trim().toUpperCase();
+        const cleanMessage = SecurityMiddleware.sanitizeString(message, 120);
+        const effectiveId = getEffectivePlayerId();
+        const profile = ProfileManager.getInstance().getProfileById(effectiveId);
+        const senderName = profile?.username || 'Player';
+
+        io.to(normalizedCode).emit('room_chat_message', {
+          id: 'chat_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+          fromSocketId: socket.id,
+          fromPlayerId: effectiveId,
+          senderName,
+          message: cleanMessage,
+          timestamp: Date.now(),
+        });
+
         if (typeof ack === 'function') ack({ success: true });
       } catch (err: any) {
         if (typeof ack === 'function') ack({ success: false, error: err.message });
@@ -853,6 +1123,136 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
       }
     });
 
+    // Link Guest Account to Google
+    socket.on('link_google_account', async (data, ack) => {
+      try {
+        const { guestPlayerId, idToken } = data || {};
+        if (!idToken) {
+          console.warn('[Socket Auth] link_google_account rejected: missing idToken');
+          if (typeof ack === 'function') ack({ success: false, error: 'Google ID token is required.' });
+          return;
+        }
+        console.log(`[Socket Auth] link_google_account request from socket ${socket.id} (token length: ${idToken.length})`);
+        const effectiveGuestId = guestPlayerId || (socket as any).authenticatedProfileId || (socket as any).guestPlayerId || socket.id;
+
+        const result = await AuthManager.getInstance().linkOAuthAccount(effectiveGuestId, 'google', idToken);
+        (socket as any).authenticatedAccountId = result.account.id;
+        (socket as any).authenticatedProfileId = result.profile.id;
+        FriendsManager.getInstance().registerUserSocket(result.profile.id, socket.id);
+        console.log(`[Socket Auth] link_google_account successful for profile: ${result.profile.id}`);
+
+        if (typeof ack === 'function') {
+          ack({
+            success: true,
+            account: result.account,
+            profile: result.profile,
+            token: result.token,
+          });
+        }
+      } catch (err: any) {
+        console.error(`[Socket Auth] link_google_account failed: ${err.message}`);
+        if (typeof ack === 'function') ack({ success: false, error: err.message });
+      }
+    });
+
+    // Link Guest Account to Facebook
+    socket.on('link_facebook_account', async (data, ack) => {
+      try {
+        const { guestPlayerId, accessToken } = data || {};
+        if (!accessToken) {
+          if (typeof ack === 'function') ack({ success: false, error: 'Facebook access token is required.' });
+          return;
+        }
+        const effectiveGuestId = guestPlayerId || (socket as any).authenticatedProfileId || (socket as any).guestPlayerId || socket.id;
+
+        const result = await AuthManager.getInstance().linkOAuthAccount(effectiveGuestId, 'facebook', accessToken);
+        (socket as any).authenticatedAccountId = result.account.id;
+        (socket as any).authenticatedProfileId = result.profile.id;
+        FriendsManager.getInstance().registerUserSocket(result.profile.id, socket.id);
+
+        if (typeof ack === 'function') {
+          ack({
+            success: true,
+            account: result.account,
+            profile: result.profile,
+            token: result.token,
+          });
+        }
+      } catch (err: any) {
+        if (typeof ack === 'function') ack({ success: false, error: err.message });
+      }
+    });
+
+    // Login With Google
+    socket.on('login_google_account', async (data, ack) => {
+      try {
+        const { idToken } = data || {};
+        if (!idToken) {
+          console.warn('[Socket Auth] login_google_account rejected: missing idToken');
+          if (typeof ack === 'function') ack({ success: false, error: 'Google ID token is required.' });
+          return;
+        }
+        console.log(`[Socket Auth] login_google_account request from socket ${socket.id} (token length: ${idToken.length})`);
+
+        const effectiveGuestId = (socket as any).authenticatedProfileId || (socket as any).guestPlayerId || socket.id;
+        const result = await AuthManager.getInstance().loginWithOAuth('google', idToken, effectiveGuestId);
+        (socket as any).authenticatedAccountId = result.account.id;
+        (socket as any).authenticatedProfileId = result.profile.id;
+        FriendsManager.getInstance().registerUserSocket(result.profile.id, socket.id);
+        console.log(`[Socket Auth] login_google_account successful for account: ${result.account.id}`);
+
+        if (typeof ack === 'function') {
+          ack({
+            success: true,
+            account: result.account,
+            profile: result.profile,
+            token: result.token,
+          });
+        }
+      } catch (err: any) {
+        console.error(`[Socket Auth] login_google_account failed: ${err.message}`);
+        if (typeof ack === 'function') ack({ success: false, error: err.message });
+      }
+    });
+
+    // Login With Facebook
+    socket.on('login_facebook_account', async (data, ack) => {
+      try {
+        const { accessToken } = data || {};
+        if (!accessToken) {
+          if (typeof ack === 'function') ack({ success: false, error: 'Facebook access token is required.' });
+          return;
+        }
+
+        const result = await AuthManager.getInstance().loginWithOAuth('facebook', accessToken);
+        (socket as any).authenticatedAccountId = result.account.id;
+        (socket as any).authenticatedProfileId = result.profile.id;
+        FriendsManager.getInstance().registerUserSocket(result.profile.id, socket.id);
+
+        if (typeof ack === 'function') {
+          ack({
+            success: true,
+            account: result.account,
+            profile: result.profile,
+            token: result.token,
+          });
+        }
+      } catch (err: any) {
+        if (typeof ack === 'function') ack({ success: false, error: err.message });
+      }
+    });
+
+    // Get Account Status (Linked providers)
+    socket.on('get_account_status', async (data, ack) => {
+      try {
+        const targetId = data?.playerId || (socket as any).authenticatedProfileId || (socket as any).guestPlayerId || socket.id;
+        const status = await AuthManager.getInstance().getAccountStatus(targetId);
+        if (typeof ack === 'function') ack({ success: true, status });
+      } catch (err: any) {
+        if (typeof ack === 'function') ack({ success: false, error: err.message });
+      }
+    });
+
     // Logout Account (Revoke Token)
     socket.on('logout_account', async (data, ack) => {
       try {
@@ -881,6 +1281,71 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
             coinBalance: profile.coinBalance ?? 500,
             transactions,
           });
+        }
+      } catch (err: any) {
+        if (typeof ack === 'function') ack({ success: false, error: err.message });
+      }
+    });
+
+    // Get Character Packs & Eligible Previews
+    socket.on('get_character_packs', (_data, ack) => {
+      try {
+        const rateCheck = SecurityMiddleware.checkGeneralApiLimit(socket.id);
+        if (!rateCheck.allowed) {
+          if (typeof ack === 'function') ack({ success: false, error: 'Too many requests.' });
+          return;
+        }
+
+        const packs = PackManager.getInstance().getPacks();
+        if (typeof ack === 'function') {
+          ack({ success: true, packs });
+        }
+      } catch (err: any) {
+        if (typeof ack === 'function') ack({ success: false, error: err.message });
+      }
+    });
+
+    // Purchase Character Pack with in-game coins
+    socket.on('purchase_character_pack', async (data, ack) => {
+      try {
+        const rateCheck = SecurityMiddleware.checkGeneralApiLimit(socket.id, 10, 5000);
+        if (!rateCheck.allowed) {
+          if (typeof ack === 'function') ack({ success: false, error: 'Purchase rate limit reached. Please wait a moment.' });
+          return;
+        }
+
+        const { packId, purchaseId } = data || {};
+        if (!packId || typeof packId !== 'string') {
+          if (typeof ack === 'function') ack({ success: false, error: 'Valid packId is required.' });
+          return;
+        }
+
+        const effectivePlayerId = getEffectivePlayerId();
+        const result = await PackManager.getInstance().purchasePack(effectivePlayerId, packId, purchaseId);
+
+        // Notify client of updated coin balance
+        io.to(socket.id).emit('coin_balance_update', {
+          playerId: effectivePlayerId,
+          coinBalance: result.newBalance,
+          delta: -result.costCoins,
+          reason: 'CHARACTER_PACK_PURCHASE',
+        });
+
+        if (typeof ack === 'function') {
+          ack({ success: true, result });
+        }
+      } catch (err: any) {
+        if (typeof ack === 'function') ack({ success: false, error: err.message });
+      }
+    });
+
+    // Get Unlocked Characters Collection
+    socket.on('get_unlocked_characters', (data, ack) => {
+      try {
+        const targetId = getEffectivePlayerId(data?.playerId);
+        const unlockedCharacters = PackManager.getInstance().getUnlockedCharacters(targetId);
+        if (typeof ack === 'function') {
+          ack({ success: true, unlockedCharacters });
         }
       } catch (err: any) {
         if (typeof ack === 'function') ack({ success: false, error: err.message });

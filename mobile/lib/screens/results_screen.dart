@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../models/auction_state_model.dart';
 import '../services/socket_service.dart';
+import '../services/auth_service.dart';
 import '../widgets/custom_button.dart';
 import 'home_screen.dart';
 
@@ -87,6 +88,8 @@ class ResultsScreen extends StatelessWidget {
                           ),
                           Text(
                             '${winner.totalTeamPoints} Total Team Points • ${winner.itemsWon} Items • \$${winner.remainingBudget} Budget Left',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               color: AppTheme.textSecondary,
                               fontSize: 12,
@@ -98,7 +101,119 @@ class ResultsScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
+
+              // Player Coin Reward & Balance Banner
+              Builder(
+                builder: (context) {
+                  final currentSocketId = SocketService.instance.socketId;
+                  final currentProfileId = AuthService.instance.effectivePlayerId;
+                  StandingsRecordModel? myStanding;
+                  for (final s in standings) {
+                    if (s.playerId == currentSocketId || (currentProfileId.isNotEmpty && s.playerId == currentProfileId)) {
+                      myStanding = s;
+                      break;
+                    }
+                  }
+
+                  String rewardText = '+25 Coins';
+                  String rewardReason = 'Match Completion Reward';
+                  Color rewardColor = AppTheme.goldHighlight;
+
+                  if (myStanding != null) {
+                    if (myStanding.rank == 1) {
+                      rewardText = '+200 Coins';
+                      rewardReason = 'Victory Reward!';
+                      rewardColor = AppTheme.goldHighlight;
+                    } else if (myStanding.rank == standings.length && standings.length > 1) {
+                      rewardText = '-50 Coins';
+                      rewardReason = 'Match Penalty';
+                      rewardColor = AppTheme.error;
+                    } else {
+                      rewardText = '+25 Coins';
+                      rewardReason = 'Participation Reward';
+                      rewardColor = AppTheme.accent;
+                    }
+                  }
+
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: AppTheme.navySurface,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: rewardColor.withOpacity(0.4), width: 1.2),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: rewardColor.withOpacity(0.15),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(Icons.monetization_on_rounded, color: rewardColor, size: 22),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                rewardReason.toUpperCase(),
+                                style: TextStyle(
+                                  fontFamily: AppTheme.fontFamily,
+                                  color: rewardColor,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.8,
+                                ),
+                              ),
+                              Text(
+                                rewardText,
+                                style: const TextStyle(
+                                  fontFamily: AppTheme.fontFamily,
+                                  color: AppTheme.pureWhite,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        ValueListenableBuilder<int>(
+                          valueListenable: AuthService.instance.coinBalanceNotifier,
+                          builder: (context, balance, _) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: AppTheme.surfaceLight,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.account_balance_wallet_rounded, color: AppTheme.goldHighlight, size: 16),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '$balance Coins',
+                                    style: const TextStyle(
+                                      fontFamily: AppTheme.fontFamily,
+                                      color: AppTheme.pureWhite,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
 
               const Text(
                 'FINAL MATCH STANDINGS',
@@ -136,33 +251,40 @@ class ResultsScreen extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 14,
-                                    backgroundColor: rank == 1
-                                        ? AppTheme.warning
-                                        : AppTheme.surfaceLight,
-                                    child: Text(
-                                      '#$rank',
-                                      style: TextStyle(
-                                        color: rank == 1 ? Colors.black : Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 14,
+                                      backgroundColor: rank == 1
+                                          ? AppTheme.warning
+                                          : AppTheme.surfaceLight,
+                                      child: Text(
+                                        '#$rank',
+                                        style: TextStyle(
+                                          color: rank == 1 ? Colors.black : Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    p.playerName,
-                                    style: const TextStyle(
-                                      color: AppTheme.textPrimary,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        p.playerName,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          color: AppTheme.textPrimary,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
+                              const SizedBox(width: 8),
                               Row(
                                 children: [
                                   Container(

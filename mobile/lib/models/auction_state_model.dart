@@ -87,6 +87,7 @@ class AuctionStateModel {
   final List<String> passedPlayerIds;
   final List<PlayerModel> players;
   final List<StandingsRecordModel> standings;
+  final List<AuctionItemModel> auctionQueue;
 
   const AuctionStateModel({
     required this.roomCode,
@@ -104,6 +105,7 @@ class AuctionStateModel {
     required this.passedPlayerIds,
     required this.players,
     this.standings = const [],
+    this.auctionQueue = const [],
   });
 
   factory AuctionStateModel.fromJson(Map<String, dynamic> json) {
@@ -119,6 +121,11 @@ class AuctionStateModel {
 
     final standingsList = (json['standings'] as List<dynamic>?)
             ?.map((s) => StandingsRecordModel.fromJson(s as Map<String, dynamic>))
+            .toList() ??
+        [];
+
+    final queueList = (json['auctionQueue'] as List<dynamic>?)
+            ?.map((e) => AuctionItemModel.fromJson(e as Map<String, dynamic>))
             .toList() ??
         [];
 
@@ -140,6 +147,7 @@ class AuctionStateModel {
       passedPlayerIds: passedList,
       players: playersList,
       standings: standingsList,
+      auctionQueue: queueList,
     );
   }
 }
