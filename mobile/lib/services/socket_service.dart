@@ -746,7 +746,7 @@ class SocketService {
     if (_socket?.connected == true) return;
     connect();
     int elapsed = 0;
-    while (_socket?.connected != true && elapsed < 4000) {
+    while (_socket?.connected != true && elapsed < 12000) {
       await Future.delayed(const Duration(milliseconds: 100));
       elapsed += 100;
     }
