@@ -8,7 +8,6 @@ import '../services/settings_service.dart';
 import '../services/audio_service.dart';
 import '../services/voice_chat_service.dart';
 import '../utils/platform_helper.dart';
-import '../widgets/age_verification_dialog.dart';
 import 'results_screen.dart';
 
 class AuctionScreen extends StatefulWidget {
@@ -672,7 +671,6 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                     final voiceState = voiceStates[p.id];
                     final isSpeaking = voiceState?.isSpeaking == true;
                     final isMuted = voiceState?.isMuted ?? true;
-                    final isLocallyMuted = VoiceChatService.instance.isPlayerLocallyMuted(p.id);
 
                     return GestureDetector(
                       onTap: () => _showPlayerWinningDetailsModal(context, p, amHost, currentSocketId, isMuted),
@@ -804,9 +802,9 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                                     child: Padding(
                                       padding: const EdgeInsets.only(left: 4),
                                       child: Icon(
-                                        isPlayerMuted ? Icons.mic_off_rounded : (isSpeaking ? Icons.graphic_eq_rounded : Icons.mic_rounded),
+                                        isMuted ? Icons.mic_off_rounded : (isSpeaking ? Icons.graphic_eq_rounded : Icons.mic_rounded),
                                         size: 13,
-                                        color: isPlayerMuted
+                                        color: isMuted
                                             ? Colors.redAccent
                                             : (isSpeaking ? Colors.greenAccent : AppTheme.champagneGold),
                                       ),
@@ -1146,7 +1144,9 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
         );
       },
     );
-  }
+  },
+);
+}
 
   // ==================== Center Column: Random Character Reveal ====================
   Widget _buildCenterCharacterRevealArea(
