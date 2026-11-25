@@ -369,6 +369,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       PolicyService.openTermsOfService(context);
                     },
                   ),
+                  const Divider(color: AppTheme.surfaceLight, height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.mail_outline_rounded, color: AppTheme.accent),
+                    title: const Text('Support & Feedback', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                    subtitle: const Text('oct.tion@gmail.com', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+                    trailing: const Icon(Icons.open_in_new_rounded, size: 18, color: AppTheme.textSecondary),
+                    onTap: () {
+                      AudioService().playSfx(SfxType.buttonClick);
+                      PolicyService.openSupportEmail(context);
+                    },
+                  ),
                 ],
               ),
             ),

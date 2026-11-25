@@ -7,6 +7,7 @@ class PolicyService {
 
   static const String privacyPolicyUrl = 'https://haalvinluis.github.io/Powerbid/privacy.html';
   static const String termsOfServiceUrl = 'https://haalvinluis.github.io/Powerbid/terms.html';
+  static const String supportEmail = 'oct.tion@gmail.com';
 
   /// Launches the official Privacy Policy in the external system browser.
   static Future<bool> openPrivacyPolicy(BuildContext context) {
@@ -23,6 +24,15 @@ class PolicyService {
       context,
       termsOfServiceUrl,
       title: 'Terms & Conditions',
+    );
+  }
+
+  /// Launches default email app with support recipient
+  static Future<bool> openSupportEmail(BuildContext context) {
+    return openUrl(
+      context,
+      'mailto:$supportEmail?subject=OCT-TION%20Player%20Inquiry',
+      title: 'Support Email',
     );
   }
 

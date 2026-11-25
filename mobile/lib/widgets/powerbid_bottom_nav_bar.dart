@@ -232,3 +232,5 @@ class PowerBidBottomNavBar extends StatelessWidget {
     );
   }
 }
+
+typedef OcttionBottomNavBar = PowerBidBottomNavBar;
