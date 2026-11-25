@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 import dotenv from 'dotenv';
@@ -30,7 +30,7 @@ const roomManager = new RoomManager();
 const PORT = process.env.PORT || 3000;
 
 // Universal CORS & Preflight middleware for HTTP requests
-app.use((_req, res, next) => {
+app.use((_req: Request, res: Response, next: NextFunction) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
@@ -43,7 +43,7 @@ app.use((_req, res, next) => {
 app.use(express.json({ limit: '64kb' }));
 
 // Diagnostic HTTP Request Logger (with strict credential redaction)
-app.use((req, _res, next) => {
+app.use((req: Request, _res: Response, next: NextFunction) => {
   if (req.path.startsWith('/api/')) {
     const sanitizedBody = { ...req.body };
     if (sanitizedBody.password) sanitizedBody.password = '[REDACTED_PASSWORD]';
@@ -55,7 +55,7 @@ app.use((req, _res, next) => {
   next();
 });
 
-app.get('/health', (_req, res) => {
+app.get('/health', (_req: Request, res: Response) => {
   const db = DatabasePool.getInstance();
   res.json({
     status: 'ok',
@@ -65,7 +65,7 @@ app.get('/health', (_req, res) => {
   });
 });
 
-app.get('/api/status', (_req, res) => {
+app.get('/api/status', (_req: Request, res: Response) => {
   const db = DatabasePool.getInstance();
   res.json({
     status: 'ok',
@@ -78,7 +78,7 @@ app.get('/api/status', (_req, res) => {
 });
 
 // HTTP REST API: Google Login
-app.post('/api/auth/google/login', async (req, res) => {
+app.post('/api/auth/google/login', async (req: Request, res: Response) => {
   try {
     const { idToken, guestPlayerId } = req.body || {};
     if (!idToken || typeof idToken !== 'string') {
@@ -111,7 +111,7 @@ app.post('/api/auth/google/login', async (req, res) => {
 });
 
 // HTTP REST API: Google Account Linking
-app.post('/api/auth/google/link', async (req, res) => {
+app.post('/api/auth/google/link', async (req: Request, res: Response) => {
   try {
     const { guestPlayerId, idToken } = req.body || {};
     if (!idToken || typeof idToken !== 'string') {
