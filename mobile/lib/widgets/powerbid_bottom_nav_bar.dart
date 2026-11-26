@@ -218,12 +218,12 @@ class PowerBidBottomNavBar extends StatelessWidget {
             BoxShadow(
               color: AppTheme.arcadeRedDark,
               blurRadius: 0,
-              offset: Offset(0, 3),
+              offset: Offset(0, 2.5),
             ),
             BoxShadow(
-              color: AppTheme.arcadeRedShadow,
-              blurRadius: 14,
-              offset: Offset(0, 4),
+              color: Color(0x20E53935),
+              blurRadius: 6,
+              offset: Offset(0, 2),
             ),
           ],
         ),

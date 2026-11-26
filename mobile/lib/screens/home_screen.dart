@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../services/audio_service.dart';
 import '../widgets/home_header.dart';
-import '../widgets/custom_button.dart';
 import '../widgets/powerbid_bottom_nav_bar.dart';
 import 'friends_screen.dart';
 import 'settings_screen.dart';
 import 'match_history_screen.dart';
 import 'mode_selection_screen.dart';
 import 'create_join_room_screen.dart';
-import 'character_packs_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,65 +17,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String _selectedCategoryTab = 'All';
   final TextEditingController _searchController = TextEditingController();
-
-  final List<String> _categoryTabs = [
-    'All',
-    'Anime',
-    'Gaming',
-    'Cricket',
-    'Superheroes',
-    'Movies',
-  ];
-
-  final List<Map<String, dynamic>> _recommendedArenas = [
-    {
-      'title': 'The Shinobi League',
-      'category': 'Anime',
-      'target': 'naruto',
-      'desc': 'Authentic ninja power duel • 8 Players',
-      'badge': '180 pts',
-      'icon': Icons.auto_awesome_rounded,
-      'color': Color(0xFF8B5CF6),
-    },
-    {
-      'title': 'Cricket Legends',
-      'category': 'Cricket',
-      'target': 'cricket',
-      'desc': 'ICC World Champions squad • 8 Players',
-      'badge': '220 pts',
-      'icon': Icons.sports_cricket_rounded,
-      'color': Color(0xFF10B981),
-    },
-    {
-      'title': 'Pokémon Champions',
-      'category': 'Gaming',
-      'target': 'pokemon',
-      'desc': 'Kanto & Legendary roster • 8 Players',
-      'badge': '200 pts',
-      'icon': Icons.catching_pokemon_rounded,
-      'color': Color(0xFF3B82F6),
-    },
-    {
-      'title': 'Avengers Assemble',
-      'category': 'Superheroes',
-      'target': 'superheroes',
-      'desc': 'Earth\'s mightiest hero clash • 8 Players',
-      'badge': '250 pts',
-      'icon': Icons.shield_rounded,
-      'color': Color(0xFFF59E0B),
-    },
-    {
-      'title': 'Grand Line Voyage',
-      'category': 'Anime',
-      'target': 'one_piece',
-      'desc': 'Straw Hat pirate crew • 8 Players',
-      'badge': '210 pts',
-      'icon': Icons.sailing_rounded,
-      'color': Color(0xFFEC4899),
-    },
-  ];
 
   @override
   void dispose() {
@@ -89,49 +29,38 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).padding.bottom;
 
-    final filteredArenas = _selectedCategoryTab == 'All'
-        ? _recommendedArenas
-        : _recommendedArenas.where((a) => a['category'] == _selectedCategoryTab).toList();
-
     return Scaffold(
       backgroundColor: AppTheme.mainBackground,
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
-          padding: EdgeInsets.fromLTRB(18.0, 12.0, 18.0, bottomInset + 32.0),
+          padding: EdgeInsets.fromLTRB(18.0, 16.0, 18.0, bottomInset + 32.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 1. Top Header (Logo, Wordmark, Profile Capsule & Notification Bell)
+              // 1. Top Header with Safe Spacing from Status Bar / Dynamic Island
+              const SizedBox(height: 6),
               const HomeHeader(),
-              const SizedBox(height: 16),
+              const SizedBox(height: 18),
 
-              // 2. Search Bar (Pill-shaped with search icon, matching reference UI)
+              // 2. Pill-shaped Search Bar
               _buildSearchBar(context),
               const SizedBox(height: 20),
 
-              // 3. Hero Feature Card (with CTA Button inside on the left, matching reference UI)
+              // 3. Hero Feature Card with 3D Red CTA Button inside on the left
               _buildHeroBanner(context),
               const SizedBox(height: 24),
 
-              // 4. Quick Actions 4-Icon Row (matching 4-icon layout from reference UI)
-              _buildQuickActionIconsRow(context),
+              // 4. Primary Actions (Browse Auctions & Create Room - kept from non-circled actions)
+              _buildPrimaryActions(context),
               const SizedBox(height: 24),
 
-              // 5. Category Filter Tabs Row (matching right screen tabs from reference UI)
-              _buildCategoryTabsRow(),
-              const SizedBox(height: 18),
-
-              // 6. "RECOMMEND" Section Header (matching vertical yellow accent bar from reference UI)
-              _buildRecommendHeader(context),
-              const SizedBox(height: 14),
-
-              // 7. Recommended Arenas List (Cards with action button on the right, matching reference UI)
-              _buildArenasList(context, filteredArenas),
+              // 5. Quick Access Shortcuts Hub (Friends, My Bids, Settings)
+              _buildQuickAccessHub(context),
               const SizedBox(height: 28),
 
-              // 8. Footer Watermark
+              // 6. Footer Watermark
               Center(
                 child: Text(
                   'v0.1.0 • Max 8 Players per Room • Fair Play & Hidden Points',
@@ -152,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// 2. Pill-shaped Search Bar (matching top of reference image)
+  /// 2. Pill-shaped Search Bar
   Widget _buildSearchBar(BuildContext context) {
     return Container(
       height: 48,
@@ -223,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// 3. Hero Feature Card with Button Inside on the Left (matching "Child Picture Book" card)
+  /// 3. Hero Feature Card with Button Inside on the Left
   Widget _buildHeroBanner(BuildContext context) {
     return Container(
       width: double.infinity,
@@ -377,7 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
-              // Right Icon / Character Artwork Emblem
+              // Right Icon Emblem
               Expanded(
                 flex: 4,
                 child: Center(
@@ -410,155 +339,165 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// 4. Quick Actions 4-Icon Row (matching the 4-icon grid from reference UI: book list, reading, space, more)
-  Widget _buildQuickActionIconsRow(BuildContext context) {
-    final actions = [
-      {
-        'label': 'Browse',
-        'icon': Icons.view_carousel_rounded,
-        'color': AppTheme.arcadeRed,
-        'onTap': () {
-          AudioService().playButtonClick();
-          Navigator.push(context, MaterialPageRoute(builder: (_) => const ModeSelectionScreen()));
-        },
-      },
-      {
-        'label': 'Create',
-        'icon': Icons.add_circle_outline_rounded,
-        'color': const Color(0xFFD97706),
-        'onTap': () {
-          AudioService().playButtonClick();
-          Navigator.push(context, MaterialPageRoute(builder: (_) => const CreateJoinRoomScreen()));
-        },
-      },
-      {
-        'label': 'Join PIN',
-        'icon': Icons.pin_rounded,
-        'color': const Color(0xFF2563EB),
-        'onTap': () {
-          AudioService().playButtonClick();
-          Navigator.push(context, MaterialPageRoute(builder: (_) => const CreateJoinRoomScreen()));
-        },
-      },
-      {
-        'label': 'Packs',
-        'icon': Icons.inventory_2_outlined,
-        'color': const Color(0xFF10B981),
-        'onTap': () {
-          AudioService().playButtonClick();
-          Navigator.push(context, MaterialPageRoute(builder: (_) => const CharacterPacksScreen()));
-        },
-      },
-    ];
-
+  /// 4. Primary Actions (Browse & Create Room - clean two-card layout)
+  Widget _buildPrimaryActions(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: actions.map((item) {
-        return Expanded(
+      children: [
+        // Browse Auctions Card
+        Expanded(
           child: GestureDetector(
-            onTap: item['onTap'] as VoidCallback,
-            behavior: HitTestBehavior.opaque,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: AppTheme.pureWhite,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: AppTheme.surfaceBorder, width: 1.2),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0x0C000000),
-                        blurRadius: 10,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    item['icon'] as IconData,
-                    color: item['color'] as Color,
-                    size: 26,
-                  ),
-                ),
-                const SizedBox(height: 7),
-                Text(
-                  item['label'] as String,
-                  style: const TextStyle(
-                    fontFamily: AppTheme.fontFamily,
-                    color: AppTheme.textPrimary,
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  /// 5. Horizontal Category Tabs (matching right screen tabs from reference UI: Child, Humanities, Education...)
-  Widget _buildCategoryTabsRow() {
-    return SizedBox(
-      height: 38,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
-        itemCount: _categoryTabs.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 10),
-        itemBuilder: (context, index) {
-          final tab = _categoryTabs[index];
-          final isSelected = tab == _selectedCategoryTab;
-
-          return GestureDetector(
             onTap: () {
               AudioService().playButtonClick();
-              setState(() => _selectedCategoryTab = tab);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ModeSelectionScreen()),
+              );
             },
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  tab,
-                  style: TextStyle(
-                    fontFamily: AppTheme.fontFamily,
-                    color: isSelected ? AppTheme.textPrimary : AppTheme.textSecondary,
-                    fontSize: 14,
-                    fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+              decoration: BoxDecoration(
+                color: AppTheme.pureWhite,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppTheme.surfaceBorder, width: 1.2),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x0C000000),
+                    blurRadius: 10,
+                    offset: Offset(0, 3),
                   ),
-                ),
-                const SizedBox(height: 4),
-                if (isSelected)
+                ],
+              ),
+              child: Row(
+                children: [
                   Container(
-                    width: 20,
-                    height: 3,
+                    width: 44,
+                    height: 44,
                     decoration: BoxDecoration(
-                      color: AppTheme.softMustardYellow,
-                      borderRadius: BorderRadius.circular(2),
+                      color: AppTheme.arcadeRed.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(14),
                     ),
-                  )
-                else
-                  const SizedBox(height: 3),
-              ],
+                    child: const Icon(
+                      Icons.view_carousel_rounded,
+                      color: AppTheme.arcadeRed,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Browse',
+                          style: TextStyle(
+                            fontFamily: AppTheme.fontFamily,
+                            color: AppTheme.textPrimary,
+                            fontSize: 14.5,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        SizedBox(height: 2),
+                        Text(
+                          'Auctions',
+                          style: TextStyle(
+                            fontFamily: AppTheme.fontFamily,
+                            color: AppTheme.textSecondary,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          );
-        },
-      ),
+          ),
+        ),
+        const SizedBox(width: 12),
+
+        // Create Room Card
+        Expanded(
+          child: GestureDetector(
+            onTap: () {
+              AudioService().playButtonClick();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const CreateJoinRoomScreen()),
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+              decoration: BoxDecoration(
+                color: AppTheme.pureWhite,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppTheme.surfaceBorder, width: 1.2),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x0C000000),
+                    blurRadius: 10,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFD97706).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: const Icon(
+                      Icons.add_circle_outline_rounded,
+                      color: Color(0xFFD97706),
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Create',
+                          style: TextStyle(
+                            fontFamily: AppTheme.fontFamily,
+                            color: AppTheme.textPrimary,
+                            fontSize: 14.5,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        SizedBox(height: 2),
+                        Text(
+                          'Room / PIN',
+                          style: TextStyle(
+                            fontFamily: AppTheme.fontFamily,
+                            color: AppTheme.textSecondary,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
-  /// 6. "RECOMMEND" Section Header with Yellow Vertical Accent Bar (matching reference UI)
-  Widget _buildRecommendHeader(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  /// 5. Quick Access Shortcuts Hub (Friends, My Bids, Settings)
+  Widget _buildQuickAccessHub(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            // Vertical Soft Mustard Yellow Accent Bar
             Container(
               width: 4,
               height: 18,
@@ -569,186 +508,151 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(width: 8),
             const Text(
-              'RECOMMEND',
+              'QUICK ACCESS',
               style: TextStyle(
                 fontFamily: AppTheme.fontFamily,
                 color: AppTheme.textPrimary,
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w900,
-                letterSpacing: 0.6,
+                letterSpacing: 0.5,
               ),
             ),
           ],
         ),
-        GestureDetector(
+        const SizedBox(height: 14),
+
+        // Row 1: Friends & Invites | My Bids
+        Row(
+          children: [
+            Expanded(
+              child: _buildQuickActionCard(
+                context: context,
+                icon: Icons.people_alt_rounded,
+                iconColor: const Color(0xFF8B5CF6),
+                title: 'Friends & Invites',
+                subtitle: 'OCT-ID & Requests',
+                onTap: () {
+                  AudioService().playButtonClick();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const FriendsScreen()),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildQuickActionCard(
+                context: context,
+                icon: Icons.history_edu_rounded,
+                iconColor: const Color(0xFF10B981),
+                title: 'My Bids',
+                subtitle: 'Match History',
+                onTap: () {
+                  AudioService().playButtonClick();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const MatchHistoryScreen()),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+
+        // Row 2: Settings Card
+        _buildQuickActionCard(
+          context: context,
+          icon: Icons.tune_rounded,
+          iconColor: const Color(0xFF2563EB),
+          title: 'Settings & Preferences',
+          subtitle: 'Audio, Vibration, SFX & Game Info',
           onTap: () {
             AudioService().playButtonClick();
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const ModeSelectionScreen()));
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SettingsScreen()),
+            );
           },
-          child: const Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'see all',
-                style: TextStyle(
-                  fontFamily: AppTheme.fontFamily,
-                  color: AppTheme.mutedText,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              SizedBox(width: 3),
-              Icon(Icons.arrow_forward_ios_rounded, color: AppTheme.mutedText, size: 10),
-            ],
-          ),
         ),
       ],
     );
   }
 
-  /// 7. Recommended Arenas List with Action Buttons on the Right (matching "The Giant Kingdom" and "Borrow it" button)
-  Widget _buildArenasList(BuildContext context, List<Map<String, dynamic>> arenas) {
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: arenas.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (context, index) {
-        final item = arenas[index];
-        final Color itemColor = item['color'] as Color;
-
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-          decoration: BoxDecoration(
-            color: AppTheme.pureWhite,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppTheme.surfaceBorder, width: 1.2),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x0A000000),
-                blurRadius: 10,
-                offset: Offset(0, 3),
+  Widget _buildQuickActionCard({
+    required BuildContext context,
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: AppTheme.pureWhite,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: AppTheme.surfaceBorder, width: 1.2),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x0A000000),
+              blurRadius: 8,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(9),
+              decoration: BoxDecoration(
+                color: iconColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
               ),
-            ],
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Left: Square rounded icon thumbnail
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: itemColor.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: itemColor.withValues(alpha: 0.3), width: 1.2),
-                ),
-                child: Icon(
-                  item['icon'] as IconData,
-                  color: itemColor,
-                  size: 26,
-                ),
-              ),
-              const SizedBox(width: 13),
-
-              // Center: Title, description, and status tag
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      item['title'] as String,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontFamily: AppTheme.fontFamily,
-                        color: AppTheme.textPrimary,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      item['desc'] as String,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontFamily: AppTheme.fontFamily,
-                        color: AppTheme.textSecondary,
-                        fontSize: 11,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: AppTheme.secondarySurface,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        item['badge'] as String,
-                        style: const TextStyle(
-                          fontFamily: AppTheme.fontFamily,
-                          color: Color(0xFFB45309),
-                          fontSize: 9.5,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 10),
-
-              // Right Side: Sleek Red 3D Pill Button (matching "Borrow it" from reference UI)
-              GestureDetector(
-                onTap: () {
-                  AudioService().playButtonClick();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ModeSelectionScreen(
-                        initialCategory: item['target'] as String,
-                      ),
-                    ),
-                  );
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8.5),
-                  decoration: BoxDecoration(
-                    gradient: AppTheme.redButtonGradient,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0x33FFFFFF), width: 1),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: AppTheme.arcadeRedDark,
-                        blurRadius: 0,
-                        offset: Offset(0, 2.5),
-                      ),
-                      BoxShadow(
-                        color: AppTheme.arcadeRedShadow,
-                        blurRadius: 6,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: const Text(
-                    'BID',
-                    style: TextStyle(
+              child: Icon(icon, color: iconColor, size: 20),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
                       fontFamily: AppTheme.fontFamily,
-                      color: Colors.white,
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 0.5,
+                      color: AppTheme.textPrimary,
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
-                ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontFamily: AppTheme.fontFamily,
+                      color: AppTheme.textSecondary,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        );
-      },
+            ),
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: AppTheme.mutedText,
+              size: 13,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

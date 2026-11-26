@@ -57,14 +57,22 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.deepNavyBg,
+      backgroundColor: AppTheme.mainBackground,
       appBar: AppBar(
-        title: const Text('My Bids & Match History'),
-        backgroundColor: AppTheme.navySurface,
+        title: const Text(
+          'My Bids & Match History',
+          style: TextStyle(
+            fontFamily: AppTheme.fontFamily,
+            color: AppTheme.textPrimary,
+            fontSize: 18,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        backgroundColor: AppTheme.mainBackground,
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh_rounded),
+            icon: const Icon(Icons.refresh_rounded, color: AppTheme.textPrimary),
             onPressed: _fetchMatchHistory,
           ),
         ],

@@ -162,7 +162,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             'Update Username',
             style: TextStyle(
               fontFamily: AppTheme.fontFamily,
-              color: AppTheme.pureWhite,
+              color: AppTheme.textPrimary,
               fontWeight: FontWeight.w800,
               fontSize: 18,
             ),
@@ -174,7 +174,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 controller: _usernameController,
                 style: const TextStyle(
                   fontFamily: AppTheme.fontFamily,
-                  color: AppTheme.pureWhite,
+                  color: AppTheme.textPrimary,
                 ),
                 decoration: InputDecoration(
                   labelText: 'New Username (3-20 chars)',
@@ -282,22 +282,22 @@ class _ProfileScreenState extends State<ProfileScreen>
     final bestWinStreak = _profileData?['bestWinStreak'] ?? 0;
 
     return Scaffold(
-      backgroundColor: AppTheme.deepNavyBg,
+      backgroundColor: AppTheme.mainBackground,
       appBar: AppBar(
-        backgroundColor: AppTheme.deepNavyBg,
+        backgroundColor: AppTheme.mainBackground,
         elevation: 0,
         title: const Text(
           'Player Profile',
           style: TextStyle(
             fontFamily: AppTheme.fontFamily,
-            color: AppTheme.pureWhite,
+            color: AppTheme.textPrimary,
             fontSize: 18,
             fontWeight: FontWeight.w800,
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings_rounded, color: AppTheme.pureWhite, size: 22),
+            icon: const Icon(Icons.settings_rounded, color: AppTheme.textPrimary, size: 22),
             onPressed: () {
               Navigator.push(
                 context,
@@ -306,7 +306,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             },
           ),
           IconButton(
-            icon: const Icon(Icons.refresh_rounded, color: AppTheme.pureWhite, size: 22),
+            icon: const Icon(Icons.refresh_rounded, color: AppTheme.textPrimary, size: 22),
             onPressed: _fetchProfileData,
           ),
         ],
@@ -328,10 +328,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                     delegate: _ProfileTabBarDelegate(
                       TabBar(
                         controller: _tabController,
-                        indicatorColor: AppTheme.goldHighlight,
+                        indicatorColor: AppTheme.arcadeRed,
                         indicatorWeight: 3,
-                        labelColor: AppTheme.goldHighlight,
-                        unselectedLabelColor: AppTheme.mutedText,
+                        labelColor: AppTheme.arcadeRed,
+                        unselectedLabelColor: AppTheme.textSecondary,
                         labelStyle: const TextStyle(
                           fontFamily: AppTheme.fontFamily,
                           fontWeight: FontWeight.w800,
@@ -378,14 +378,14 @@ class _ProfileScreenState extends State<ProfileScreen>
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: AppTheme.navySurface,
+        color: AppTheme.pureWhite,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppTheme.surfaceBorder, width: 1.2),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            color: Color(0x0C000000),
+            blurRadius: 10,
+            offset: Offset(0, 3),
           ),
         ],
       ),
@@ -420,7 +420,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                               fontFamily: AppTheme.fontFamily,
                               fontSize: 19,
                               fontWeight: FontWeight.w800,
-                              color: AppTheme.pureWhite,
+                              color: AppTheme.textPrimary,
                             ),
                           ),
                         ),
@@ -460,16 +460,16 @@ class _ProfileScreenState extends State<ProfileScreen>
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.photo_camera_rounded, size: 12, color: Color(0xFF93C5FD)),
+                            const Icon(Icons.photo_camera_rounded, size: 12, color: AppTheme.textPrimary),
                             const SizedBox(width: 4),
-                            Flexible(
+                            const Flexible(
                               child: Text(
                                 'Change Avatar',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontFamily: AppTheme.fontFamily,
-                                  color: Color(0xFF93C5FD),
+                                  color: AppTheme.textPrimary,
                                   fontSize: 10.5,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -499,13 +499,13 @@ class _ProfileScreenState extends State<ProfileScreen>
                   color: AppTheme.secondarySurface,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: AppTheme.goldHighlight.withValues(alpha: 0.4),
+                    color: AppTheme.softMustardYellow,
                   ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.badge_rounded, size: 14, color: AppTheme.goldHighlight),
+                    const Icon(Icons.badge_rounded, size: 14, color: Color(0xFFB45309)),
                     const SizedBox(width: 5),
                     Text(
                       () {
@@ -517,7 +517,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       }(),
                       style: const TextStyle(
                         fontFamily: AppTheme.fontFamily,
-                        color: AppTheme.goldHighlight,
+                        color: Color(0xFFB45309),
                         fontSize: 12,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 0.6,
@@ -770,7 +770,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 'ACHIEVEMENTS',
                 style: TextStyle(
                   fontFamily: AppTheme.fontFamily,
-                  color: AppTheme.pureWhite,
+                  color: AppTheme.textPrimary,
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.8,
@@ -784,7 +784,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontFamily: AppTheme.fontFamily,
-                    color: AppTheme.goldHighlight,
+                    color: Color(0xFFB45309),
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                   ),
@@ -812,7 +812,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               return Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppTheme.navySurface,
+                  color: AppTheme.pureWhite,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
                     color: isUnlocked ? AppTheme.goldHighlight : AppTheme.surfaceBorder,
@@ -838,7 +838,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                           iconText,
                           style: TextStyle(
                             fontSize: 18,
-                            color: isUnlocked ? Colors.white : Colors.grey,
+                            color: isUnlocked ? AppTheme.textPrimary : Colors.grey,
                           ),
                         ),
                       ),
@@ -850,9 +850,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                         children: [
                           Text(
                             title,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontFamily: AppTheme.fontFamily,
-                              color: isUnlocked ? AppTheme.pureWhite : AppTheme.mutedText,
+                              color: AppTheme.textPrimary,
                               fontWeight: FontWeight.w700,
                               fontSize: 13.5,
                             ),
@@ -956,7 +956,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                           category,
                           style: const TextStyle(
                             fontFamily: AppTheme.fontFamily,
-                            color: AppTheme.pureWhite,
+                            color: AppTheme.textPrimary,
                             fontWeight: FontWeight.w700,
                             fontSize: 13,
                           ),
@@ -1045,7 +1045,7 @@ class _ProfileTabBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
-      color: AppTheme.deepNavyBg,
+      color: AppTheme.mainBackground,
       child: _tabBar,
     );
   }
@@ -1259,7 +1259,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
                       fontFamily: AppTheme.fontFamily,
                       fontSize: 17,
                       fontWeight: FontWeight.w800,
-                      color: AppTheme.pureWhite,
+                      color: AppTheme.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -1268,7 +1268,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
                     style: const TextStyle(
                       fontFamily: AppTheme.fontFamily,
                       fontSize: 12.5,
-                      color: AppTheme.mutedText,
+                      color: AppTheme.textSecondary,
                     ),
                   ),
                 ],
@@ -1293,7 +1293,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
                 'Linked Authentication Provider',
                 style: TextStyle(
                   fontFamily: AppTheme.fontFamily,
-                  color: AppTheme.pureWhite,
+                  color: AppTheme.textPrimary,
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                 ),
@@ -1392,7 +1392,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
                         fontFamily: AppTheme.fontFamily,
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
-                        color: AppTheme.pureWhite,
+                        color: AppTheme.textPrimary,
                       ),
                     ),
                     SizedBox(height: 2),
@@ -1560,7 +1560,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
                           !_isSocialLoginMode ? 'Link with Google' : 'Sign in with Google',
                           style: const TextStyle(
                             fontFamily: AppTheme.fontFamily,
-                            color: AppTheme.pureWhite,
+                            color: AppTheme.textPrimary,
                             fontSize: 14.5,
                             fontWeight: FontWeight.w800,
                           ),
@@ -1629,7 +1629,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
               'Google OAuth Setup',
               style: TextStyle(
                 fontFamily: AppTheme.fontFamily,
-                color: AppTheme.pureWhite,
+                color: AppTheme.textPrimary,
                 fontWeight: FontWeight.w800,
                 fontSize: 16,
               ),
@@ -1647,7 +1647,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
               ),
               SelectableText(
                 AuthConfig.androidPackageName,
-                style: const TextStyle(color: AppTheme.pureWhite, fontSize: 12, fontFamily: 'monospace'),
+                style: const TextStyle(color: AppTheme.textPrimary, fontSize: 12, fontFamily: 'monospace'),
               ),
               const SizedBox(height: 10),
               const Text(
@@ -1656,7 +1656,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
               ),
               SelectableText(
                 AuthConfig.debugSha1,
-                style: const TextStyle(color: AppTheme.pureWhite, fontSize: 11, fontFamily: 'monospace'),
+                style: const TextStyle(color: AppTheme.textPrimary, fontSize: 11, fontFamily: 'monospace'),
               ),
               const SizedBox(height: 12),
               Text(
@@ -1699,7 +1699,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
                 title,
                 style: const TextStyle(
                   fontFamily: AppTheme.fontFamily,
-                  color: AppTheme.pureWhite,
+                  color: AppTheme.textPrimary,
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                 ),

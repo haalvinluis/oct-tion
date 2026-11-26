@@ -52,8 +52,17 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
     return Scaffold(
       backgroundColor: AppTheme.mainBackground,
       appBar: AppBar(
-        title: const Text('Auction Setup & Catalogue'),
-        backgroundColor: AppTheme.secondaryBackground,
+        title: const Text(
+          'Auction Setup & Catalogue',
+          style: TextStyle(
+            fontFamily: AppTheme.fontFamily,
+            color: AppTheme.textPrimary,
+            fontSize: 18,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        iconTheme: const IconThemeData(color: AppTheme.textPrimary),
+        backgroundColor: AppTheme.mainBackground,
         elevation: 0,
       ),
       body: SafeArea(

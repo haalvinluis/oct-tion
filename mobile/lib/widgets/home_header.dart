@@ -62,7 +62,7 @@ class HomeHeader extends StatelessWidget {
                         text: 'OCT-',
                         style: TextStyle(
                           fontFamily: AppTheme.fontFamily,
-                          color: AppTheme.creamText,
+                          color: AppTheme.textPrimary,
                           fontSize: 18,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 0.8,
@@ -72,7 +72,7 @@ class HomeHeader extends StatelessWidget {
                         text: 'TION',
                         style: TextStyle(
                           fontFamily: AppTheme.fontFamily,
-                          color: AppTheme.goldHighlight,
+                          color: Color(0xFFD97706),
                           fontSize: 18,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 0.8,
@@ -155,8 +155,8 @@ class HomeHeader extends StatelessWidget {
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
                                       fontFamily: AppTheme.fontFamily,
-                                      color: AppTheme.pureWhite,
-                                      fontSize: 10.5,
+                                      color: AppTheme.textPrimary,
+                                      fontSize: 11,
                                       fontWeight: FontWeight.w800,
                                     ),
                                   );
@@ -174,14 +174,14 @@ class HomeHeader extends StatelessWidget {
                                 Icon(
                                   Icons.shield_rounded,
                                   size: 11,
-                                  color: AppTheme.goldHighlight,
+                                  color: Color(0xFFB45309),
                                 ),
                                 SizedBox(width: 3),
                                 Text(
                                   'Player',
                                   style: TextStyle(
                                     fontFamily: AppTheme.fontFamily,
-                                    color: AppTheme.goldHighlight,
+                                    color: Color(0xFFB45309),
                                     fontSize: 10,
                                     fontWeight: FontWeight.w800,
                                   ),
