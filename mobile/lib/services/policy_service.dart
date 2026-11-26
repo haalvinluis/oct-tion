@@ -5,8 +5,8 @@ import '../theme/app_theme.dart';
 class PolicyService {
   PolicyService._();
 
-  static const String privacyPolicyUrl = 'https://haalvinluis.github.io/Powerbid/privacy.html';
-  static const String termsOfServiceUrl = 'https://haalvinluis.github.io/Powerbid/terms.html';
+  static const String privacyPolicyUrl = 'https://haalvinluis.github.io/oct-tion/privacy.html';
+  static const String termsOfServiceUrl = 'https://haalvinluis.github.io/oct-tion/terms.html';
   static const String supportEmail = 'oct.tion@gmail.com';
 
   /// Launches the official Privacy Policy in the external system browser.
