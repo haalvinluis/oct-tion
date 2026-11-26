@@ -19,7 +19,7 @@ class PowerBidBottomNavBar extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: AppTheme.pureWhite,
-        border: const Border(
+        border: Border(
           top: BorderSide(color: AppTheme.surfaceBorder, width: 1.2),
         ),
         boxShadow: [

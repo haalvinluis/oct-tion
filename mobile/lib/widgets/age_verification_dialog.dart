@@ -101,7 +101,7 @@ class _AgeVerificationDialogState extends State<AgeVerificationDialog> {
                   ),
                 ),
                 const SizedBox(width: 14),
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -127,7 +127,7 @@ class _AgeVerificationDialogState extends State<AgeVerificationDialog> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close_rounded, color: AppTheme.mutedText),
+                  icon: Icon(Icons.close_rounded, color: AppTheme.mutedText),
                   onPressed: () => Navigator.pop(context, false),
                 ),
               ],
@@ -255,7 +255,7 @@ class _AgeVerificationDialogState extends State<AgeVerificationDialog> {
                       setState(() => _confirmed = val ?? true);
                     },
                   ),
-                  const Expanded(
+                  Expanded(
                     child: Text(
                       'I confirm this is my real age and understand it cannot be changed.',
                       style: TextStyle(
@@ -268,7 +268,7 @@ class _AgeVerificationDialogState extends State<AgeVerificationDialog> {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
 
             // Confirm Button
             ElevatedButton(

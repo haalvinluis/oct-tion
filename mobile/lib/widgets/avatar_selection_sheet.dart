@@ -91,7 +91,7 @@ class _AvatarSelectionSheetState extends State<AvatarSelectionSheet> {
 
     return Container(
       padding: EdgeInsets.fromLTRB(20, 16, 20, bottomInset + 20),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppTheme.navySurface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         border: Border(
@@ -123,7 +123,7 @@ class _AvatarSelectionSheetState extends State<AvatarSelectionSheet> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'Choose Profile Avatar',
                       style: TextStyle(
                         fontFamily: AppTheme.fontFamily,
@@ -134,7 +134,7 @@ class _AvatarSelectionSheetState extends State<AvatarSelectionSheet> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close_rounded, color: AppTheme.mutedText),
+                      icon: Icon(Icons.close_rounded, color: AppTheme.mutedText),
                       onPressed: () => Navigator.pop(context),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
@@ -191,7 +191,7 @@ class _AvatarSelectionSheetState extends State<AvatarSelectionSheet> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              Text(
                                 'Select from Phone Gallery',
                                 style: TextStyle(
                                   fontFamily: AppTheme.fontFamily,
@@ -205,7 +205,7 @@ class _AvatarSelectionSheetState extends State<AvatarSelectionSheet> {
                                 currentData.isGallery
                                     ? 'Custom photo currently active'
                                     : 'Choose any picture from device gallery',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontFamily: AppTheme.fontFamily,
                                   color: AppTheme.mutedText,
                                   fontSize: 11,
@@ -257,7 +257,7 @@ class _AvatarSelectionSheetState extends State<AvatarSelectionSheet> {
                           ),
                         ),
                         const SizedBox(width: 14),
-                        const Expanded(
+                        Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -289,7 +289,7 @@ class _AvatarSelectionSheetState extends State<AvatarSelectionSheet> {
                 const SizedBox(height: 18),
 
                 // 2. Default Curated Avatars Heading
-                const Text(
+                Text(
                   'Or Pick a Default OCT-TION Avatar',
                   style: TextStyle(
                     fontFamily: AppTheme.fontFamily,
@@ -364,7 +364,7 @@ class _AvatarSelectionSheetState extends State<AvatarSelectionSheet> {
                                   bottom: 0,
                                   child: Container(
                                     padding: const EdgeInsets.all(2),
-                                    decoration: const BoxDecoration(
+                                    decoration: BoxDecoration(
                                       color: AppTheme.navySurface,
                                       shape: BoxShape.circle,
                                     ),

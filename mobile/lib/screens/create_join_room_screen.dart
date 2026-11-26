@@ -6,7 +6,6 @@ import '../models/category_model.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/section_header.dart';
 import '../widgets/room_preview_dialog.dart';
-import '../config/app_config.dart';
 import 'lobby_screen.dart';
 import 'mode_selection_screen.dart';
 
@@ -351,17 +350,17 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
                   style: const TextStyle(color: AppTheme.warmIvory, fontWeight: FontWeight.w600),
                   decoration: InputDecoration(
                     labelText: 'Username',
-                    labelStyle: const TextStyle(color: AppTheme.mutedText),
+                    labelStyle: TextStyle(color: AppTheme.mutedText),
                     hintText: 'Enter your player name',
-                    hintStyle: const TextStyle(color: AppTheme.mutedText),
+                    hintStyle: TextStyle(color: AppTheme.mutedText),
                     prefixIcon: const Icon(Icons.person_rounded, color: AppTheme.trueChampagneGold),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppTheme.surfaceBorder),
+                      borderSide: BorderSide(color: AppTheme.surfaceBorder),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppTheme.surfaceBorder),
+                      borderSide: BorderSide(color: AppTheme.surfaceBorder),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -432,7 +431,7 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
                 const SizedBox(height: 3),
                 Text(
                   'Join available public ${_getTopicDisplayName()} match instantly',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     color: AppTheme.mutedText,
                   ),
@@ -495,7 +494,7 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
                     ),
                     Text(
                       'Mode: ${widget.gameMode == "POWER_COMPARISON" ? "1v1 Power Comparison" : "Auction Team Challenge"}',
-                      style: const TextStyle(color: AppTheme.mutedText, fontSize: 11),
+                      style: TextStyle(color: AppTheme.mutedText, fontSize: 11),
                     ),
                   ],
                 ),
@@ -616,7 +615,7 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
             ],
           ),
           const SizedBox(height: 12),
-          const Divider(color: AppTheme.surfaceBorder, height: 1),
+          Divider(color: AppTheme.surfaceBorder, height: 1),
           const SizedBox(height: 12),
           _buildSummaryRow(
             icon: Icons.category_rounded,
@@ -647,34 +646,35 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
   }
 
   Widget _buildSummaryRow({required IconData icon, required String label, required String value}) {
-    return Row(
-      children: [
-        Icon(icon, size: 15, color: AppTheme.trueChampagneGold),
-        const SizedBox(width: 8),
-        Expanded(
-          flex: 4,
-          child: Text(
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(icon, size: 16, color: AppTheme.trueChampagneGold),
+          const SizedBox(width: 8),
+          Text(
             label,
             style: const TextStyle(
               fontSize: 12,
-              color: Color(0xFF94A3B8),
+              fontWeight: FontWeight.w600,
+              color: Color(0xFFCBD5E1),
             ),
           ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          flex: 6,
-          child: Text(
-            value,
-            textAlign: TextAlign.end,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -734,13 +734,13 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
                     decoration: BoxDecoration(
                       color: _selectedMaxPlayers == count
-                          ? AppTheme.selectedCard
-                          : AppTheme.darkCharcoalBurgundy,
+                          ? const Color(0xFFF8D366)
+                          : const Color(0xFF1E293B),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: _selectedMaxPlayers == count
-                            ? AppTheme.trueChampagneGold
-                            : AppTheme.surfaceBorder,
+                            ? const Color(0xFFD97706)
+                            : const Color(0xFF334155),
                         width: _selectedMaxPlayers == count ? 2 : 1,
                       ),
                     ),
@@ -748,8 +748,10 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
                       '$count',
                       style: TextStyle(
                         fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: _selectedMaxPlayers == count ? const Color(0xFF0F172A) : Colors.white,
+                        fontWeight: FontWeight.w900,
+                        color: _selectedMaxPlayers == count
+                            ? const Color(0xFF0F172A)
+                            : const Color(0xFFF8FAFC),
                       ),
                     ),
                   ),
@@ -817,13 +819,13 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
                     decoration: BoxDecoration(
                       color: _itemsPerPlayer == perPlayer
-                          ? AppTheme.selectedCard
-                          : AppTheme.darkCharcoalBurgundy,
+                          ? const Color(0xFFF8D366)
+                          : const Color(0xFF1E293B),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: _itemsPerPlayer == perPlayer
-                            ? AppTheme.trueChampagneGold
-                            : AppTheme.surfaceBorder,
+                            ? const Color(0xFFD97706)
+                            : const Color(0xFF334155),
                         width: _itemsPerPlayer == perPlayer ? 2 : 1,
                       ),
                     ),
@@ -831,8 +833,10 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
                       '$perPlayer Per Player (${_selectedMaxPlayers * perPlayer} Total)',
                       style: TextStyle(
                         fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: _itemsPerPlayer == perPlayer ? const Color(0xFF0F172A) : Colors.white,
+                        fontWeight: FontWeight.w900,
+                        color: _itemsPerPlayer == perPlayer
+                            ? const Color(0xFF0F172A)
+                            : const Color(0xFFF8FAFC),
                       ),
                     ),
                   ),
@@ -899,13 +903,13 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(
                       color: _selectedTimerDuration == duration
-                          ? AppTheme.selectedCard
-                          : AppTheme.darkCharcoalBurgundy,
+                          ? const Color(0xFFF8D366)
+                          : const Color(0xFF1E293B),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: _selectedTimerDuration == duration
-                            ? AppTheme.trueChampagneGold
-                            : AppTheme.surfaceBorder,
+                            ? const Color(0xFFD97706)
+                            : const Color(0xFF334155),
                         width: _selectedTimerDuration == duration ? 2 : 1,
                       ),
                     ),
@@ -914,10 +918,10 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
                         '${duration}s',
                         style: TextStyle(
                           fontSize: 12,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w900,
                           color: _selectedTimerDuration == duration
                               ? const Color(0xFF0F172A)
-                              : Colors.white,
+                              : const Color(0xFFF8FAFC),
                         ),
                       ),
                     ),
@@ -956,14 +960,14 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
                   labelText: 'Enter 6-Character Room Code',
-                  labelStyle: const TextStyle(color: AppTheme.mutedText),
+                  labelStyle: TextStyle(color: AppTheme.mutedText),
                   hintText: 'X7K9P2',
                   hintStyle: TextStyle(color: AppTheme.mutedText.withValues(alpha: 0.5)),
                   prefixIcon: const Icon(Icons.key_rounded, color: AppTheme.trueChampagneGold),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppTheme.surfaceBorder),
+                    borderSide: BorderSide(color: AppTheme.surfaceBorder),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),

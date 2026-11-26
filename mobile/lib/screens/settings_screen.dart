@@ -36,15 +36,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppTheme.surface,
-        title: const Text('Restore Defaults', style: TextStyle(color: AppTheme.textPrimary)),
-        content: const Text(
+        title: Text('Restore Defaults', style: TextStyle(color: AppTheme.textPrimary)),
+        content: Text(
           'Are you sure you want to reset all audio, gameplay, and display settings to default values?',
           style: TextStyle(color: AppTheme.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('CANCEL', style: TextStyle(color: AppTheme.textSecondary)),
+            child: Text('CANCEL', style: TextStyle(color: AppTheme.textSecondary)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppTheme.error),
@@ -83,20 +83,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   SwitchListTile(
                     title: const Text('Master Sound', style: TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: const Text('Toggle all game audio output', style: TextStyle(color: AppTheme.textSecondary)),
+                    subtitle: Text('Toggle all game audio output', style: TextStyle(color: AppTheme.textSecondary)),
                     value: _settings.masterSound,
-                    activeColor: AppTheme.accent,
+                    activeThumbColor: AppTheme.accent,
                     onChanged: (val) {
                       AudioService().playSfx(SfxType.buttonClick);
                       _settings.setMasterSound(val);
                     },
                   ),
-                  const Divider(color: AppTheme.surfaceLight),
+                  Divider(color: AppTheme.surfaceLight),
                   SwitchListTile(
                     title: const Text('Sound Effects (SFX)', style: TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: const Text('Bids, timer ticks, item announcements', style: TextStyle(color: AppTheme.textSecondary)),
+                    subtitle: Text('Bids, timer ticks, item announcements', style: TextStyle(color: AppTheme.textSecondary)),
                     value: _settings.sfxEnabled,
-                    activeColor: AppTheme.accent,
+                    activeThumbColor: AppTheme.accent,
                     onChanged: _settings.masterSound
                         ? (val) {
                             AudioService().playSfx(SfxType.buttonClick);
@@ -104,12 +104,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           }
                         : null,
                   ),
-                  const Divider(color: AppTheme.surfaceLight),
+                  Divider(color: AppTheme.surfaceLight),
                   SwitchListTile(
                     title: const Text('Button Touch Sounds', style: TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: const Text('Subtle UI audio feedback on button taps', style: TextStyle(color: AppTheme.textSecondary)),
+                    subtitle: Text('Subtle UI audio feedback on button taps', style: TextStyle(color: AppTheme.textSecondary)),
                     value: _settings.buttonTouchSound,
-                    activeColor: AppTheme.accent,
+                    activeThumbColor: AppTheme.accent,
                     onChanged: _settings.masterSound
                         ? (val) {
                             AudioService().playButtonClick();
@@ -117,12 +117,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           }
                         : null,
                   ),
-                  const Divider(color: AppTheme.surfaceLight),
+                  Divider(color: AppTheme.surfaceLight),
                   SwitchListTile(
                     title: const Text('Background Music', style: TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: const Text('Lobby & match background music', style: TextStyle(color: AppTheme.textSecondary)),
+                    subtitle: Text('Lobby & match background music', style: TextStyle(color: AppTheme.textSecondary)),
                     value: _settings.musicEnabled,
-                    activeColor: AppTheme.accent,
+                    activeThumbColor: AppTheme.accent,
                     onChanged: _settings.masterSound
                         ? (val) {
                             AudioService().playSfx(SfxType.buttonClick);
@@ -130,7 +130,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           }
                         : null,
                   ),
-                  const Divider(color: AppTheme.surfaceLight),
+                  Divider(color: AppTheme.surfaceLight),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     child: Column(
@@ -175,31 +175,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   SwitchListTile(
                     title: const Text('Vibration Feedback', style: TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: const Text('Haptic responses on bids & countdown warnings', style: TextStyle(color: AppTheme.textSecondary)),
+                    subtitle: Text('Haptic responses on bids & countdown warnings', style: TextStyle(color: AppTheme.textSecondary)),
                     value: _settings.vibrationEnabled,
-                    activeColor: AppTheme.accent,
+                    activeThumbColor: AppTheme.accent,
                     onChanged: (val) {
                       AudioService().playSfx(SfxType.buttonClick);
                       _settings.setVibrationEnabled(val);
                     },
                   ),
-                  const Divider(color: AppTheme.surfaceLight),
+                  Divider(color: AppTheme.surfaceLight),
                   SwitchListTile(
                     title: const Text('Confirm High Bids', style: TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: const Text('Prompt for confirmation when bidding > 50% remaining budget', style: TextStyle(color: AppTheme.textSecondary)),
+                    subtitle: Text('Prompt for confirmation when bidding > 50% remaining budget', style: TextStyle(color: AppTheme.textSecondary)),
                     value: _settings.confirmBidDialog,
-                    activeColor: AppTheme.accent,
+                    activeThumbColor: AppTheme.accent,
                     onChanged: (val) {
                       AudioService().playSfx(SfxType.buttonClick);
                       _settings.setConfirmBidDialog(val);
                     },
                   ),
-                  const Divider(color: AppTheme.surfaceLight),
+                  Divider(color: AppTheme.surfaceLight),
                   SwitchListTile(
                     title: const Text('Confirm Leave Match', style: TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: const Text('Warn before forfeiting active auction match', style: TextStyle(color: AppTheme.textSecondary)),
+                    subtitle: Text('Warn before forfeiting active auction match', style: TextStyle(color: AppTheme.textSecondary)),
                     value: _settings.confirmLeaveMatch,
-                    activeColor: AppTheme.accent,
+                    activeThumbColor: AppTheme.accent,
                     onChanged: (val) {
                       AudioService().playSfx(SfxType.buttonClick);
                       _settings.setConfirmLeaveMatch(val);
@@ -234,7 +234,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  const Divider(color: AppTheme.surfaceLight),
+                  Divider(color: AppTheme.surfaceLight),
                   const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -302,7 +302,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       const Icon(Icons.gavel_rounded, color: AppTheme.gold, size: 28),
                       const SizedBox(width: 8),
                       RichText(
-                        text: const TextSpan(
+                        text: TextSpan(
                           children: [
                             TextSpan(
                               text: 'OCT-',
@@ -324,14 +324,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                       ),
                       const Spacer(),
-                      const Chip(
+                      Chip(
                         label: Text('v1.0.0', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                         backgroundColor: AppTheme.surfaceLight,
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
-                  const Text(
+                  Text(
                     'OCT-TION — Bid • Win • Rule. Real-time multiplayer auction game. Draft high-scoring characters, manage budgets, and outbid opponents in live arenas.',
                     style: TextStyle(color: AppTheme.textSecondary, fontSize: 13, height: 1.4),
                   ),
@@ -351,30 +351,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ListTile(
                     leading: const Icon(Icons.privacy_tip_outlined, color: AppTheme.accent),
                     title: const Text('Privacy Policy', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                    subtitle: const Text('Data handling, Google Sign-In and account deletion', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
-                    trailing: const Icon(Icons.open_in_new_rounded, size: 18, color: AppTheme.textSecondary),
+                    subtitle: Text('Data handling, Google Sign-In and account deletion', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+                    trailing: Icon(Icons.open_in_new_rounded, size: 18, color: AppTheme.textSecondary),
                     onTap: () {
                       AudioService().playSfx(SfxType.buttonClick);
                       PolicyService.openPrivacyPolicy(context);
                     },
                   ),
-                  const Divider(color: AppTheme.surfaceLight, height: 1),
+                  Divider(color: AppTheme.surfaceLight, height: 1),
                   ListTile(
                     leading: const Icon(Icons.description_outlined, color: AppTheme.accent),
                     title: const Text('Terms & Conditions', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                    subtitle: const Text('Rules, bidding system, virtual currency & guidelines', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
-                    trailing: const Icon(Icons.open_in_new_rounded, size: 18, color: AppTheme.textSecondary),
+                    subtitle: Text('Rules, bidding system, virtual currency & guidelines', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+                    trailing: Icon(Icons.open_in_new_rounded, size: 18, color: AppTheme.textSecondary),
                     onTap: () {
                       AudioService().playSfx(SfxType.buttonClick);
                       PolicyService.openTermsOfService(context);
                     },
                   ),
-                  const Divider(color: AppTheme.surfaceLight, height: 1),
+                  Divider(color: AppTheme.surfaceLight, height: 1),
                   ListTile(
                     leading: const Icon(Icons.mail_outline_rounded, color: AppTheme.accent),
                     title: const Text('Support & Feedback', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                    subtitle: const Text('oct.tion@gmail.com', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
-                    trailing: const Icon(Icons.open_in_new_rounded, size: 18, color: AppTheme.textSecondary),
+                    subtitle: Text('oct.tion@gmail.com', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+                    trailing: Icon(Icons.open_in_new_rounded, size: 18, color: AppTheme.textSecondary),
                     onTap: () {
                       AudioService().playSfx(SfxType.buttonClick);
                       PolicyService.openSupportEmail(context);

@@ -133,7 +133,7 @@ class _RoomPreviewDialogState extends State<RoomPreviewDialog> {
       child: Padding(
         padding: const EdgeInsets.all(24.0),
         child: _isLoading
-            ? const SizedBox(
+            ? SizedBox(
                 height: 180,
                 child: Center(
                   child: Column(
@@ -155,7 +155,7 @@ class _RoomPreviewDialogState extends State<RoomPreviewDialog> {
                     children: [
                       const Icon(Icons.error_outline_rounded, color: Colors.redAccent, size: 48),
                       const SizedBox(height: 16),
-                      const Text(
+                      Text(
                         'Invitation Unavailable',
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
                       ),
@@ -163,7 +163,7 @@ class _RoomPreviewDialogState extends State<RoomPreviewDialog> {
                       Text(
                         _error!,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+                        style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton(
@@ -201,13 +201,13 @@ class _RoomPreviewDialogState extends State<RoomPreviewDialog> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Auction Invitation',
                       style: TextStyle(color: AppTheme.textSecondary, fontSize: 12, fontWeight: FontWeight.w600),
                     ),
                     Text(
                       'Room ${prev.roomCode}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: AppTheme.textPrimary,
@@ -259,10 +259,10 @@ class _RoomPreviewDialogState extends State<RoomPreviewDialog> {
           if (canJoin) ...[
             TextField(
               controller: _nameController,
-              style: const TextStyle(color: AppTheme.textPrimary),
+              style: TextStyle(color: AppTheme.textPrimary),
               decoration: InputDecoration(
                 labelText: 'Your Display Name',
-                labelStyle: const TextStyle(color: AppTheme.textSecondary),
+                labelStyle: TextStyle(color: AppTheme.textSecondary),
                 filled: true,
                 fillColor: AppTheme.surfaceLight,
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -315,8 +315,8 @@ class _RoomPreviewDialogState extends State<RoomPreviewDialog> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13)),
-        Text(value, style: const TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold, fontSize: 13)),
+        Text(label, style: TextStyle(color: AppTheme.textSecondary, fontSize: 13)),
+        Text(value, style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold, fontSize: 13)),
       ],
     );
   }

@@ -14,7 +14,7 @@ class _LeaderboardsScreenState extends State<LeaderboardsScreen>
   late TabController _tabController;
   final List<String> _types = ['most_wins', 'win_rate', 'most_items', 'most_matches'];
 
-  Map<String, List<Map<String, dynamic>>> _leaderboardData = {};
+  final Map<String, List<Map<String, dynamic>>> _leaderboardData = {};
   bool _isLoading = true;
 
   @override
@@ -95,7 +95,7 @@ class _LeaderboardsScreenState extends State<LeaderboardsScreen>
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             color: AppTheme.surfaceLight.withValues(alpha: 0.5),
-            child: const Row(
+            child: Row(
               children: [
                 Icon(Icons.info_outline_rounded, color: AppTheme.accent, size: 16),
                 SizedBox(width: 8),
@@ -114,9 +114,9 @@ class _LeaderboardsScreenState extends State<LeaderboardsScreen>
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.leaderboard_rounded, color: AppTheme.textSecondary, size: 56),
+                          Icon(Icons.leaderboard_rounded, color: AppTheme.textSecondary, size: 56),
                           const SizedBox(height: 12),
-                          const Text(
+                          Text(
                             'No Leaderboard Records Yet',
                             style: TextStyle(
                               color: AppTheme.textPrimary,
@@ -125,7 +125,7 @@ class _LeaderboardsScreenState extends State<LeaderboardsScreen>
                             ),
                           ),
                           const SizedBox(height: 6),
-                          const Text(
+                          Text(
                             'Complete online room matches to rank on global leaderboards.',
                             style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
                           ),
@@ -143,8 +143,9 @@ class _LeaderboardsScreenState extends State<LeaderboardsScreen>
                         final detailText = entry['detailText'] ?? '';
 
                         Color rankColor = AppTheme.surfaceLight;
-                        if (rank == 1) rankColor = const Color(0xFFFFD700); // Gold
-                        else if (rank == 2) rankColor = const Color(0xFFC0C0C0); // Silver
+                        if (rank == 1) {
+                          rankColor = const Color(0xFFFFD700); // Gold
+                        } else if (rank == 2) rankColor = const Color(0xFFC0C0C0); // Silver
                         else if (rank == 3) rankColor = const Color(0xFFCD7F32); // Bronze
 
                         return Container(
@@ -200,7 +201,7 @@ class _LeaderboardsScreenState extends State<LeaderboardsScreen>
                                   children: [
                                     Text(
                                       username,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: AppTheme.textPrimary,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 15,
@@ -209,7 +210,7 @@ class _LeaderboardsScreenState extends State<LeaderboardsScreen>
                                     const SizedBox(height: 2),
                                     Text(
                                       detailText,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: AppTheme.textSecondary,
                                         fontSize: 12,
                                       ),

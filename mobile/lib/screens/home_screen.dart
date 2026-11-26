@@ -103,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: TextField(
               controller: _searchController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: 'Search auctions, anime, heroes...',
                 hintStyle: TextStyle(
                   fontFamily: AppTheme.fontFamily,
@@ -117,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 isDense: true,
                 filled: false,
               ),
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: AppTheme.fontFamily,
                 color: AppTheme.textPrimary,
                 fontSize: 13.5,
@@ -141,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 MaterialPageRoute(builder: (_) => const ModeSelectionScreen()),
               );
             },
-            child: const Icon(
+            child: Icon(
               Icons.search_rounded,
               color: AppTheme.mutedText,
               size: 22,
@@ -233,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 10),
 
-                    const Text(
+                    Text(
                       'OCT-TION Arena',
                       style: TextStyle(
                         fontFamily: AppTheme.fontFamily,
@@ -244,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    const Text(
+                    Text(
                       'Bid, win authentic cards, up to 8 players.',
                       style: TextStyle(
                         fontFamily: AppTheme.fontFamily,
@@ -383,7 +383,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
@@ -456,7 +456,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
@@ -507,7 +507,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             const SizedBox(width: 8),
-            const Text(
+            Text(
               'QUICK ACCESS',
               style: TextStyle(
                 fontFamily: AppTheme.fontFamily,
@@ -624,7 +624,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: AppTheme.fontFamily,
                       color: AppTheme.textPrimary,
                       fontSize: 13.5,
@@ -636,7 +636,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     subtitle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: AppTheme.fontFamily,
                       color: AppTheme.textSecondary,
                       fontSize: 11,
@@ -645,7 +645,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            const Icon(
+            Icon(
               Icons.arrow_forward_ios_rounded,
               color: AppTheme.mutedText,
               size: 13,

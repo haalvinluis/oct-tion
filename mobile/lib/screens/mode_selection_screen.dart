@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../models/category_model.dart';
-import '../services/socket_service.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/section_header.dart';
 import '../widgets/powerbid_bottom_nav_bar.dart';
@@ -20,7 +19,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
   late String _selectedCategory;
   late String _selectedTopic;
   String _selectedGameMode = 'AUCTION_TEAM_CHALLENGE';
-  int _selectedItemCount = 10;
+  final int _selectedItemCount = 10;
 
   final List<int> _itemCountOptions = [5, 8, 10];
 
@@ -52,7 +51,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
     return Scaffold(
       backgroundColor: AppTheme.mainBackground,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Auction Setup & Catalogue',
           style: TextStyle(
             fontFamily: AppTheme.fontFamily,
@@ -61,7 +60,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
             fontWeight: FontWeight.w800,
           ),
         ),
-        iconTheme: const IconThemeData(color: AppTheme.textPrimary),
+        iconTheme: IconThemeData(color: AppTheme.textPrimary),
         backgroundColor: AppTheme.mainBackground,
         elevation: 0,
       ),
@@ -143,7 +142,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                     Expanded(
                       child: Text(
                         'Room Config: ${_selectedCategory == 'marvel' ? 'Marvel Characters' : CategoryModel.defaultDisplayName(_selectedTopic)} • Live Mystery Auction Arena',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppTheme.warmCream,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -367,7 +366,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
                   children: [
                     Text(
                       catalogueName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: AppTheme.warmCream,
@@ -398,7 +397,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
           const SizedBox(height: 12),
           Text(
             description,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               color: AppTheme.mutedText,
               height: 1.4,
@@ -413,7 +412,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: AppTheme.surfaceBorder),
             ),
-            child: const Row(
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(
@@ -539,7 +538,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
             const SizedBox(height: 8),
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
                 color: AppTheme.warmCream,
@@ -548,7 +547,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
             const SizedBox(height: 4),
             Text(
               subtitle,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11,
                 color: AppTheme.mutedText,
               ),

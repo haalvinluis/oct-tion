@@ -109,7 +109,7 @@ class HeroAuctionBanner extends StatelessWidget {
                     const SizedBox(height: 10),
 
                     // Headline
-                    const Text(
+                    Text(
                       'Big Bids. Bigger Wins!',
                       style: TextStyle(
                         fontFamily: AppTheme.fontFamily,
@@ -123,7 +123,7 @@ class HeroAuctionBanner extends StatelessWidget {
                     const SizedBox(height: 5),
 
                     // Subtitle
-                    const Text(
+                    Text(
                       'Join live auctions, place your bids and discover your next favourite.',
                       style: TextStyle(
                         fontFamily: AppTheme.fontFamily,

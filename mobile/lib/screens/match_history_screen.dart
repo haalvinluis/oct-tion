@@ -59,7 +59,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
     return Scaffold(
       backgroundColor: AppTheme.mainBackground,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'My Bids & Match History',
           style: TextStyle(
             fontFamily: AppTheme.fontFamily,
@@ -72,7 +72,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh_rounded, color: AppTheme.textPrimary),
+            icon: Icon(Icons.refresh_rounded, color: AppTheme.textPrimary),
             onPressed: _fetchMatchHistory,
           ),
         ],
@@ -100,7 +100,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                             ),
                           ),
                           const SizedBox(height: 18),
-                          const Text(
+                          Text(
                             'Connection Issue',
                             style: TextStyle(
                               color: AppTheme.textPrimary,
@@ -112,7 +112,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                           Text(
                             _errorMessage!,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppTheme.textSecondary,
                               fontSize: 13,
                               height: 1.4,
@@ -139,9 +139,9 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.history_rounded, color: AppTheme.textSecondary, size: 56),
+                            Icon(Icons.history_rounded, color: AppTheme.textSecondary, size: 56),
                             const SizedBox(height: 12),
-                            const Text(
+                            Text(
                               'No Completed Matches Recorded Yet',
                               style: TextStyle(
                                 color: AppTheme.textPrimary,
@@ -150,7 +150,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                               ),
                             ),
                             const SizedBox(height: 6),
-                            const Text(
+                            Text(
                               'Play an online auction room match to log your results.',
                               style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
                             ),
@@ -178,7 +178,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                             color: AppTheme.navySurface,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),
-                              side: const BorderSide(color: AppTheme.surfaceBorder),
+                              side: BorderSide(color: AppTheme.surfaceBorder),
                             ),
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -194,7 +194,7 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                                 children: [
                                   Text(
                                     category,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       color: AppTheme.textPrimary,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 15,
@@ -223,10 +223,10 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
                                 padding: const EdgeInsets.only(top: 4.0),
                                 child: Text(
                                   '${isTie ? 'Tie Result' : 'Winner: $winnerName'} • $itemCount Items • $dateStr',
-                                  style: const TextStyle(color: AppTheme.mutedText, fontSize: 12),
+                                  style: TextStyle(color: AppTheme.mutedText, fontSize: 12),
                                 ),
                               ),
-                              trailing: const Icon(Icons.chevron_right_rounded, color: AppTheme.mutedText),
+                              trailing: Icon(Icons.chevron_right_rounded, color: AppTheme.mutedText),
                               onTap: () {
                                 Navigator.push(
                                   context,

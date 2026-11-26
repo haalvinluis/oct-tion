@@ -144,7 +144,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     value: cat.id,
                     child: Text(
                       cat.name,
-                      style: const TextStyle(color: AppTheme.textPrimary),
+                      style: TextStyle(color: AppTheme.textPrimary),
                     ),
                   ),
                 );
@@ -172,10 +172,10 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const Text('Category', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
+                  Text('Category', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
-                    value: selectedCategory,
+                    initialValue: selectedCategory,
                     dropdownColor: AppTheme.surfaceLight,
                     decoration: const InputDecoration(contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
                     items: uniqueItems,
@@ -186,7 +186,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  const Text('Auction Characters (Starting 4 / Player)', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
+                  Text('Auction Characters (Starting 4 / Player)', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
@@ -205,7 +205,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     }).toList(),
                   ),
                   const SizedBox(height: 16),
-                  const Text('Bidding Timer Duration', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
+                  Text('Bidding Timer Duration', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
@@ -347,7 +347,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
+                        Text(
                           'Invite Friends to Room',
                           style: TextStyle(
                             fontSize: 18,
@@ -367,7 +367,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    const Text(
+                    Text(
                       'Choose friends to send an instant room invitation notification.',
                       style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
                     ),
@@ -378,7 +378,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                         child: Center(child: CircularProgressIndicator(color: AppTheme.accent)),
                       )
                     else if (friends.isEmpty)
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.all(32),
                         child: Center(
                           child: Column(
@@ -426,7 +426,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                                       children: [
                                         Text(
                                           friend.username,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             color: AppTheme.textPrimary,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 14,
@@ -572,7 +572,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    const Text(
+                    Text(
                       'Share Room Invitation',
                       style: TextStyle(
                         fontSize: 18,
@@ -581,7 +581,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    const Text(
+                    Text(
                       'Share an unguessable deep link. Friends can view the room preview and join directly.',
                       style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
                     ),
@@ -617,7 +617,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                                 inviteUrl ?? '',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: AppTheme.textPrimary,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
@@ -735,7 +735,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     ),
                     child: Column(
                       children: [
-                        const Text(
+                        Text(
                           'ROOM CODE',
                           style: TextStyle(
                             fontSize: 12,
@@ -758,7 +758,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.copy_rounded, color: AppTheme.textSecondary, size: 20),
+                              icon: Icon(Icons.copy_rounded, color: AppTheme.textSecondary, size: 20),
                               onPressed: () {
                                 Clipboard.setData(ClipboardData(text: widget.roomCode));
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -776,12 +776,12 @@ class _LobbyScreenState extends State<LobbyScreen> {
                             Chip(
                               label: Text('Category: ${room?.categoryDisplayName ?? CategoryModel.defaultDisplayName(widget.category)} • Topic: ${room?.topicDisplayName ?? (widget.topic != null ? CategoryModel.defaultDisplayName(widget.topic!) : room?.categoryDisplayName ?? CategoryModel.defaultDisplayName(widget.category))}'),
                               backgroundColor: AppTheme.surfaceLight,
-                              labelStyle: const TextStyle(fontSize: 11, color: AppTheme.textPrimary),
+                              labelStyle: TextStyle(fontSize: 11, color: AppTheme.textPrimary),
                             ),
                             Chip(
                               label: Text('${room?.totalItems ?? widget.itemCount} Items'),
                               backgroundColor: AppTheme.surfaceLight,
-                              labelStyle: const TextStyle(fontSize: 11, color: AppTheme.textPrimary),
+                              labelStyle: TextStyle(fontSize: 11, color: AppTheme.textPrimary),
                             ),
                             Chip(
                               label: Text('Timer: ${room?.timerDuration ?? 15}s'),
@@ -941,7 +941,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: AppTheme.surfaceBorder),
                         ),
-                        child: const Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             SizedBox(

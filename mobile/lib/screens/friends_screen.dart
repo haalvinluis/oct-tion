@@ -179,7 +179,7 @@ class _FriendsScreenState extends State<FriendsScreen>
       if (mounted) {
         if (res['success'] == true) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text('Friend request cancelled.'),
               backgroundColor: AppTheme.surfaceLight,
             ),
@@ -211,15 +211,15 @@ class _FriendsScreenState extends State<FriendsScreen>
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.surface,
-        title: const Text('Remove Friend', style: TextStyle(color: AppTheme.textPrimary)),
+        title: Text('Remove Friend', style: TextStyle(color: AppTheme.textPrimary)),
         content: Text(
           'Are you sure you want to remove ${friend.username} (${friend.publicPlayerId}) from your friends list?',
-          style: const TextStyle(color: AppTheme.textSecondary),
+          style: TextStyle(color: AppTheme.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel', style: TextStyle(color: AppTheme.textSecondary)),
+            child: Text('Cancel', style: TextStyle(color: AppTheme.textSecondary)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
@@ -336,12 +336,12 @@ class _FriendsScreenState extends State<FriendsScreen>
             children: [
               Icon(Icons.people_outline_rounded, size: 64, color: AppTheme.textSecondary.withValues(alpha: 0.5)),
               const SizedBox(height: 16),
-              const Text(
+              Text(
                 'No Friends Added Yet',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'Use the Find Friends tab to search players by their unique Player ID (e.g. OCT-10427).',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
@@ -411,7 +411,7 @@ class _FriendsScreenState extends State<FriendsScreen>
                           children: [
                             Text(
                               friend.username,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 color: AppTheme.textPrimary,
@@ -447,7 +447,7 @@ class _FriendsScreenState extends State<FriendsScreen>
                             const SizedBox(width: 12),
                             Text(
                               '${friend.matchesWon}W (${friend.winRate}%)',
-                              style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                              style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
                             ),
                           ],
                         ),
@@ -455,7 +455,7 @@ class _FriendsScreenState extends State<FriendsScreen>
                     ),
                   ),
                   PopupMenuButton<String>(
-                    icon: const Icon(Icons.more_vert_rounded, color: AppTheme.textSecondary),
+                    icon: Icon(Icons.more_vert_rounded, color: AppTheme.textSecondary),
                     color: AppTheme.surface,
                     onSelected: (val) {
                       if (val == 'copy_id') {
@@ -468,7 +468,7 @@ class _FriendsScreenState extends State<FriendsScreen>
                       }
                     },
                     itemBuilder: (ctx) => [
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'copy_id',
                         child: Row(
                           children: [
@@ -509,12 +509,12 @@ class _FriendsScreenState extends State<FriendsScreen>
             children: [
               Icon(Icons.mail_outline_rounded, size: 64, color: AppTheme.textSecondary.withValues(alpha: 0.5)),
               const SizedBox(height: 16),
-              const Text(
+              Text(
                 'No Pending Requests',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'Incoming and outgoing friend requests will appear here.',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
@@ -569,7 +569,7 @@ class _FriendsScreenState extends State<FriendsScreen>
                           children: [
                             Text(
                               req.senderUsername,
-                              style: const TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold, fontSize: 15),
+                              style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold, fontSize: 15),
                             ),
                             const SizedBox(height: 2),
                             Text(
@@ -599,7 +599,7 @@ class _FriendsScreenState extends State<FriendsScreen>
           if (_outgoingRequests.isNotEmpty) ...[
             Text(
               'SENT REQUESTS (${_outgoingRequests.length})',
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppTheme.textSecondary,
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
@@ -622,7 +622,7 @@ class _FriendsScreenState extends State<FriendsScreen>
                       CircleAvatar(
                         radius: 20,
                         backgroundColor: AppTheme.surfaceLight,
-                        child: const Icon(Icons.person_outline_rounded, color: AppTheme.textSecondary, size: 20),
+                        child: Icon(Icons.person_outline_rounded, color: AppTheme.textSecondary, size: 20),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -631,7 +631,7 @@ class _FriendsScreenState extends State<FriendsScreen>
                           children: [
                             Text(
                               req.receiverUsername,
-                              style: const TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold, fontSize: 15),
+                              style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold, fontSize: 15),
                             ),
                             const SizedBox(height: 2),
                             Text(
@@ -677,12 +677,12 @@ class _FriendsScreenState extends State<FriendsScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Search by Player ID',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
                 ),
                 const SizedBox(height: 6),
-                const Text(
+                Text(
                   'Every OCT-TION player has a unique non-sequential ID (e.g. OCT-10427). Ask your friend for their ID and enter it below.',
                   style: TextStyle(fontSize: 12, color: AppTheme.textSecondary),
                 ),
@@ -693,7 +693,7 @@ class _FriendsScreenState extends State<FriendsScreen>
                       child: TextField(
                         controller: _searchController,
                         textCapitalization: TextCapitalization.characters,
-                        style: const TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold, letterSpacing: 1.0),
+                        style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold, letterSpacing: 1.0),
                         decoration: InputDecoration(
                           hintText: 'OCT-XXXXX',
                           hintStyle: TextStyle(color: AppTheme.textSecondary.withValues(alpha: 0.5)),
@@ -789,7 +789,7 @@ class _FriendsScreenState extends State<FriendsScreen>
                             children: [
                               Text(
                                 _searchResult!['username']?.toString() ?? 'Player',
-                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
+                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
                               ),
                               const SizedBox(height: 4),
                               Row(
@@ -859,9 +859,9 @@ class _FriendsScreenState extends State<FriendsScreen>
   Widget _buildStatCol(String label, String value) {
     return Column(
       children: [
-        Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
+        Text(value, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
         const SizedBox(height: 2),
-        Text(label, style: const TextStyle(fontSize: 10, color: AppTheme.textSecondary, fontWeight: FontWeight.w600)),
+        Text(label, style: TextStyle(fontSize: 10, color: AppTheme.textSecondary, fontWeight: FontWeight.w600)),
       ],
     );
   }

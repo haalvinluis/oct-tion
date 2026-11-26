@@ -12,7 +12,7 @@ class ItemNameWithFlag extends StatelessWidget {
   final String itemName;
   final double fontSize;
   final FontWeight fontWeight;
-  final Color color;
+  final Color? color;
   final TextAlign textAlign;
   final int maxLines;
   final TextOverflow overflow;
@@ -25,7 +25,7 @@ class ItemNameWithFlag extends StatelessWidget {
     required this.itemName,
     this.fontSize = 22,
     this.fontWeight = FontWeight.w900,
-    this.color = AppTheme.primaryText,
+    this.color,
     this.textAlign = TextAlign.center,
     this.maxLines = 2,
     this.overflow = TextOverflow.ellipsis,
@@ -92,6 +92,7 @@ class ItemNameWithFlag extends StatelessWidget {
     final parts = parse(itemName);
     final scale = flagScale ?? 0.65;
     final computedFlagSize = (fontSize * scale).clamp(9.0, 32.0);
+    final effectiveColor = color ?? AppTheme.primaryText;
 
     // If NOT sports category, display character name alone without flag
     if (!isSports || parts.flag == null || parts.flag!.isEmpty) {
@@ -105,7 +106,7 @@ class ItemNameWithFlag extends StatelessWidget {
           fontSize: fontSize,
           fontWeight: fontWeight,
           letterSpacing: 0.5,
-          color: color,
+          color: effectiveColor,
         ),
       );
     }
@@ -121,7 +122,7 @@ class ItemNameWithFlag extends StatelessWidget {
           fontSize: fontSize,
           fontWeight: fontWeight,
           letterSpacing: 0.5,
-          color: color,
+          color: effectiveColor,
         ),
         children: [
           TextSpan(text: parts.baseName),

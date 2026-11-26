@@ -514,7 +514,7 @@ class SocketService {
       {
         'username': username,
         'category': category,
-        if (topic != null) 'topic': topic,
+        'topic': ?topic,
         'gameMode': gameMode,
         'itemCount': itemCount,
         'timerDuration': timerDuration,
@@ -698,10 +698,10 @@ class SocketService {
       'update_room_settings',
       {
         'roomCode': roomCode,
-        if (category != null) 'category': category,
-        if (topic != null) 'topic': topic,
-        if (itemCount != null) 'itemCount': itemCount,
-        if (timerDuration != null) 'timerDuration': timerDuration,
+        'category': ?category,
+        'topic': ?topic,
+        'itemCount': ?itemCount,
+        'timerDuration': ?timerDuration,
       },
       ack: (data) {
         if (data != null && data is Map<String, dynamic>) {
@@ -1195,7 +1195,7 @@ class SocketService {
     final completer = Completer<int?>();
     _socket!.emitWithAck(
       'get_coin_balance',
-      {if (playerId != null) 'playerId': playerId},
+      {'playerId': ?playerId},
       ack: (data) {
         if (data != null && data is Map && data['success'] == true && data['coinBalance'] != null) {
           final balance = data['coinBalance'] as int;
@@ -1340,7 +1340,7 @@ class SocketService {
     final completer = Completer<Map<String, dynamic>?>();
     _socket!.emitWithAck(
       'get_account_status',
-      {if (playerId != null) 'playerId': playerId},
+      {'playerId': ?playerId},
       ack: (data) {
         if (data != null && data is Map && data['success'] == true && data['status'] != null) {
           completer.complete(Map<String, dynamic>.from(data['status'] as Map));
@@ -1408,7 +1408,7 @@ class SocketService {
     final completer = Completer<List<Map<String, dynamic>>>();
     _socket!.emitWithAck(
       'get_unlocked_characters',
-      {if (playerId != null) 'playerId': playerId},
+      {'playerId': ?playerId},
       ack: (data) {
         if (data != null && data is Map && data['success'] == true && data['unlockedCharacters'] is List) {
           final list = (data['unlockedCharacters'] as List)

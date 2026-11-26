@@ -86,11 +86,11 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
         backgroundColor: AppTheme.navySurface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: AppTheme.surfaceBorder, width: 1.2),
+          side: BorderSide(color: AppTheme.surfaceBorder, width: 1.2),
         ),
         title: Text(
           'Unlock $packName?',
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: AppTheme.fontFamily,
             color: AppTheme.pureWhite,
             fontWeight: FontWeight.w800,
@@ -99,7 +99,7 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
         ),
         content: Text(
           'This will deduct $priceCoins virtual in-game coins from your balance. No real-money transaction will occur.',
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: AppTheme.fontFamily,
             color: AppTheme.mutedText,
             fontSize: 13,
@@ -109,7 +109,7 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('CANCEL', style: TextStyle(color: AppTheme.mutedText)),
+            child: Text('CANCEL', style: TextStyle(color: AppTheme.mutedText)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -178,7 +178,7 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
             const SizedBox(height: 8),
             Text(
               'Pack Unlocked!',
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: AppTheme.fontFamily,
                 color: AppTheme.pureWhite,
                 fontWeight: FontWeight.w900,
@@ -201,7 +201,7 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+              Text(
                 'You unlocked the following character cards:',
                 style: TextStyle(
                   fontFamily: AppTheme.fontFamily,
@@ -254,7 +254,7 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
                                   char['characterName'] ?? 'Character',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontFamily: AppTheme.fontFamily,
                                     color: AppTheme.pureWhite,
                                     fontWeight: FontWeight.bold,
@@ -263,7 +263,7 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
                                 ),
                                 Text(
                                   (char['categoryId'] ?? 'CATALOG').toString().toUpperCase(),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontFamily: AppTheme.fontFamily,
                                     color: AppTheme.mutedText,
                                     fontSize: 10,
@@ -343,14 +343,14 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
                               packName,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontFamily: AppTheme.fontFamily,
                                 color: AppTheme.pureWhite,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w800,
                               ),
                             ),
-                            const Text(
+                            Text(
                               'Sample Eligible Character Cards',
                               style: TextStyle(
                                 fontFamily: AppTheme.fontFamily,
@@ -362,12 +362,12 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close_rounded, color: AppTheme.mutedText),
+                        icon: Icon(Icons.close_rounded, color: AppTheme.mutedText),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ],
                   ),
-                  const Divider(color: AppTheme.surfaceBorder, height: 24),
+                  Divider(color: AppTheme.surfaceBorder, height: 24),
                   Expanded(
                     child: ListView.separated(
                       controller: scrollController,
@@ -404,7 +404,7 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
                                       item['displayName'] ?? 'Character',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontFamily: AppTheme.fontFamily,
                                         color: AppTheme.pureWhite,
                                         fontWeight: FontWeight.bold,
@@ -413,7 +413,7 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
                                     ),
                                     Text(
                                       (item['categoryId'] ?? 'CATALOG').toString().toUpperCase(),
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontFamily: AppTheme.fontFamily,
                                         color: AppTheme.mutedText,
                                         fontSize: 11,
@@ -461,7 +461,7 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
       appBar: AppBar(
         backgroundColor: AppTheme.navySurface,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Character Packs',
           style: TextStyle(
             fontFamily: AppTheme.fontFamily,
@@ -540,9 +540,9 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.inventory_2_outlined, color: AppTheme.mutedText, size: 48),
+            Icon(Icons.inventory_2_outlined, color: AppTheme.mutedText, size: 48),
             const SizedBox(height: 12),
-            const Text(
+            Text(
               'No character packs available.',
               style: TextStyle(color: AppTheme.mutedText, fontFamily: AppTheme.fontFamily),
             ),
@@ -633,11 +633,11 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
               ),
               Row(
                 children: [
-                  const Icon(Icons.style_rounded, color: AppTheme.mutedText, size: 16),
+                  Icon(Icons.style_rounded, color: AppTheme.mutedText, size: 16),
                   const SizedBox(width: 4),
                   Text(
                     '$count CARDS',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: AppTheme.fontFamily,
                       color: AppTheme.pureWhite,
                       fontWeight: FontWeight.bold,
@@ -653,7 +653,7 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
           // Pack Name
           Text(
             name,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: AppTheme.fontFamily,
               color: AppTheme.pureWhite,
               fontSize: 20,
@@ -663,7 +663,7 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
           const SizedBox(height: 4),
           Text(
             desc,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: AppTheme.fontFamily,
               color: AppTheme.mutedText,
               fontSize: 12.5,
@@ -677,7 +677,7 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'Eligible Characters Preview:',
                   style: TextStyle(
                     fontFamily: AppTheme.fontFamily,
@@ -719,7 +719,7 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
                     child: Center(
                       child: Text(
                         p['displayName'] ?? '',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: AppTheme.fontFamily,
                           color: AppTheme.pureWhite,
                           fontSize: 11,
@@ -796,9 +796,9 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.style_outlined, color: AppTheme.mutedText, size: 56),
+              Icon(Icons.style_outlined, color: AppTheme.mutedText, size: 56),
               const SizedBox(height: 14),
-              const Text(
+              Text(
                 'No Character Cards Unlocked Yet',
                 style: TextStyle(
                   fontFamily: AppTheme.fontFamily,
@@ -808,7 +808,7 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
                 ),
               ),
               const SizedBox(height: 6),
-              const Text(
+              Text(
                 'Purchase 5-card or 10-card packs in the Available Packs tab with in-game coins to build your deck.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -870,7 +870,7 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
                       item['characterName'] ?? 'Character Card',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: AppTheme.fontFamily,
                         color: AppTheme.pureWhite,
                         fontWeight: FontWeight.w800,
@@ -880,7 +880,7 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
                     const SizedBox(height: 2),
                     Text(
                       (item['categoryId'] ?? 'CATALOG').toString().toUpperCase(),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: AppTheme.fontFamily,
                         color: AppTheme.mutedText,
                         fontSize: 11,

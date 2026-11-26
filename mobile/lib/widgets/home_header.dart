@@ -56,7 +56,7 @@ class HomeHeader extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 RichText(
-                  text: const TextSpan(
+                  text: TextSpan(
                     children: [
                       TextSpan(
                         text: 'OCT-',
@@ -82,7 +82,7 @@ class HomeHeader extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 2),
-                const FittedBox(
+                FittedBox(
                   fit: BoxFit.scaleDown,
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -153,7 +153,7 @@ class HomeHeader extends StatelessWidget {
                                     displayName,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontFamily: AppTheme.fontFamily,
                                       color: AppTheme.textPrimary,
                                       fontSize: 11,

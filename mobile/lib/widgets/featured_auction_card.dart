@@ -24,7 +24,7 @@ class FeaturedAuctionCard extends StatelessWidget {
               size: 20,
             ),
             const SizedBox(width: 8),
-            const Flexible(
+            Flexible(
               child: FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.centerLeft,
@@ -158,7 +158,7 @@ class FeaturedAuctionCard extends StatelessWidget {
                             // Auction Title
                             Text(
                               titleText,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontFamily: AppTheme.fontFamily,
                                 color: AppTheme.textPrimary,
                                 fontSize: 18,
@@ -171,7 +171,7 @@ class FeaturedAuctionCard extends StatelessWidget {
                             // Description
                             Text(
                               descText,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontFamily: AppTheme.fontFamily,
                                 color: AppTheme.mutedText,
                                 fontSize: 11.5,
@@ -215,7 +215,7 @@ class FeaturedAuctionCard extends StatelessWidget {
                                               children: [
                                                 Text(
                                                   hasLiveAuction ? 'Timer' : 'Turn Rule',
-                                                  style: const TextStyle(
+                                                  style: TextStyle(
                                                     fontFamily: AppTheme.fontFamily,
                                                     color: AppTheme.mutedText,
                                                     fontSize: 9,
@@ -224,7 +224,7 @@ class FeaturedAuctionCard extends StatelessWidget {
                                                 ),
                                                 Text(
                                                   timerText,
-                                                  style: const TextStyle(
+                                                  style: TextStyle(
                                                     fontFamily: AppTheme.fontFamily,
                                                     color: AppTheme.textPrimary,
                                                     fontSize: 11.5,
@@ -267,7 +267,7 @@ class FeaturedAuctionCard extends StatelessWidget {
                                               children: [
                                                 Text(
                                                   hasLiveAuction ? 'Current Bid' : 'Starting Bid',
-                                                  style: const TextStyle(
+                                                  style: TextStyle(
                                                     fontFamily: AppTheme.fontFamily,
                                                     color: AppTheme.mutedText,
                                                     fontSize: 9,

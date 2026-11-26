@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../theme/app_theme.dart';
 import '../models/auction_state_model.dart';
 import '../models/player_model.dart';
@@ -180,20 +179,20 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
         context: context,
         builder: (context) => AlertDialog(
           backgroundColor: AppTheme.cardBackground,
-          title: const Text('Confirm High Bid', style: TextStyle(color: AppTheme.warmCream)),
+          title: Text('Confirm High Bid', style: TextStyle(color: AppTheme.warmCream)),
           content: Text(
             'Place bid of \$$nextBidAmount? Over 50% of your remaining budget (\$${myPlayer.budget}).',
-            style: const TextStyle(color: AppTheme.mutedText),
+            style: TextStyle(color: AppTheme.mutedText),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('CANCEL', style: TextStyle(color: AppTheme.mutedText)),
+              child: Text('CANCEL', style: TextStyle(color: AppTheme.mutedText)),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: AppTheme.champagneGold),
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('CONFIRM BID', style: TextStyle(color: AppTheme.mainBackground, fontWeight: FontWeight.bold)),
+              child: Text('CONFIRM BID', style: TextStyle(color: AppTheme.mainBackground, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -236,7 +235,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
       await SocketService.instance.passItem();
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('You passed on this item.'),
           backgroundColor: AppTheme.selectedCard,
           duration: Duration(seconds: 1),
@@ -266,15 +265,15 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
         context: context,
         builder: (context) => AlertDialog(
           backgroundColor: AppTheme.cardBackground,
-          title: const Text('Leave Match?', style: TextStyle(color: AppTheme.warmCream)),
-          content: const Text(
+          title: Text('Leave Match?', style: TextStyle(color: AppTheme.warmCream)),
+          content: Text(
             'Are you sure you want to forfeit and leave the active auction room?',
             style: TextStyle(color: AppTheme.mutedText),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('CANCEL', style: TextStyle(color: AppTheme.mutedText)),
+              child: Text('CANCEL', style: TextStyle(color: AppTheme.mutedText)),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: AppTheme.error),
@@ -326,7 +325,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close_rounded, color: AppTheme.mutedText, size: 20),
+                    icon: Icon(Icons.close_rounded, color: AppTheme.mutedText, size: 20),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
@@ -339,7 +338,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                   return ActionChip(
                     backgroundColor: AppTheme.selectedCard,
                     side: BorderSide(color: AppTheme.champagneGold.withValues(alpha: 0.3)),
-                    label: Text(msg, style: const TextStyle(color: AppTheme.warmCream, fontSize: 12)),
+                    label: Text(msg, style: TextStyle(color: AppTheme.warmCream, fontSize: 12)),
                     onPressed: () {
                       VoiceChatService.instance.sendChatMessage(msg);
                       Navigator.pop(context);
@@ -471,7 +470,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
       padding: const EdgeInsets.symmetric(horizontal: 14),
       decoration: BoxDecoration(
         color: AppTheme.secondaryBackground,
-        border: const Border(bottom: BorderSide(color: AppTheme.surfaceBorder, width: 1)),
+        border: Border(bottom: BorderSide(color: AppTheme.surfaceBorder, width: 1)),
       ),
       child: Row(
         children: [
@@ -815,7 +814,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                                       const SizedBox(height: 2),
                                       Text(
                                         '\$${p.budget} • ${p.acquiredItems.length} Won',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 9,
                                           fontWeight: FontWeight.w600,
                                           color: AppTheme.mutedText,
@@ -955,7 +954,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                               backgroundColor: AppTheme.trueChampagneGold,
                               child: Text(
                                 player.name.isNotEmpty ? player.name[0].toUpperCase() : '?',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: AppTheme.deepBlackBurgundy,
@@ -1012,7 +1011,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                                   ),
                                   Text(
                                     player.isHost ? 'Room Host • Active Bidder' : 'Player • Active Bidder',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 11,
                                       color: AppTheme.mutedText,
                                     ),
@@ -1021,13 +1020,13 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.close_rounded, color: AppTheme.mutedText),
+                              icon: Icon(Icons.close_rounded, color: AppTheme.mutedText),
                               onPressed: () => Navigator.pop(context),
                             ),
                           ],
                         ),
                     const SizedBox(height: 14),
-                    const Divider(color: AppTheme.surfaceBorder, height: 1),
+                    Divider(color: AppTheme.surfaceBorder, height: 1),
                     const SizedBox(height: 14),
 
                     // Balance Card
@@ -1041,7 +1040,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
+                          Text(
                             'Remaining Match Budget',
                             style: TextStyle(color: AppTheme.mutedText, fontSize: 13),
                           ),
@@ -1075,7 +1074,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                           ? ListView.separated(
                               shrinkWrap: true,
                               itemCount: player.purchasedItems.length,
-                              separatorBuilder: (_, __) => const SizedBox(height: 6),
+                              separatorBuilder: (_, _) => const SizedBox(height: 6),
                               itemBuilder: (context, idx) {
                                 final item = player.purchasedItems[idx];
                                 return Container(
@@ -1116,7 +1115,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                               ? ListView.separated(
                                   shrinkWrap: true,
                                   itemCount: player.acquiredItems.length,
-                                  separatorBuilder: (_, __) => const SizedBox(height: 6),
+                                  separatorBuilder: (_, _) => const SizedBox(height: 6),
                                   itemBuilder: (context, idx) {
                                     final name = player.acquiredItems[idx];
                                     return Container(
@@ -1156,7 +1155,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                               : Container(
                                   padding: const EdgeInsets.symmetric(vertical: 16),
                                   alignment: Alignment.center,
-                                  child: const Text(
+                                  child: Text(
                                     'No characters won yet in this auction match',
                                     style: TextStyle(color: AppTheme.mutedText, fontSize: 12),
                                   ),
@@ -1294,7 +1293,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                   isSports: isSports,
                 ),
                 const SizedBox(height: 6),
-                const Text(
+                Text(
                   'Starting Bid: \$0 • Players Start Bidding',
                   maxLines: 1,
                   textAlign: TextAlign.center,
@@ -1311,7 +1310,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
 
           // Highest Bid Banner
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
               color: isLeading ? AppTheme.selectedCard : AppTheme.mainBackground,
               borderRadius: BorderRadius.circular(12),
@@ -1327,13 +1326,13 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'HIGHEST BID',
                         style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppTheme.mutedText),
                       ),
                       Text(
                         '\$$currentBid',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: AppTheme.fontFamily,
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
@@ -1347,7 +1346,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      const Text(
+                      Text(
                         'LEADING BIDDER',
                         style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppTheme.mutedText),
                       ),
@@ -1415,7 +1414,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Flexible(
+                Flexible(
                   child: Text(
                     'Your Budget',
                     maxLines: 1,

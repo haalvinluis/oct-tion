@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../theme/app_theme.dart';
 import '../models/auction_state_model.dart';
 import '../services/socket_service.dart';
-import '../services/auth_service.dart';
 import '../utils/platform_helper.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/item_name_flag.dart';
@@ -65,7 +63,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                   border: Border.all(color: AppTheme.warning, width: 1.5),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.warning.withOpacity(0.15),
+                      color: AppTheme.warning.withValues(alpha: 0.15),
                       blurRadius: 20,
                       spreadRadius: 2,
                     ),
@@ -95,7 +93,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                           const SizedBox(height: 4),
                           Text(
                             winner.playerName,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppTheme.textPrimary,
                               fontSize: 22,
                               fontWeight: FontWeight.w900,
@@ -105,7 +103,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                             '${winner.totalTeamPoints} Total Team Points • ${winner.itemsWon} Items • \$${winner.remainingBudget} Budget Left',
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppTheme.textSecondary,
                               fontSize: 12,
                             ),
@@ -137,7 +135,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                       child: const Icon(Icons.stars_rounded, color: AppTheme.goldHighlight, size: 22),
                     ),
                     const SizedBox(width: 12),
-                    const Expanded(
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -168,7 +166,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
               ),
               const SizedBox(height: 16),
 
-              const Text(
+              Text(
                 'FINAL MATCH STANDINGS',
                 style: TextStyle(
                   color: AppTheme.textPrimary,
@@ -227,7 +225,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                                         p.playerName,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           color: AppTheme.textPrimary,
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -243,7 +241,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
-                                      color: AppTheme.primary.withOpacity(0.4),
+                                      color: AppTheme.primary.withValues(alpha: 0.4),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
@@ -274,7 +272,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                             runSpacing: 6,
                             children: p.itemsList.isEmpty
                                 ? [
-                                    const Text(
+                                    Text(
                                       'No items purchased',
                                       style: TextStyle(
                                         color: AppTheme.textSecondary,
@@ -294,7 +292,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                                         color: AppTheme.surfaceLight,
                                         borderRadius: BorderRadius.circular(8),
                                         border: Border.all(
-                                            color: AppTheme.primary.withOpacity(0.4)),
+                                            color: AppTheme.primary.withValues(alpha: 0.4)),
                                       ),
                                       child: Builder(builder: (context) {
                                         final parts = ItemNameWithFlag.parse(itemName);
@@ -303,7 +301,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                                           children: [
                                             Text(
                                               parts.baseName,
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 color: AppTheme.textPrimary,
                                                 fontSize: 11,
                                                 fontWeight: FontWeight.w600,
@@ -321,7 +319,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                                             ],
                                             Text(
                                               ' • \$$price',
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 color: AppTheme.textPrimary,
                                                 fontSize: 11,
                                                 fontWeight: FontWeight.w600,

@@ -84,7 +84,7 @@ class CategoryBrowseSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Expanded(
+            Expanded(
               child: FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.centerLeft,
@@ -108,7 +108,7 @@ class CategoryBrowseSection extends StatelessWidget {
                   MaterialPageRoute(builder: (_) => const ModeSelectionScreen()),
                 );
               },
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
@@ -230,7 +230,7 @@ class CategoryBrowseSection extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: AppTheme.fontFamily,
                 color: AppTheme.pureWhite,
                 fontSize: 12,

@@ -53,7 +53,7 @@ class NotificationsSheet extends StatelessWidget {
                       children: [
                         const Icon(Icons.notifications_rounded, color: AppTheme.accent, size: 22),
                         const SizedBox(width: 8),
-                        const Text(
+                        Text(
                           'Notifications',
                           style: TextStyle(
                             fontSize: 18,
@@ -86,7 +86,7 @@ class NotificationsSheet extends StatelessWidget {
                         children: [
                           Icon(Icons.notifications_none_rounded, size: 48, color: AppTheme.textSecondary.withValues(alpha: 0.5)),
                           const SizedBox(height: 12),
-                          const Text(
+                          Text(
                             'No Notifications',
                             style: TextStyle(color: AppTheme.textSecondary, fontSize: 14),
                           ),
@@ -196,7 +196,7 @@ class NotificationsSheet extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     notif.message,
-                    style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                    style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
                   ),
                   if (notif.type == 'ROOM_INVITE' && notif.data['token'] != null) ...[
                     const SizedBox(height: 8),

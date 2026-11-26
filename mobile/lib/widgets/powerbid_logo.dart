@@ -100,7 +100,7 @@ class PowerBidLogo extends StatelessWidget {
         ),
         if (showSubtitle) ...[
           const SizedBox(height: 6),
-          const Text(
+          Text(
             'OCT-TION — Bid • Win • Rule',
             style: TextStyle(
               color: AppTheme.creamText,

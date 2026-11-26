@@ -95,8 +95,8 @@ class _MatchDetailsScreenState extends State<MatchDetailsScreen> {
                         children: [
                           const Icon(Icons.error_outline_rounded, color: Colors.redAccent, size: 48),
                           const SizedBox(height: 12),
-                          Text(_errorMessage!, style: const TextStyle(color: AppTheme.textSecondary)),
-                          const SizedBox(height: 16),
+                          Text(_errorMessage!, style: TextStyle(color: AppTheme.textSecondary)),
+                          SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: _fetchMatchDetails,
                             child: const Text('Retry'),
@@ -136,7 +136,7 @@ class _MatchDetailsScreenState extends State<MatchDetailsScreen> {
                                   Chip(
                                     label: Text('$itemCount Items'),
                                     backgroundColor: AppTheme.surfaceLight,
-                                    labelStyle: const TextStyle(
+                                    labelStyle: TextStyle(
                                       color: AppTheme.textPrimary,
                                       fontSize: 11,
                                     ),
@@ -163,7 +163,7 @@ class _MatchDetailsScreenState extends State<MatchDetailsScreen> {
                                   const SizedBox(width: 8),
                                   Text(
                                     isTie ? 'Match Ended in a Tie!' : 'Winner: $winnerName',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       color: AppTheme.textPrimary,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -176,7 +176,7 @@ class _MatchDetailsScreenState extends State<MatchDetailsScreen> {
                         ),
                         const SizedBox(height: 24),
 
-                        const Text(
+                        Text(
                           'PARTICIPANT BREAKDOWN',
                           style: TextStyle(
                             color: AppTheme.textPrimary,
@@ -238,7 +238,7 @@ class _MatchDetailsScreenState extends State<MatchDetailsScreen> {
                                           const SizedBox(width: 10),
                                           Text(
                                             username,
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               color: AppTheme.textPrimary,
                                               fontSize: 15,
                                               fontWeight: FontWeight.bold,
@@ -273,16 +273,16 @@ class _MatchDetailsScreenState extends State<MatchDetailsScreen> {
 
                                   Text(
                                     'Characters Acquired ($itemsWon):',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       color: AppTheme.textSecondary,
                                       fontSize: 11,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  const SizedBox(height: 6),
+                                  SizedBox(height: 6),
 
                                   purchased.isEmpty
-                                      ? const Text(
+                                      ? Text(
                                           'No character items purchased in this match.',
                                           style: TextStyle(
                                             color: AppTheme.textSecondary,
@@ -313,7 +313,7 @@ class _MatchDetailsScreenState extends State<MatchDetailsScreen> {
                                                   children: [
                                                     Text(
                                                       parts.baseName,
-                                                      style: const TextStyle(
+                                                      style: TextStyle(
                                                         color: AppTheme.textPrimary,
                                                         fontSize: 11,
                                                       ),
@@ -330,7 +330,7 @@ class _MatchDetailsScreenState extends State<MatchDetailsScreen> {
                                                     ],
                                                     Text(
                                                       ' • \$$price',
-                                                      style: const TextStyle(
+                                                      style: TextStyle(
                                                         color: AppTheme.textPrimary,
                                                         fontSize: 11,
                                                       ),

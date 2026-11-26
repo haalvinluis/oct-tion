@@ -51,7 +51,7 @@ class StatBadge extends StatelessWidget {
                   label.toUpperCase(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: AppTheme.fontFamily,
                     color: AppTheme.mutedText,
                     fontSize: 10,

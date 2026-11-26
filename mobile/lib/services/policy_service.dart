@@ -164,7 +164,7 @@ class PolicyService {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Could not automatically launch the browser. The link has been copied to your clipboard so you can open it directly in Chrome:',
               style: TextStyle(
                 fontFamily: AppTheme.fontFamily,

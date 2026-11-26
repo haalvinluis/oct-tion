@@ -11,7 +11,6 @@ import '../widgets/avatar_selection_sheet.dart';
 import '../widgets/powerbid_bottom_nav_bar.dart';
 import 'match_history_screen.dart';
 import 'settings_screen.dart';
-import 'character_packs_screen.dart';
 import '../widgets/legal_links_footer.dart';
 import '../widgets/age_verification_dialog.dart';
 
@@ -156,9 +155,9 @@ class _ProfileScreenState extends State<ProfileScreen>
           backgroundColor: AppTheme.navySurface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
-            side: const BorderSide(color: AppTheme.surfaceBorder, width: 1.2),
+            side: BorderSide(color: AppTheme.surfaceBorder, width: 1.2),
           ),
-          title: const Text(
+          title: Text(
             'Update Username',
             style: TextStyle(
               fontFamily: AppTheme.fontFamily,
@@ -172,17 +171,17 @@ class _ProfileScreenState extends State<ProfileScreen>
             children: [
               TextField(
                 controller: _usernameController,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: AppTheme.fontFamily,
                   color: AppTheme.textPrimary,
                 ),
                 decoration: InputDecoration(
                   labelText: 'New Username (3-20 chars)',
-                  labelStyle: const TextStyle(color: AppTheme.mutedText),
+                  labelStyle: TextStyle(color: AppTheme.mutedText),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppTheme.surfaceBorder),
+                    borderSide: BorderSide(color: AppTheme.surfaceBorder),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -197,7 +196,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel', style: TextStyle(color: AppTheme.mutedText)),
+              child: Text('Cancel', style: TextStyle(color: AppTheme.mutedText)),
             ),
             ElevatedButton(
               onPressed: _isUpdatingName ? null : _handleUpdateUsername,
@@ -286,7 +285,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       appBar: AppBar(
         backgroundColor: AppTheme.mainBackground,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Player Profile',
           style: TextStyle(
             fontFamily: AppTheme.fontFamily,
@@ -297,7 +296,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings_rounded, color: AppTheme.textPrimary, size: 22),
+            icon: Icon(Icons.settings_rounded, color: AppTheme.textPrimary, size: 22),
             onPressed: () {
               Navigator.push(
                 context,
@@ -306,7 +305,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             },
           ),
           IconButton(
-            icon: const Icon(Icons.refresh_rounded, color: AppTheme.textPrimary, size: 22),
+            icon: Icon(Icons.refresh_rounded, color: AppTheme.textPrimary, size: 22),
             onPressed: _fetchProfileData,
           ),
         ],
@@ -416,7 +415,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                             username,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontFamily: AppTheme.fontFamily,
                               fontSize: 19,
                               fontWeight: FontWeight.w800,
@@ -460,9 +459,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.photo_camera_rounded, size: 12, color: AppTheme.textPrimary),
+                            Icon(Icons.photo_camera_rounded, size: 12, color: AppTheme.textPrimary),
                             const SizedBox(width: 4),
-                            const Flexible(
+                            Flexible(
                               child: Text(
                                 'Change Avatar',
                                 maxLines: 1,
@@ -484,7 +483,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14),
 
           // Player ID, Coins, and Account Link status pills
           Wrap(
@@ -552,7 +551,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: AppTheme.surfaceBorder),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(Icons.copy_rounded, size: 12, color: AppTheme.mutedText),
@@ -766,7 +765,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'ACHIEVEMENTS',
                 style: TextStyle(
                   fontFamily: AppTheme.fontFamily,
@@ -850,7 +849,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         children: [
                           Text(
                             title,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontFamily: AppTheme.fontFamily,
                               color: AppTheme.textPrimary,
                               fontWeight: FontWeight.w700,
@@ -860,7 +859,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                           const SizedBox(height: 2),
                           Text(
                             desc,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontFamily: AppTheme.fontFamily,
                               color: AppTheme.mutedText,
                               fontSize: 11,
@@ -902,7 +901,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       return Center(
         child: Padding(
           padding: EdgeInsets.only(bottom: bottomInset + 60),
-          child: const Column(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.history_rounded, color: AppTheme.mutedText, size: 48),
@@ -954,7 +953,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       children: [
                         Text(
                           category,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: AppTheme.fontFamily,
                             color: AppTheme.textPrimary,
                             fontWeight: FontWeight.w700,
@@ -964,7 +963,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         const SizedBox(height: 3),
                         Text(
                           'Winner: $winnerName • $dateStr',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: AppTheme.fontFamily,
                             color: AppTheme.mutedText,
                             fontSize: 11.5,
@@ -1199,7 +1198,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
             final userEmail = AuthService.instance.currentUserEmailNotifier.value;
 
             return Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: AppTheme.navySurface,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                 border: Border(top: BorderSide(color: AppTheme.surfaceBorder, width: 1.5)),
@@ -1253,7 +1252,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Protected Account',
                     style: TextStyle(
                       fontFamily: AppTheme.fontFamily,
@@ -1265,7 +1264,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
                   const SizedBox(height: 2),
                   Text(
                     email ?? googleEmail ?? 'Verified Player',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: AppTheme.fontFamily,
                       fontSize: 12.5,
                       color: AppTheme.textSecondary,
@@ -1289,7 +1288,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Linked Authentication Provider',
                 style: TextStyle(
                   fontFamily: AppTheme.fontFamily,
@@ -1307,7 +1306,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
                 onLinkTap: googleLinked ? null : () => _handleRealGoogleAuth(isLinkMode: true),
               ),
               if (email != null && email.isNotEmpty) ...[
-                const Divider(color: AppTheme.surfaceBorder, height: 16),
+                Divider(color: AppTheme.surfaceBorder, height: 16),
                 _buildProviderRow(
                   icon: Icons.email_rounded,
                   title: 'Email',
@@ -1382,7 +1381,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
                 child: const Icon(Icons.link_rounded, color: AppTheme.goldHighlight, size: 22),
               ),
               const SizedBox(width: 12),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1408,13 +1407,13 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.close_rounded, color: AppTheme.mutedText, size: 22),
+                icon: Icon(Icons.close_rounded, color: AppTheme.mutedText, size: 22),
                 onPressed: () => Navigator.of(context).pop(),
                 tooltip: 'Close',
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
 
           // Mode Selector: Link Guest (Keep Stats) vs Sign In (Existing User)
           Row(
@@ -1426,7 +1425,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
                     _errorMessage = null;
                   }),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 9),
+                    padding: EdgeInsets.symmetric(vertical: 9),
                     decoration: BoxDecoration(
                       color: !_isSocialLoginMode ? AppTheme.goldHighlight.withValues(alpha: 0.15) : Colors.transparent,
                       borderRadius: BorderRadius.circular(10),
@@ -1484,7 +1483,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
             !_isSocialLoginMode
                 ? 'Connect your verified Google account. Your match history, stats, and profile will be permanently linked.'
                 : 'Sign in to an existing Google-linked account. Your previously saved account data will be restored on this device.',
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: AppTheme.fontFamily,
               fontSize: 12,
               color: AppTheme.mutedText,
@@ -1558,7 +1557,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
                       children: [
                         Text(
                           !_isSocialLoginMode ? 'Link with Google' : 'Sign in with Google',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: AppTheme.fontFamily,
                             color: AppTheme.textPrimary,
                             fontSize: 14.5,
@@ -1566,7 +1565,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
                           ),
                         ),
                         const SizedBox(height: 2),
-                        const Text(
+                        Text(
                           'Genuine Google Sign-In with Play Services',
                           style: TextStyle(
                             fontFamily: AppTheme.fontFamily,
@@ -1595,15 +1594,15 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
           Center(
             child: TextButton.icon(
               onPressed: () => _showOAuthSetupInfo(context),
-              icon: const Icon(Icons.help_outline_rounded, size: 14, color: AppTheme.mutedText),
-              label: const Text(
+              icon: Icon(Icons.help_outline_rounded, size: 14, color: AppTheme.mutedText),
+              label: Text(
                 'Google OAuth Setup & SHA-1',
                 style: TextStyle(fontFamily: AppTheme.fontFamily, color: AppTheme.mutedText, fontSize: 11),
               ),
             ),
           ),
           const SizedBox(height: 12),
-          const Divider(color: AppTheme.surfaceBorder, height: 1),
+          Divider(color: AppTheme.surfaceBorder, height: 1),
           const SizedBox(height: 12),
           const LegalLinksFooter(showDisclaimer: true),
           const SizedBox(height: 8),
@@ -1619,12 +1618,12 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
         backgroundColor: AppTheme.navySurface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: AppTheme.surfaceBorder, width: 1.2),
+          side: BorderSide(color: AppTheme.surfaceBorder, width: 1.2),
         ),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.security_rounded, color: AppTheme.goldHighlight, size: 20),
-            SizedBox(width: 8),
+            const Icon(Icons.security_rounded, color: AppTheme.goldHighlight, size: 20),
+            const SizedBox(width: 8),
             Text(
               'Google OAuth Setup',
               style: TextStyle(
@@ -1641,27 +1640,27 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+              Text(
                 'Android Package Name:',
                 style: TextStyle(color: AppTheme.goldHighlight, fontWeight: FontWeight.bold, fontSize: 12),
               ),
               SelectableText(
                 AuthConfig.androidPackageName,
-                style: const TextStyle(color: AppTheme.textPrimary, fontSize: 12, fontFamily: 'monospace'),
+                style: TextStyle(color: AppTheme.textPrimary, fontSize: 12, fontFamily: 'monospace'),
               ),
-              const SizedBox(height: 10),
-              const Text(
+              SizedBox(height: 10),
+              Text(
                 'Debug Keystore SHA-1:',
                 style: TextStyle(color: AppTheme.goldHighlight, fontWeight: FontWeight.bold, fontSize: 12),
               ),
               SelectableText(
                 AuthConfig.debugSha1,
-                style: const TextStyle(color: AppTheme.textPrimary, fontSize: 11, fontFamily: 'monospace'),
+                style: TextStyle(color: AppTheme.textPrimary, fontSize: 11, fontFamily: 'monospace'),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               Text(
                 'Google Client ID: ${AuthConfig.isGoogleConfigured ? 'Configured' : 'Needs Web Client ID'}',
-                style: const TextStyle(color: AppTheme.mutedText, fontSize: 11),
+                style: TextStyle(color: AppTheme.mutedText, fontSize: 11),
               ),
             ],
           ),
@@ -1697,7 +1696,7 @@ class _AuthModalWidgetState extends State<_AuthModalWidget> {
             children: [
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: AppTheme.fontFamily,
                   color: AppTheme.textPrimary,
                   fontSize: 13,

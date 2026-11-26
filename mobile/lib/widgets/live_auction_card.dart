@@ -70,7 +70,7 @@ class LiveAuctionsSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Expanded(
+            Expanded(
               child: Row(
                 children: [
                   Icon(
@@ -106,7 +106,7 @@ class LiveAuctionsSection extends StatelessWidget {
                   MaterialPageRoute(builder: (_) => const ModeSelectionScreen()),
                 );
               },
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
@@ -203,7 +203,7 @@ class LiveAuctionsSection extends StatelessWidget {
                   item['title'] as String,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: AppTheme.fontFamily,
                     color: AppTheme.textPrimary,
                     fontSize: 14,
@@ -215,7 +215,7 @@ class LiveAuctionsSection extends StatelessWidget {
                   item['subtitle'] as String,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: AppTheme.fontFamily,
                     color: AppTheme.mutedText,
                     fontSize: 10.5,
