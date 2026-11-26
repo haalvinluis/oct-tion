@@ -18,18 +18,20 @@ class ItemNameWithFlag extends StatelessWidget {
   final TextOverflow overflow;
   final bool showBadge;
   final double? flagScale;
+  final bool isSports;
 
   const ItemNameWithFlag({
     super.key,
     required this.itemName,
     this.fontSize = 22,
     this.fontWeight = FontWeight.w900,
-    this.color = AppTheme.warmCream,
+    this.color = AppTheme.primaryText,
     this.textAlign = TextAlign.center,
     this.maxLines = 2,
     this.overflow = TextOverflow.ellipsis,
     this.showBadge = true,
     this.flagScale,
+    this.isSports = false,
   });
 
   static final RegExp _flagRegex = RegExp(
@@ -43,7 +45,7 @@ class ItemNameWithFlag extends StatelessWidget {
     if (match != null) {
       final flag = match.group(0)!.trim();
       final baseName = trimmed.substring(0, match.start).trim();
-      return ItemNameParts(baseName: baseName, flag: flag);
+      return ItemNameParts(baseName: baseName.isNotEmpty ? baseName : trimmed, flag: flag);
     }
     return ItemNameParts(baseName: trimmed, flag: null);
   }
@@ -54,71 +56,73 @@ class ItemNameWithFlag extends StatelessWidget {
     final scale = flagScale ?? 0.65;
     final computedFlagSize = (fontSize * scale).clamp(9.0, 32.0);
 
-    if (parts.flag != null && parts.flag!.isNotEmpty) {
-      return RichText(
+    // If NOT sports category, display character name alone without flag
+    if (!isSports || parts.flag == null || parts.flag!.isEmpty) {
+      return Text(
+        parts.baseName.isNotEmpty ? parts.baseName : itemName,
         textAlign: textAlign,
         maxLines: maxLines,
         overflow: overflow,
-        text: TextSpan(
-          style: TextStyle(
-            fontFamily: AppTheme.fontFamily,
-            fontSize: fontSize,
-            fontWeight: fontWeight,
-            letterSpacing: 0.5,
-            color: color,
-          ),
-          children: [
-            TextSpan(text: parts.baseName),
-            const TextSpan(text: ' '),
-            WidgetSpan(
-              alignment: PlaceholderAlignment.middle,
-              child: showBadge
-                  ? Container(
-                      margin: const EdgeInsets.only(left: 3),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: fontSize > 15 ? 5 : 3,
-                        vertical: fontSize > 15 ? 1.5 : 0.5,
+        style: TextStyle(
+          fontFamily: AppTheme.fontFamily,
+          fontSize: fontSize,
+          fontWeight: fontWeight,
+          letterSpacing: 0.5,
+          color: color,
+        ),
+      );
+    }
+
+    // In sports category: Show character name with smaller country flag next to it
+    return RichText(
+      textAlign: textAlign,
+      maxLines: maxLines,
+      overflow: overflow,
+      text: TextSpan(
+        style: TextStyle(
+          fontFamily: AppTheme.fontFamily,
+          fontSize: fontSize,
+          fontWeight: fontWeight,
+          letterSpacing: 0.5,
+          color: color,
+        ),
+        children: [
+          TextSpan(text: parts.baseName),
+          const TextSpan(text: ' '),
+          WidgetSpan(
+            alignment: PlaceholderAlignment.middle,
+            child: showBadge
+                ? Container(
+                    margin: const EdgeInsets.only(left: 3),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: fontSize > 15 ? 5 : 3,
+                      vertical: fontSize > 15 ? 1.5 : 0.5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(
+                        color: AppTheme.goldBorder.withValues(alpha: 0.55),
+                        width: 0.7,
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.35),
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(
-                          color: AppTheme.goldBorder.withValues(alpha: 0.45),
-                          width: 0.7,
-                        ),
-                      ),
-                      child: Text(
-                        parts.flag!,
-                        style: TextStyle(
-                          fontSize: computedFlagSize,
-                          height: 1.1,
-                        ),
-                      ),
-                    )
-                  : Text(
+                    ),
+                    child: Text(
                       parts.flag!,
                       style: TextStyle(
                         fontSize: computedFlagSize,
                         height: 1.1,
                       ),
                     ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return Text(
-      itemName,
-      textAlign: textAlign,
-      maxLines: maxLines,
-      overflow: overflow,
-      style: TextStyle(
-        fontFamily: AppTheme.fontFamily,
-        fontSize: fontSize,
-        fontWeight: fontWeight,
-        letterSpacing: 0.5,
-        color: color,
+                  )
+                : Text(
+                    parts.flag!,
+                    style: TextStyle(
+                      fontSize: computedFlagSize,
+                      height: 1.1,
+                    ),
+                  ),
+          ),
+        ],
       ),
     );
   }

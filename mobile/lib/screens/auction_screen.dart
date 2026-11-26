@@ -8,6 +8,7 @@ import '../services/settings_service.dart';
 import '../services/audio_service.dart';
 import '../services/voice_chat_service.dart';
 import '../utils/platform_helper.dart';
+import '../models/category_model.dart';
 import '../widgets/item_name_flag.dart';
 import 'results_screen.dart';
 
@@ -32,6 +33,36 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
 
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
+
+  bool _isSportsCategory(AuctionStateModel? state) {
+    final currentItem = state?.currentItem;
+    final itemCategory = currentItem?.category.trim().toLowerCase() ?? '';
+    if (itemCategory == 'sports' ||
+        itemCategory == 'cricket' ||
+        itemCategory == 'football' ||
+        itemCategory == 'basketball' ||
+        itemCategory == 'tennis' ||
+        itemCategory == 'wwe') {
+      return true;
+    }
+    final cat = widget.categoryDisplayName.trim().toLowerCase();
+    if (cat == 'sports' ||
+        cat == 'cricket' ||
+        cat == 'football' ||
+        cat == 'basketball' ||
+        cat == 'tennis' ||
+        cat == 'wwe') {
+      return true;
+    }
+    final parent = CategoryModel.getCategoryForTopic(cat);
+    if (parent == 'sports') {
+      return true;
+    }
+    if (itemCategory.isNotEmpty && CategoryModel.getCategoryForTopic(itemCategory) == 'sports') {
+      return true;
+    }
+    return false;
+  }
 
   @override
   void initState() {
@@ -832,37 +863,37 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                                 spacing: 3,
                                 runSpacing: 2.5,
                                 children: p.acquiredItems.map((itemName) {
+                                  final isSports = _isSportsCategory(state);
                                   final parts = ItemNameWithFlag.parse(itemName);
-                                  final baseShort = parts.baseName.length > 9 ? '${parts.baseName.substring(0, 8)}…' : parts.baseName;
                                   return Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1.5),
+                                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                                     decoration: BoxDecoration(
-                                      color: isMe ? AppTheme.selectedCard : AppTheme.mainBackground,
-                                      borderRadius: BorderRadius.circular(4),
+                                      color: isMe ? const Color(0xFFFFF7ED) : const Color(0xFFF8FAFC),
+                                      borderRadius: BorderRadius.circular(5),
                                       border: Border.all(
-                                        color: AppTheme.champagneGold.withValues(alpha: 0.6),
-                                        width: 0.6,
+                                        color: isMe ? const Color(0xFFF97316) : const Color(0xFFCBD5E1),
+                                        width: 0.8,
                                       ),
                                     ),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        const Icon(Icons.shield_rounded, size: 7.5, color: AppTheme.champagneGold),
-                                        const SizedBox(width: 2.5),
                                         Text(
-                                          baseShort,
-                                          style: const TextStyle(
-                                            fontSize: 8,
-                                            fontWeight: FontWeight.w700,
-                                            color: AppTheme.warmCream,
+                                          parts.baseName,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: 9,
+                                            fontWeight: FontWeight.bold,
+                                            color: isMe ? const Color(0xFFC2410C) : const Color(0xFF0F172A),
                                           ),
                                         ),
-                                        if (parts.flag != null) ...[
-                                          const SizedBox(width: 2),
+                                        if (isSports && parts.flag != null && parts.flag!.isNotEmpty) ...[
+                                          const SizedBox(width: 3),
                                           Text(
                                             parts.flag!,
                                             style: const TextStyle(
-                                              fontSize: 7,
+                                              fontSize: 8,
                                               height: 1.0,
                                             ),
                                           ),
@@ -1063,14 +1094,15 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                                           itemName: item.itemName,
                                           fontSize: 13,
                                           fontWeight: FontWeight.w600,
-                                          color: AppTheme.warmIvory,
+                                          color: AppTheme.primaryText,
                                           textAlign: TextAlign.start,
+                                          isSports: _isSportsCategory(SocketService.instance.auctionNotifier.value),
                                         ),
                                       ),
                                       Text(
                                         '— \$${item.price}',
                                         style: const TextStyle(
-                                          color: AppTheme.trueChampagneGold,
+                                          color: Color(0xFFB45309),
                                           fontWeight: FontWeight.bold,
                                           fontSize: 12,
                                         ),
@@ -1099,19 +1131,19 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                                           const Icon(Icons.star_rounded, color: AppTheme.trueChampagneGold, size: 16),
                                           const SizedBox(width: 8),
                                           Expanded(
-                                            child: Text(
-                                              name,
-                                              style: const TextStyle(
-                                                color: AppTheme.warmIvory,
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 13,
-                                              ),
+                                            child: ItemNameWithFlag(
+                                              itemName: name,
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppTheme.primaryText,
+                                              textAlign: TextAlign.start,
+                                              isSports: _isSportsCategory(SocketService.instance.auctionNotifier.value),
                                             ),
                                           ),
                                           const Text(
                                             'Won in Match',
                                             style: TextStyle(
-                                              color: AppTheme.trueChampagneGold,
+                                              color: Color(0xFFB45309),
                                               fontWeight: FontWeight.bold,
                                               fontSize: 11,
                                             ),
@@ -1179,7 +1211,15 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
     bool isLeading,
     bool hasPassed,
   ) {
-    final itemName = currentItem?.displayName ?? currentItem?.name ?? 'Mystery Character';
+    final isSports = _isSportsCategory(state);
+    final resolvedItem = currentItem ??
+        ((state != null && state.auctionQueue.isNotEmpty && state.currentItemIndex < state.auctionQueue.length)
+            ? state.auctionQueue[state.currentItemIndex]
+            : null);
+    final rawName = resolvedItem?.displayName ?? resolvedItem?.name ?? '';
+    final itemName = rawName.isNotEmpty
+        ? rawName
+        : (widget.categoryDisplayName.isNotEmpty ? '${widget.categoryDisplayName} Character' : 'Auction Item');
     final phase = state?.phase ?? 'BIDDING';
 
     return Container(
@@ -1221,7 +1261,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                         style: const TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
-                          color: AppTheme.champagneGold,
+                          color: Color(0xFFB45309),
                         ),
                       ),
                     ),
@@ -1230,6 +1270,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                       decoration: BoxDecoration(
                         color: AppTheme.selectedCard,
                         borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: AppTheme.goldBorder, width: 0.8),
                       ),
                       child: Text(
                         phase == 'SOLD' ? 'SOLD' : (phase == 'UNSOLD' ? 'UNSOLD' : 'LIVE AUCTION'),
@@ -1237,19 +1278,20 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                           color: phase == 'SOLD'
-                              ? Colors.greenAccent
-                              : (phase == 'UNSOLD' ? Colors.redAccent : AppTheme.warmCream),
+                              ? const Color(0xFF16A34A)
+                              : (phase == 'UNSOLD' ? const Color(0xFFDC2626) : const Color(0xFF0F172A)),
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 12),
                 ItemNameWithFlag(
                   itemName: itemName,
                   fontSize: 22,
                   fontWeight: FontWeight.w900,
-                  color: AppTheme.warmCream,
+                  color: AppTheme.primaryText,
+                  isSports: isSports,
                 ),
                 const SizedBox(height: 6),
                 const Text(
@@ -1259,8 +1301,8 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: AppTheme.mutedText,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.textSecondary,
                   ),
                 ),
               ],

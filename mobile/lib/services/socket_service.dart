@@ -194,43 +194,67 @@ class SocketService {
 
     // Auction engine broadcasts
     _socket!.on('auction_started', (data) {
-      if (data != null && data['roomState'] != null) {
+      if (data != null && data is Map && data['roomState'] != null) {
         auctionNotifier.value = AuctionStateModel.fromJson(data['roomState']);
       }
     });
 
     _socket!.on('item_announced', (data) {
-      if (data != null && data['roomState'] != null) {
-        auctionNotifier.value = AuctionStateModel.fromJson(data['roomState']);
+      if (data != null && data is Map) {
+        if (data['roomState'] != null) {
+          auctionNotifier.value = AuctionStateModel.fromJson(data['roomState']);
+        } else if (data['currentItem'] != null && auctionNotifier.value != null) {
+          final old = auctionNotifier.value!;
+          auctionNotifier.value = AuctionStateModel(
+            roomCode: old.roomCode,
+            gameMode: old.gameMode,
+            phase: 'ITEM_ANNOUNCED',
+            currentItemIndex: (data['itemIndex'] as num?)?.toInt() != null
+                ? ((data['itemIndex'] as num).toInt() - 1)
+                : old.currentItemIndex,
+            totalItems: (data['totalItems'] as num?)?.toInt() ?? old.totalItems,
+            currentItem: AuctionItemModel.fromJson(data['currentItem']),
+            currentBid: 0,
+            minNextBid: 25,
+            leadingBidderId: null,
+            leadingBidderName: null,
+            timerDuration: old.timerDuration,
+            timerSecondsRemaining: old.timerDuration,
+            passedPlayerIds: [],
+            players: old.players,
+            standings: old.standings,
+            auctionQueue: old.auctionQueue,
+          );
+        }
       }
     });
 
     _socket!.on('auction_state_update', (data) {
-      if (data != null && data is Map<String, dynamic>) {
+      if (data != null && data is Map) {
         auctionNotifier.value = AuctionStateModel.fromJson(data);
       }
     });
 
     _socket!.on('bid_accepted', (data) {
-      if (data != null && data['roomState'] != null) {
+      if (data != null && data is Map && data['roomState'] != null) {
         auctionNotifier.value = AuctionStateModel.fromJson(data['roomState']);
       }
     });
 
     _socket!.on('player_passed', (data) {
-      if (data != null && data['roomState'] != null) {
+      if (data != null && data is Map && data['roomState'] != null) {
         auctionNotifier.value = AuctionStateModel.fromJson(data['roomState']);
       }
     });
 
     _socket!.on('item_sold', (data) {
-      if (data != null && data['roomState'] != null) {
+      if (data != null && data is Map && data['roomState'] != null) {
         auctionNotifier.value = AuctionStateModel.fromJson(data['roomState']);
       }
     });
 
     _socket!.on('item_unsold', (data) {
-      if (data != null && data['roomState'] != null) {
+      if (data != null && data is Map && data['roomState'] != null) {
         auctionNotifier.value = AuctionStateModel.fromJson(data['roomState']);
       }
     });

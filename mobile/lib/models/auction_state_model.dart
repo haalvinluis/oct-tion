@@ -21,17 +21,30 @@ class AuctionItemModel {
     required this.basePrice,
   });
 
-  factory AuctionItemModel.fromJson(Map<String, dynamic> json) {
-    final nameStr = json['displayName'] ?? json['name'] ?? '';
+  factory AuctionItemModel.fromJson(dynamic rawJson) {
+    if (rawJson == null || rawJson is! Map) {
+      return const AuctionItemModel(
+        id: '',
+        name: '',
+        displayName: '',
+        category: '',
+        powerPoints: 0,
+        scoringMethod: '',
+        provenance: '',
+        basePrice: 0,
+      );
+    }
+    final json = Map<String, dynamic>.from(rawJson);
+    final nameStr = (json['displayName'] ?? json['name'] ?? '').toString();
     return AuctionItemModel(
-      id: json['id'] ?? '',
+      id: json['id']?.toString() ?? '',
       name: nameStr,
       displayName: nameStr,
-      category: json['categoryId'] ?? json['category'] ?? '',
-      powerPoints: json['powerPoints'] ?? 0,
-      scoringMethod: json['scoringMethod'] ?? 'Standard Rating Scale (0-100)',
-      provenance: json['provenance'] ?? 'Verified Official Reference Data',
-      basePrice: json['basePrice'] ?? 0,
+      category: (json['categoryId'] ?? json['category'] ?? '').toString(),
+      powerPoints: (json['powerPoints'] as num?)?.toInt() ?? 0,
+      scoringMethod: json['scoringMethod']?.toString() ?? 'Standard Rating Scale (0-100)',
+      provenance: json['provenance']?.toString() ?? 'Verified Official Reference Data',
+      basePrice: (json['basePrice'] as num?)?.toInt() ?? 0,
     );
   }
 }
@@ -108,9 +121,25 @@ class AuctionStateModel {
     this.auctionQueue = const [],
   });
 
-  factory AuctionStateModel.fromJson(Map<String, dynamic> json) {
+  factory AuctionStateModel.fromJson(dynamic rawJson) {
+    if (rawJson == null || rawJson is! Map) {
+      return const AuctionStateModel(
+        roomCode: '',
+        phase: 'LOBBY',
+        currentItemIndex: 0,
+        totalItems: 0,
+        currentBid: 0,
+        minNextBid: 25,
+        timerSecondsRemaining: 15,
+        passedPlayerIds: [],
+        players: [],
+      );
+    }
+    final json = Map<String, dynamic>.from(rawJson);
+
     final playersList = (json['players'] as List<dynamic>?)
-            ?.map((p) => PlayerModel.fromJson(p as Map<String, dynamic>))
+            ?.where((p) => p != null && p is Map)
+            .map((p) => PlayerModel.fromJson(Map<String, dynamic>.from(p as Map)))
             .toList() ??
         [];
 
@@ -120,30 +149,35 @@ class AuctionStateModel {
         [];
 
     final standingsList = (json['standings'] as List<dynamic>?)
-            ?.map((s) => StandingsRecordModel.fromJson(s as Map<String, dynamic>))
+            ?.where((s) => s != null && s is Map)
+            .map((s) => StandingsRecordModel.fromJson(Map<String, dynamic>.from(s as Map)))
             .toList() ??
         [];
 
     final queueList = (json['auctionQueue'] as List<dynamic>?)
-            ?.map((e) => AuctionItemModel.fromJson(e as Map<String, dynamic>))
+            ?.where((e) => e != null && e is Map)
+            .map((e) => AuctionItemModel.fromJson(Map<String, dynamic>.from(e as Map)))
             .toList() ??
         [];
 
+    AuctionItemModel? currentItemModel;
+    if (json['currentItem'] != null && json['currentItem'] is Map) {
+      currentItemModel = AuctionItemModel.fromJson(Map<String, dynamic>.from(json['currentItem'] as Map));
+    }
+
     return AuctionStateModel(
-      roomCode: json['roomCode'] ?? '',
-      gameMode: json['gameMode'] ?? 'AUCTION_TEAM_CHALLENGE',
-      phase: json['phase'] ?? 'LOBBY',
-      currentItemIndex: json['currentItemIndex'] ?? 0,
-      totalItems: json['totalItems'] ?? 0,
-      currentItem: json['currentItem'] != null
-          ? AuctionItemModel.fromJson(json['currentItem'])
-          : null,
-      currentBid: json['currentBid'] ?? 0,
-      minNextBid: json['minNextBid'] ?? 0,
-      leadingBidderId: json['leadingBidderId'],
-      leadingBidderName: json['leadingBidderName'],
-      timerDuration: json['timerDuration'] ?? 15,
-      timerSecondsRemaining: json['timerSecondsRemaining'] ?? 15,
+      roomCode: json['roomCode']?.toString() ?? '',
+      gameMode: json['gameMode']?.toString() ?? 'AUCTION_TEAM_CHALLENGE',
+      phase: json['phase']?.toString() ?? 'LOBBY',
+      currentItemIndex: (json['currentItemIndex'] as num?)?.toInt() ?? 0,
+      totalItems: (json['totalItems'] as num?)?.toInt() ?? 0,
+      currentItem: currentItemModel,
+      currentBid: (json['currentBid'] as num?)?.toInt() ?? 0,
+      minNextBid: (json['minNextBid'] as num?)?.toInt() ?? 25,
+      leadingBidderId: json['leadingBidderId']?.toString(),
+      leadingBidderName: json['leadingBidderName']?.toString(),
+      timerDuration: (json['timerDuration'] as num?)?.toInt() ?? 15,
+      timerSecondsRemaining: (json['timerSecondsRemaining'] as num?)?.toInt() ?? 15,
       passedPlayerIds: passedList,
       players: playersList,
       standings: standingsList,
