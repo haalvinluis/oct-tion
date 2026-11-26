@@ -1449,19 +1449,25 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                 color: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid)
                     ? AppTheme.secondaryBackground
                     : null,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                   color: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid)
                       ? AppTheme.surfaceBorder
-                      : AppTheme.champagneGold,
+                      : const Color(0x40FFFFFF),
+                  width: 1.2,
                 ),
                 boxShadow: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid)
                     ? null
-                    : [
+                    : const [
                         BoxShadow(
-                          color: AppTheme.champagneGold.withValues(alpha: 0.28),
+                          color: AppTheme.arcadeRedDark,
+                          blurRadius: 0,
+                          offset: Offset(0, 3.5),
+                        ),
+                        BoxShadow(
+                          color: AppTheme.arcadeRedShadow,
                           blurRadius: 8,
-                          offset: const Offset(0, 2),
+                          offset: Offset(0, 4),
                         ),
                       ],
               ),
@@ -1470,7 +1476,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                     ? const SizedBox(
                         width: 18,
                         height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.mainBackground),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                       )
                     : Text(
                         isLeading
@@ -1483,7 +1489,16 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                           letterSpacing: 0.5,
                           color: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid)
                               ? AppTheme.mutedText
-                              : AppTheme.darkMaroonText,
+                              : Colors.white,
+                          shadows: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid)
+                              ? null
+                              : const [
+                                  Shadow(
+                                    color: Color(0x60000000),
+                                    offset: Offset(0, 1),
+                                    blurRadius: 2,
+                                  ),
+                                ],
                         ),
                       ),
               ),
@@ -1497,12 +1512,13 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                 ? null
                 : _passItem,
             style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.redAccent,
+              foregroundColor: AppTheme.arcadeRed,
               side: BorderSide(
-                color: (hasPassed || !isBiddingOpen) ? AppTheme.surfaceBorder : Colors.redAccent.withValues(alpha: 0.5),
+                color: (hasPassed || !isBiddingOpen) ? AppTheme.surfaceBorder : AppTheme.arcadeRed.withValues(alpha: 0.6),
+                width: 1.2,
               ),
               padding: const EdgeInsets.symmetric(vertical: 8),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
             child: const Text('PASS ROUND', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
           ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../services/audio_service.dart';
 import '../widgets/home_header.dart';
+import '../widgets/custom_button.dart';
 import '../widgets/powerbid_bottom_nav_bar.dart';
 import 'friends_screen.dart';
 import 'settings_screen.dart';
@@ -63,18 +64,18 @@ class HomeScreen extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: AppTheme.velvetCardGradient,
+        color: AppTheme.pureWhite,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppTheme.goldBorderGlow, width: 1.3),
+        border: Border.all(color: AppTheme.goldBorder, width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.4),
+            color: const Color(0x10000000),
             blurRadius: 18,
             offset: const Offset(0, 6),
           ),
           BoxShadow(
-            color: AppTheme.goldHighlight.withValues(alpha: 0.12),
-            blurRadius: 12,
+            color: AppTheme.softMustardYellow.withValues(alpha: 0.15),
+            blurRadius: 10,
             offset: const Offset(0, 2),
           ),
         ],
@@ -91,7 +92,7 @@ class HomeScreen extends StatelessWidget {
                     color: AppTheme.secondarySurface,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: AppTheme.goldHighlight.withValues(alpha: 0.45),
+                      color: AppTheme.softMustardYellow,
                       width: 1,
                     ),
                   ),
@@ -100,7 +101,7 @@ class HomeScreen extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.wifi_tethering_rounded,
-                        color: AppTheme.goldHighlight,
+                        color: Color(0xFFB45309),
                         size: 14,
                       ),
                       SizedBox(width: 6),
@@ -111,7 +112,7 @@ class HomeScreen extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontFamily: AppTheme.fontFamily,
-                            color: AppTheme.goldHighlight,
+                            color: Color(0xFFB45309),
                             fontSize: 10.5,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 0.8,
@@ -125,7 +126,7 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(width: 10),
               const Icon(
                 Icons.sports_esports_rounded,
-                color: AppTheme.goldHighlight,
+                color: AppTheme.arcadeRed,
                 size: 24,
               ),
             ],
@@ -135,7 +136,7 @@ class HomeScreen extends StatelessWidget {
             'OCT-TION Arena',
             style: TextStyle(
               fontFamily: AppTheme.fontFamily,
-              color: AppTheme.pureWhite,
+              color: AppTheme.textPrimary,
               fontSize: 23,
               fontWeight: FontWeight.w900,
               letterSpacing: -0.2,
@@ -146,7 +147,7 @@ class HomeScreen extends StatelessWidget {
             'Bid, win authentic character cards, and compete in real-time rooms of up to 8 players.',
             style: TextStyle(
               fontFamily: AppTheme.fontFamily,
-              color: AppTheme.mutedText,
+              color: AppTheme.textSecondary,
               fontSize: 12.5,
               height: 1.4,
             ),
@@ -155,79 +156,29 @@ class HomeScreen extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: AppTheme.goldButtonGradient,
-                    borderRadius: BorderRadius.circular(14),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppTheme.goldHighlight.withValues(alpha: 0.35),
-                        blurRadius: 10,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      AudioService().playSfx(SfxType.buttonClick);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const ModeSelectionScreen()),
-                      );
-                    },
-                    icon: const Icon(Icons.flash_on_rounded, size: 18, color: AppTheme.darkMaroonText),
-                    label: const FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text('Play Online'),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      foregroundColor: AppTheme.darkMaroonText,
-                      shadowColor: Colors.transparent,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      textStyle: const TextStyle(
-                        fontFamily: AppTheme.fontFamily,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 0.3,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: OutlinedButton.icon(
+                child: CustomButton(
+                  label: 'Play Online',
+                  icon: Icons.flash_on_rounded,
                   onPressed: () {
-                    AudioService().playSfx(SfxType.buttonClick);
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const ModeSelectionScreen()),
                     );
                   },
-                  icon: const Icon(Icons.view_carousel_rounded, size: 18, color: AppTheme.goldHighlight),
-                  label: const FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text('Browse Rooms'),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppTheme.pureWhite,
-                    side: const BorderSide(color: AppTheme.goldBorderGlow, width: 1.2),
-                    backgroundColor: AppTheme.secondarySurface,
-                    padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 8),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    textStyle: const TextStyle(
-                      fontFamily: AppTheme.fontFamily,
-                      fontSize: 13.5,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: CustomButton(
+                  label: 'Browse Rooms',
+                  icon: Icons.view_carousel_rounded,
+                  type: ButtonType.secondary,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ModeSelectionScreen()),
+                    );
+                  },
                 ),
               ),
             ],
@@ -245,7 +196,7 @@ class HomeScreen extends StatelessWidget {
           'Quick Access',
           style: TextStyle(
             fontFamily: AppTheme.fontFamily,
-            color: AppTheme.pureWhite,
+            color: AppTheme.textPrimary,
             fontSize: 18,
             fontWeight: FontWeight.w800,
             letterSpacing: -0.2,
@@ -339,19 +290,19 @@ class HomeScreen extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(18),
-        splashColor: AppTheme.goldHighlight.withValues(alpha: 0.15),
-        highlightColor: AppTheme.goldHighlight.withValues(alpha: 0.08),
+        splashColor: AppTheme.softMustardYellow.withValues(alpha: 0.15),
+        highlightColor: AppTheme.softMustardYellow.withValues(alpha: 0.08),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
           decoration: BoxDecoration(
-            gradient: AppTheme.velvetCardGradient,
+            color: AppTheme.pureWhite,
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppTheme.goldBorder, width: 1.2),
+            border: Border.all(color: AppTheme.surfaceBorder, width: 1.2),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.35),
+                color: const Color(0x0C000000),
                 blurRadius: 10,
-                offset: const Offset(0, 4),
+                offset: const Offset(0, 3),
               ),
             ],
           ),
@@ -365,7 +316,7 @@ class HomeScreen extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontFamily: AppTheme.fontFamily,
-                  color: AppTheme.pureWhite,
+                  color: AppTheme.textPrimary,
                   fontSize: 13.5,
                   fontWeight: FontWeight.w700,
                 ),
@@ -377,7 +328,7 @@ class HomeScreen extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontFamily: AppTheme.fontFamily,
-                  color: AppTheme.mutedText,
+                  color: AppTheme.textSecondary,
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
                 ),

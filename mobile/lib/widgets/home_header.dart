@@ -22,15 +22,15 @@ class HomeHeader extends StatelessWidget {
             height: 40,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFF2A1014), Color(0xFF160609)],
+                colors: [Color(0xFFFFFBEA), AppTheme.softMustardYellow],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppTheme.goldBorderGlow, width: 1.3),
+              border: Border.all(color: AppTheme.softMustardYellow, width: 1.3),
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.goldHighlight.withValues(alpha: 0.25),
+                  color: AppTheme.softMustardYellow.withValues(alpha: 0.25),
                   blurRadius: 10,
                   offset: const Offset(0, 3),
                 ),
@@ -120,7 +120,7 @@ class HomeHeader extends StatelessWidget {
                   border: Border.all(color: AppTheme.goldBorderGlow, width: 1.1),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.35),
+                      color: const Color(0x0C000000),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),

@@ -32,7 +32,7 @@ class FeaturedAuctionCard extends StatelessWidget {
                   'Featured Auction',
                   style: TextStyle(
                     fontFamily: AppTheme.fontFamily,
-                    color: AppTheme.pureWhite,
+                    color: AppTheme.textPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
                     letterSpacing: -0.2,
@@ -160,7 +160,7 @@ class FeaturedAuctionCard extends StatelessWidget {
                               titleText,
                               style: const TextStyle(
                                 fontFamily: AppTheme.fontFamily,
-                                color: AppTheme.pureWhite,
+                                color: AppTheme.textPrimary,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: -0.2,
@@ -226,7 +226,7 @@ class FeaturedAuctionCard extends StatelessWidget {
                                                   timerText,
                                                   style: const TextStyle(
                                                     fontFamily: AppTheme.fontFamily,
-                                                    color: AppTheme.pureWhite,
+                                                    color: AppTheme.textPrimary,
                                                     fontSize: 11.5,
                                                     fontWeight: FontWeight.w700,
                                                   ),

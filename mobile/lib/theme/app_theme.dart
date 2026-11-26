@@ -4,94 +4,106 @@ class AppTheme {
   // Bundled Font Family
   static const String fontFamily = 'PlusJakartaSans';
 
-  // OCT-TION Premium Color Tokens: Deep Black-Burgundy, Dark Wine, Champagne Gold, and Warm Ivory
-  static const Color deepBlackBurgundy = Color(0xFF0D0306); // #0D0306
-  static const Color darkCharcoalBurgundy = Color(0xFF1E0A12); // #1E0A12
-  static const Color trueChampagneGold = Color(0xFFD4AF37); // #D4AF37
-  static const Color warmIvory = Color(0xFFFDFBF7); // #FDFBF7
+  // OCT-TION Core Palette: Soft Mustard Yellow (#F8D366), Pure White (#FFFFFF), and Juicy Arcade Red
+  static const Color softMustardYellow = Color(0xFFF8D366); // RGB(248, 211, 102) Soft Mustard Yellow
+  static const Color pureWhite = Color(0xFFFFFFFF); // Pure White #FFFFFF (255, 255, 255)
+  static const Color appScreenSurface = pureWhite;
+  static const Color arcadeRed = Color(0xFFE53935); // Vibrant Arcade Red
+  static const Color arcadeRedDark = Color(0xFFB71C1C); // 3D Bottom Bevel / Lip
+  static const Color arcadeRedLight = Color(0xFFFF5252); // Top Highlight
+  static const Color arcadeRedShadow = Color(0x40E53935); // Ambient Red Glow
 
-  static const Color darkMaroonBg = deepBlackBurgundy; // Main background #0D0306 (Deep black-burgundy)
-  static const Color maroonBackground = darkMaroonBg;
-  static const Color mainBackground = darkMaroonBg;
-  static const Color secondaryBackground = darkCharcoalBurgundy; // Secondary background #1E0A12
-  static const Color maroonSurface = darkCharcoalBurgundy; // Card background #1E0A12 (Dark charcoal-burgundy)
-  static const Color cardBackground = maroonSurface;
-  static const Color secondarySurface = secondaryBackground; // Secondary elevated surface
-  static const Color selectedCard = Color(0xFF38141F); // Selected card (Subtle rich burgundy)
-  static const Color surfaceBorder = Color(0x33D4AF37); // Subtle luxury champagne gold border (20% opacity)
-  static const Color goldBorder = Color(0x59D4AF37); // Soft antique gold border (35% opacity)
-  static const Color goldBorderGlow = Color(0x80D4AF37); // Champagne gold border glow (50% opacity)
-  static const Color warmCream = warmIvory; // Primary text #FDFBF7 (Warm ivory)
-  static const Color creamText = warmCream;
-  static const Color primaryText = warmCream;
-  static const Color goldHighlight = trueChampagneGold; // Primary accent #D4AF37 (Champagne gold)
-  static const Color champagneGold = goldHighlight;
-  static const Color accentGold = goldHighlight;
-  static const Color pureWhite = warmIvory; // Warm ivory primary text
-  static const Color mutedText = Color(0xFFB9A99A); // Secondary text #B9A99A (Muted beige)
-  static const Color secondaryText = mutedText;
-  static const Color maroonAccent = Color(0xFF38141F); // Selected rich burgundy
-  static const Color goldAccent = Color(0xFFA9824C); // Secondary accent #A9824C (Soft antique gold)
-  static const Color softAntiqueGold = goldAccent;
-  static const Color darkMaroonText = deepBlackBurgundy; // High contrast dark text for champagne gold buttons
+  // App Surfaces (Pure White & Airy Contrast)
+  static const Color mainBackground = Color(0xFFF8F9FA); // Crisp canvas allowing white cards to pop
+  static const Color darkMaroonBg = mainBackground;
+  static const Color maroonBackground = mainBackground;
+  static const Color secondaryBackground = Color(0xFFF1F5F9); // Light slate container
+  static const Color surface = pureWhite; // Pure White Card Surface
+  static const Color cardBackground = pureWhite;
+  static const Color maroonSurface = pureWhite;
+  static const Color secondarySurface = Color(0xFFFFFBEA); // Warm mustard tinted surface
+  static const Color surfaceLight = Color(0xFFFFFBEA);
+  static const Color selectedCard = Color(0xFFFFF3C4); // Soft mustard highlight for selected items
 
-  // Aliases ensuring seamless backwards compatibility across all existing widgets
-  static const Color deepNavyBg = darkMaroonBg;
-  static const Color navySurface = maroonSurface;
-  static const Color blueAccent = goldHighlight; // Replaces old blue with champagne gold
-  static const Color purpleAccent = goldAccent; // Replaces old purple with antique gold
+  // Borders & Accents (Mustard & Subtle Dividers)
+  static const Color surfaceBorder = Color(0xFFE2E8F0); // Subtle card outline
+  static const Color goldBorder = softMustardYellow; // Soft Mustard Yellow border
+  static const Color goldBorderGlow = Color(0x66F8D366); // 40% Mustard Yellow glow
+  static const Color goldHighlight = softMustardYellow;
+  static const Color champagneGold = softMustardYellow;
+  static const Color trueChampagneGold = softMustardYellow;
+  static const Color accentGold = softMustardYellow;
+  static const Color goldAccent = softMustardYellow;
+  static const Color softAntiqueGold = softMustardYellow;
+  static const Color accent = softMustardYellow;
+  static const Color gold = softMustardYellow;
+  static const Color electricBlue = arcadeRed;
 
-  // Standard Theme Tokens mapped to OCT-TION Design System
-  static const Color background = darkMaroonBg;
-  static const Color surface = maroonSurface;
-  static const Color surfaceLight = secondarySurface;
-  static const Color primary = warmCream;
-  static const Color electricBlue = goldHighlight;
-  static const Color accent = goldHighlight;
-  static const Color gold = goldHighlight;
-  static const Color silver = Color(0xFFD0C3B4);
-  static const Color silverLight = Color(0xFFE8DDD0);
-  static const Color textPrimary = warmCream;
-  static const Color textSecondary = mutedText;
-  static const Color error = Color(0xFFFF5252);
-  static const Color success = Color(0xFF00E676);
-  static const Color warning = Color(0xFFFFB300);
+  // Typography Tokens (High contrast on White surfaces)
+  static const Color textPrimary = Color(0xFF0F172A); // High-contrast deep slate
+  static const Color textSecondary = Color(0xFF64748B); // Slate-500 secondary
+  static const Color mutedText = Color(0xFF64748B);
+  static const Color secondaryText = Color(0xFF64748B);
+  static const Color primaryText = Color(0xFF0F172A);
+  static const Color warmCream = Color(0xFF0F172A);
+  static const Color creamText = Color(0xFF0F172A);
+  static const Color warmIvory = pureWhite;
+  static const Color darkMaroonText = pureWhite; // Crisp white for inside red buttons
+  static const Color deepBlackBurgundy = Color(0xFF0F172A);
+  static const Color darkCharcoalBurgundy = Color(0xFF1E293B);
 
-  // OCT-TION Linear Gradients
-  static const LinearGradient primaryGradient = LinearGradient(
-    colors: [Color(0xFFF5EBDD), Color(0xFFD6AD70), Color(0xFFA9824C)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+  // Backwards compatibility aliases
+  static const Color deepNavyBg = mainBackground;
+  static const Color navySurface = surface;
+  static const Color blueAccent = arcadeRed;
+  static const Color purpleAccent = softMustardYellow;
+  static const Color maroonAccent = arcadeRed;
+  static const Color background = mainBackground;
+  static const Color primary = arcadeRed;
+  static const Color silver = Color(0xFF94A3B8);
+  static const Color silverLight = Color(0xFFCBD5E1);
+  static const Color error = Color(0xFFEF4444);
+  static const Color success = Color(0xFF10B981);
+  static const Color warning = Color(0xFFF59E0B);
+
+  // 3D Red Arcade Button Gradient
+  static const LinearGradient redButtonGradient = LinearGradient(
+    colors: [arcadeRedLight, arcadeRed, arcadeRedDark],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
   );
 
-  static const LinearGradient goldButtonGradient = LinearGradient(
-    colors: [Color(0xFFF5EBDD), Color(0xFFD6AD70), Color(0xFFA9824C)],
+  static const LinearGradient goldButtonGradient = redButtonGradient; // Redirects primary buttons to Red 3D!
+
+  // Soft Mustard & Clean White Surface Gradients
+  static const LinearGradient primaryGradient = LinearGradient(
+    colors: [arcadeRedLight, arcadeRed],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const LinearGradient velvetCardGradient = LinearGradient(
-    colors: [Color(0xFF2A1014), Color(0xFF21080D)],
+    colors: [pureWhite, pureWhite],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const LinearGradient bannerGradient = LinearGradient(
-    colors: [Color(0xFF2A1014), Color(0xFF21080D), Color(0xFF160609)],
+    colors: [Color(0xFFFFFDF5), Color(0xFFFFF8DE), Color(0xFFFFF2C2)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const LinearGradient goldGradient = LinearGradient(
-    colors: [Color(0xFFF5EBDD), Color(0xFFD6AD70), Color(0xFFA9824C)],
+    colors: [Color(0xFFFFF4D1), softMustardYellow],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const LinearGradient centralGavelGradient = LinearGradient(
-    colors: [Color(0xFF40171B), Color(0xFFD6AD70), Color(0xFFA9824C)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    colors: [arcadeRedLight, arcadeRed, arcadeRedDark],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
   );
 
   // Reusable Typography Styles (Plus Jakarta Sans)
@@ -99,7 +111,7 @@ class AppTheme {
     fontFamily: fontFamily,
     fontSize: 26,
     fontWeight: FontWeight.w800,
-    color: pureWhite,
+    color: textPrimary,
     letterSpacing: -0.5,
     height: 1.2,
   );
@@ -108,7 +120,7 @@ class AppTheme {
     fontFamily: fontFamily,
     fontSize: 22,
     fontWeight: FontWeight.w800,
-    color: pureWhite,
+    color: textPrimary,
     letterSpacing: -0.3,
     height: 1.25,
   );
@@ -117,7 +129,7 @@ class AppTheme {
     fontFamily: fontFamily,
     fontSize: 19,
     fontWeight: FontWeight.w700,
-    color: pureWhite,
+    color: textPrimary,
     letterSpacing: -0.2,
     height: 1.3,
   );
@@ -126,7 +138,7 @@ class AppTheme {
     fontFamily: fontFamily,
     fontSize: 16,
     fontWeight: FontWeight.w600,
-    color: pureWhite,
+    color: textPrimary,
     letterSpacing: -0.1,
     height: 1.3,
   );
@@ -135,7 +147,7 @@ class AppTheme {
     fontFamily: fontFamily,
     fontSize: 14,
     fontWeight: FontWeight.w600,
-    color: pureWhite,
+    color: textPrimary,
     height: 1.3,
   );
 
@@ -143,7 +155,7 @@ class AppTheme {
     fontFamily: fontFamily,
     fontSize: 14,
     fontWeight: FontWeight.w400,
-    color: pureWhite,
+    color: textPrimary,
     height: 1.4,
   );
 
@@ -151,7 +163,7 @@ class AppTheme {
     fontFamily: fontFamily,
     fontSize: 12.5,
     fontWeight: FontWeight.w400,
-    color: mutedText,
+    color: textSecondary,
     height: 1.4,
   );
 
@@ -159,7 +171,7 @@ class AppTheme {
     fontFamily: fontFamily,
     fontSize: 11,
     fontWeight: FontWeight.w500,
-    color: mutedText,
+    color: textSecondary,
     height: 1.3,
   );
 
@@ -167,7 +179,7 @@ class AppTheme {
     fontFamily: fontFamily,
     fontSize: 14,
     fontWeight: FontWeight.w700,
-    color: pureWhite,
+    color: textPrimary,
     letterSpacing: 0.2,
   );
 
@@ -175,7 +187,7 @@ class AppTheme {
     fontFamily: fontFamily,
     fontSize: 12,
     fontWeight: FontWeight.w600,
-    color: mutedText,
+    color: textSecondary,
     letterSpacing: 0.1,
   );
 
@@ -183,7 +195,7 @@ class AppTheme {
     fontFamily: fontFamily,
     fontSize: 10,
     fontWeight: FontWeight.w700,
-    color: goldHighlight,
+    color: Color(0xFFB45309), // Warm amber for mustard small labels
     letterSpacing: 0.4,
   );
 
@@ -191,7 +203,7 @@ class AppTheme {
     fontFamily: fontFamily,
     fontSize: 18,
     fontWeight: FontWeight.w800,
-    color: pureWhite,
+    color: textPrimary,
     letterSpacing: -0.2,
   );
 
@@ -199,10 +211,10 @@ class AppTheme {
     fontFamily: fontFamily,
     fontSize: 14,
     fontWeight: FontWeight.w800,
-    color: goldHighlight,
+    color: Color(0xFFB45309),
   );
 
-  static ThemeData get darkTheme {
+  static ThemeData get lightTheme {
     const textTheme = TextTheme(
       displayLarge: displayLarge,
       displayMedium: displayMedium,
@@ -219,19 +231,19 @@ class AppTheme {
 
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
+      brightness: Brightness.light,
       fontFamily: fontFamily,
-      scaffoldBackgroundColor: background,
-      primaryColor: primary,
+      scaffoldBackgroundColor: mainBackground,
+      primaryColor: arcadeRed,
       textTheme: textTheme,
-      colorScheme: const ColorScheme.dark(
-        primary: primary,
-        secondary: accent,
+      colorScheme: const ColorScheme.light(
+        primary: arcadeRed,
+        secondary: softMustardYellow,
         surface: surface,
         error: error,
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: surface,
+        backgroundColor: pureWhite,
         elevation: 0,
         centerTitle: true,
         titleTextStyle: TextStyle(
@@ -244,63 +256,63 @@ class AppTheme {
         iconTheme: IconThemeData(color: textPrimary),
       ),
       cardTheme: CardThemeData(
-        color: surface,
-        elevation: 4,
-        shadowColor: Colors.black54,
+        color: pureWhite,
+        elevation: 3,
+        shadowColor: const Color(0x1A000000),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-          side: const BorderSide(color: surfaceBorder, width: 1.2),
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: Color(0xFFF1F5F9), width: 1.2),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: surface,
+        fillColor: pureWhite,
         hintStyle: const TextStyle(fontFamily: fontFamily, color: textSecondary),
-        labelStyle: const TextStyle(fontFamily: fontFamily, color: accent),
+        labelStyle: const TextStyle(fontFamily: fontFamily, color: arcadeRed),
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: surfaceBorder, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: surfaceBorder, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: goldHighlight, width: 1.8),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: arcadeRed, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: error, width: 1.5),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: goldHighlight,
-          foregroundColor: darkMaroonText,
-          elevation: 3,
-          shadowColor: goldHighlight.withValues(alpha: 0.35),
+          backgroundColor: arcadeRed,
+          foregroundColor: pureWhite,
+          elevation: 4,
+          shadowColor: arcadeRedShadow,
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 24),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(18),
           ),
           textStyle: const TextStyle(
             fontFamily: fontFamily,
             fontSize: 15,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w900,
             letterSpacing: 0.4,
           ),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: warmCream,
-          backgroundColor: secondarySurface,
+          foregroundColor: arcadeRed,
+          backgroundColor: pureWhite,
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 24),
-          side: const BorderSide(color: goldBorder, width: 1.2),
+          side: const BorderSide(color: arcadeRed, width: 1.5),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(18),
           ),
           textStyle: const TextStyle(
             fontFamily: fontFamily,
@@ -313,5 +325,5 @@ class AppTheme {
     );
   }
 
-  static ThemeData get lightTheme => darkTheme;
+  static ThemeData get darkTheme => lightTheme;
 }

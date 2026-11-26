@@ -29,7 +29,7 @@ class StatBadge extends StatelessWidget {
         border: Border.all(color: AppTheme.surfaceBorder, width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
+            color: const Color(0x0C000000),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -72,7 +72,7 @@ class StatBadge extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontFamily: AppTheme.fontFamily,
-                color: AppTheme.pureWhite,
+                color: AppTheme.textPrimary,
                 fontSize: valueFontSize ?? 18,
                 fontWeight: FontWeight.w800,
               ),

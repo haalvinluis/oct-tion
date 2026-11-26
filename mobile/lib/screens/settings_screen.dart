@@ -395,12 +395,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       padding: const EdgeInsets.only(left: 4.0, bottom: 8.0),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: AppTheme.accent),
+          Icon(icon, size: 20, color: AppTheme.arcadeRed),
           const SizedBox(width: 8),
           Text(
             title,
             style: const TextStyle(
-              color: AppTheme.accent,
+              color: AppTheme.arcadeRed,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.0,
               fontSize: 14,

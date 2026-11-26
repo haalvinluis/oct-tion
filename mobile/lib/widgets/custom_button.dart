@@ -4,7 +4,7 @@ import '../services/audio_service.dart';
 
 enum ButtonType { primary, secondary, danger }
 
-class CustomButton extends StatelessWidget {
+class CustomButton extends StatefulWidget {
   final String label;
   final VoidCallback? onPressed;
   final ButtonType type;
@@ -27,61 +27,58 @@ class CustomButton extends StatelessWidget {
   });
 
   @override
+  State<CustomButton> createState() => _CustomButtonState();
+}
+
+class _CustomButtonState extends State<CustomButton> {
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
-    final bool isEnabled = onPressed != null && !isLoading;
+    final bool isEnabled = widget.onPressed != null && !widget.isLoading;
 
     Color fg;
-    Color bg;
-    BorderSide border = BorderSide.none;
-    List<BoxShadow> shadows = [];
-    Gradient? gradient;
+    Color topColor;
+    Color bottomColor;
+    Color bevelColor;
+    Color borderColor;
 
-    switch (type) {
+    switch (widget.type) {
       case ButtonType.primary:
-        bg = AppTheme.goldHighlight;
-        fg = AppTheme.darkMaroonText;
+        fg = AppTheme.pureWhite;
         if (isEnabled) {
-          gradient = AppTheme.goldButtonGradient;
-          shadows = [
-            BoxShadow(
-              color: AppTheme.goldHighlight.withValues(alpha: 0.35),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ];
+          topColor = AppTheme.arcadeRedLight;
+          bottomColor = AppTheme.arcadeRed;
+          bevelColor = AppTheme.arcadeRedDark;
+          borderColor = const Color(0x40FFFFFF);
+        } else {
+          topColor = const Color(0xFFCBD5E1);
+          bottomColor = const Color(0xFF94A3B8);
+          bevelColor = const Color(0xFF64748B);
+          borderColor = Colors.transparent;
+          fg = const Color(0xFFF1F5F9);
         }
         break;
       case ButtonType.secondary:
-        bg = AppTheme.secondarySurface;
-        fg = AppTheme.warmCream;
-        border = const BorderSide(color: AppTheme.goldBorderGlow, width: 1.3);
-        if (isEnabled) {
-          shadows = [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
-            ),
-          ];
-        }
+        fg = isEnabled ? AppTheme.arcadeRed : const Color(0xFF94A3B8);
+        topColor = AppTheme.pureWhite;
+        bottomColor = const Color(0xFFFFF9E6); // subtle mustard cream
+        bevelColor = isEnabled ? AppTheme.softMustardYellow : const Color(0xFFCBD5E1);
+        borderColor = isEnabled ? AppTheme.arcadeRed : const Color(0xFFCBD5E1);
         break;
       case ButtonType.danger:
-        bg = const Color(0xFF3D080A);
-        fg = const Color(0xFFFCA5A5);
-        border = BorderSide(color: AppTheme.error.withValues(alpha: 0.8), width: 1.3);
-        if (isEnabled) {
-          shadows = [
-            BoxShadow(
-              color: AppTheme.error.withValues(alpha: 0.2),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
-            ),
-          ];
-        }
+        fg = AppTheme.pureWhite;
+        topColor = const Color(0xFFDC2626);
+        bottomColor = const Color(0xFF991B1B);
+        bevelColor = const Color(0xFF7F1D1D);
+        borderColor = const Color(0x33FFFFFF);
         break;
     }
 
-    final childWidget = isLoading
+    final double pressOffset = (_isPressed && isEnabled) ? 3.0 : 0.0;
+    final double bottomLipHeight = (_isPressed && isEnabled) ? 1.0 : 4.0;
+
+    final childWidget = widget.isLoading
         ? SizedBox(
             height: 20,
             width: 20,
@@ -94,23 +91,32 @@ class CustomButton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (icon != null) ...[
-                Icon(icon, size: 18, color: fg),
+              if (widget.icon != null) ...[
+                Icon(widget.icon, size: 20, color: fg),
                 const SizedBox(width: 8),
               ],
               Flexible(
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Text(
-                    label.toUpperCase(),
+                    widget.label.toUpperCase(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontFamily: AppTheme.fontFamily,
                       color: fg,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 0.6,
-                      fontSize: fontSize ?? 14.5,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 0.8,
+                      fontSize: widget.fontSize ?? 14.5,
+                      shadows: isEnabled && widget.type != ButtonType.secondary
+                          ? const [
+                              Shadow(
+                                color: Color(0x60000000),
+                                offset: Offset(0, 1.2),
+                                blurRadius: 2.5,
+                              ),
+                            ]
+                          : null,
                     ),
                   ),
                 ),
@@ -119,33 +125,48 @@ class CustomButton extends StatelessWidget {
           );
 
     return Container(
-      width: width ?? double.infinity,
-      height: 52,
-      decoration: BoxDecoration(
-        color: gradient == null ? bg : null,
-        gradient: isEnabled ? gradient : null,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: shadows,
-      ),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          padding: padding ?? const EdgeInsets.symmetric(horizontal: 14),
-          backgroundColor: Colors.transparent,
-          foregroundColor: fg,
-          shadowColor: Colors.transparent,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-            side: border,
-          ),
-        ),
-        onPressed: isEnabled
-            ? () {
+      width: widget.width ?? double.infinity,
+      height: 54,
+      padding: EdgeInsets.only(top: pressOffset, bottom: 4.0 - pressOffset),
+      child: GestureDetector(
+        onTapDown: isEnabled ? (_) => setState(() => _isPressed = true) : null,
+        onTapUp: isEnabled
+            ? (_) {
+                setState(() => _isPressed = false);
                 AudioService().playButtonClick();
-                onPressed!();
+                widget.onPressed!();
               }
             : null,
-        child: childWidget,
+        onTapCancel: isEnabled ? () => setState(() => _isPressed = false) : null,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 60),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [topColor, bottomColor],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: borderColor, width: 1.4),
+            boxShadow: [
+              // 3D tactile bevel edge (bottom lip)
+              BoxShadow(
+                color: bevelColor,
+                offset: Offset(0, bottomLipHeight),
+                blurRadius: 0,
+              ),
+              // Soft ambient depth shadow
+              if (isEnabled)
+                BoxShadow(
+                  color: (widget.type == ButtonType.primary ? AppTheme.arcadeRedShadow : Colors.black12),
+                  offset: Offset(0, bottomLipHeight + 3),
+                  blurRadius: 6,
+                ),
+            ],
+          ),
+          padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
+          child: Center(child: childWidget),
+        ),
       ),
     );
   }

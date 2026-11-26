@@ -87,7 +87,7 @@ class LiveAuctionsSection extends StatelessWidget {
                         'Live Auctions',
                         style: TextStyle(
                           fontFamily: AppTheme.fontFamily,
-                          color: AppTheme.pureWhite,
+                          color: AppTheme.textPrimary,
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
                           letterSpacing: -0.2,
@@ -159,7 +159,7 @@ class LiveAuctionsSection extends StatelessWidget {
         border: Border.all(color: AppTheme.surfaceBorder, width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.25),
+            color: const Color(0x0C000000),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -205,7 +205,7 @@ class LiveAuctionsSection extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontFamily: AppTheme.fontFamily,
-                    color: AppTheme.pureWhite,
+                    color: AppTheme.textPrimary,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
@@ -236,7 +236,7 @@ class LiveAuctionsSection extends StatelessWidget {
                 item['basePrice'] as String,
                 style: const TextStyle(
                   fontFamily: AppTheme.fontFamily,
-                  color: AppTheme.goldHighlight,
+                  color: Color(0xFFB45309),
                   fontSize: 12,
                   fontWeight: FontWeight.w800,
                 ),
@@ -254,13 +254,18 @@ class LiveAuctionsSection extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
                   decoration: BoxDecoration(
-                    gradient: AppTheme.primaryGradient,
+                    gradient: AppTheme.redButtonGradient,
                     borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
-                        color: AppTheme.blueAccent.withValues(alpha: 0.35),
+                        color: AppTheme.arcadeRedDark,
+                        blurRadius: 0,
+                        offset: Offset(0, 2),
+                      ),
+                      BoxShadow(
+                        color: AppTheme.arcadeRedShadow,
                         blurRadius: 6,
-                        offset: const Offset(0, 2),
+                        offset: Offset(0, 3),
                       ),
                     ],
                   ),

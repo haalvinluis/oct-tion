@@ -83,14 +83,7 @@ class PowerBidLogo extends StatelessWidget {
                   fontSize: fontSize,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1.5,
-                  color: AppTheme.creamText,
-                  shadows: [
-                    Shadow(
-                      color: AppTheme.maroonBackground.withValues(alpha: 0.8),
-                      blurRadius: 12,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
+                  color: AppTheme.textPrimary,
                 ),
               ),
               TextSpan(
@@ -99,14 +92,7 @@ class PowerBidLogo extends StatelessWidget {
                   fontSize: fontSize,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1.5,
-                  color: AppTheme.gold,
-                  shadows: [
-                    Shadow(
-                      color: AppTheme.gold.withValues(alpha: 0.5),
-                      blurRadius: 14,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
+                  color: const Color(0xFFD97706), // Rich warm amber for high contrast
                 ),
               ),
             ],

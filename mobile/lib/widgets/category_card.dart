@@ -92,7 +92,7 @@ class CategoryBrowseSection extends StatelessWidget {
                   'Browse Categories',
                   style: TextStyle(
                     fontFamily: AppTheme.fontFamily,
-                    color: AppTheme.pureWhite,
+                    color: AppTheme.textPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
                     letterSpacing: -0.2,

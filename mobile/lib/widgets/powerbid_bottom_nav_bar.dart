@@ -18,15 +18,15 @@ class PowerBidBottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.secondaryBackground,
+        color: AppTheme.pureWhite,
         border: const Border(
-          top: BorderSide(color: AppTheme.goldBorder, width: 1.2),
+          top: BorderSide(color: AppTheme.surfaceBorder, width: 1.2),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.6),
-            blurRadius: 20,
-            offset: const Offset(0, -4),
+            color: const Color(0x0E000000),
+            blurRadius: 16,
+            offset: const Offset(0, -3),
           ),
         ],
       ),
@@ -209,23 +209,27 @@ class PowerBidBottomNavBar extends StatelessWidget {
         height: 52,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          gradient: AppTheme.goldButtonGradient,
+          gradient: AppTheme.centralGavelGradient,
           border: Border.all(
-            color: const Color(0xFFFFF0D4),
+            color: AppTheme.pureWhite,
             width: 2.2,
           ),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
-              color: AppTheme.goldHighlight.withValues(alpha: 0.45),
-              blurRadius: 16,
-              spreadRadius: 1,
-              offset: const Offset(0, 2),
+              color: AppTheme.arcadeRedDark,
+              blurRadius: 0,
+              offset: Offset(0, 3),
+            ),
+            BoxShadow(
+              color: AppTheme.arcadeRedShadow,
+              blurRadius: 14,
+              offset: Offset(0, 4),
             ),
           ],
         ),
         child: const Icon(
           Icons.gavel_rounded,
-          color: AppTheme.darkMaroonText,
+          color: Colors.white,
           size: 27,
         ),
       ),

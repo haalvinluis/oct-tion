@@ -13,18 +13,18 @@ class HeroAuctionBanner extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: AppTheme.bannerGradient,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: AppTheme.surfaceBorder, width: 1.2),
+        border: Border.all(color: AppTheme.goldBorder, width: 1.3),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.purpleAccent.withValues(alpha: 0.15),
-            blurRadius: 20,
+            color: const Color(0x0C000000),
+            blurRadius: 16,
             spreadRadius: 1,
-            offset: const Offset(0, 6),
+            offset: const Offset(0, 4),
           ),
           BoxShadow(
-            color: AppTheme.blueAccent.withValues(alpha: 0.1),
-            blurRadius: 14,
-            spreadRadius: 1,
+            color: AppTheme.softMustardYellow.withValues(alpha: 0.18),
+            blurRadius: 12,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -97,7 +97,7 @@ class HeroAuctionBanner extends StatelessWidget {
                             'LIVE NOW',
                             style: TextStyle(
                               fontFamily: AppTheme.fontFamily,
-                              color: AppTheme.pureWhite,
+                              color: Color(0xFFB45309),
                               fontSize: 9.5,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 0.8,
@@ -113,7 +113,7 @@ class HeroAuctionBanner extends StatelessWidget {
                       'Big Bids. Bigger Wins!',
                       style: TextStyle(
                         fontFamily: AppTheme.fontFamily,
-                        color: AppTheme.pureWhite,
+                        color: AppTheme.textPrimary,
                         fontSize: 19,
                         fontWeight: FontWeight.w900,
                         letterSpacing: -0.3,
@@ -127,7 +127,7 @@ class HeroAuctionBanner extends StatelessWidget {
                       'Join live auctions, place your bids and discover your next favourite.',
                       style: TextStyle(
                         fontFamily: AppTheme.fontFamily,
-                        color: AppTheme.mutedText,
+                        color: AppTheme.textSecondary,
                         fontSize: 11,
                         height: 1.35,
                       ),
@@ -143,15 +143,20 @@ class HeroAuctionBanner extends StatelessWidget {
                         );
                       },
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 9),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9.5),
                         decoration: BoxDecoration(
-                          gradient: AppTheme.primaryGradient,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
+                          gradient: AppTheme.redButtonGradient,
+                          borderRadius: BorderRadius.circular(14),
+                          boxShadow: const [
                             BoxShadow(
-                              color: AppTheme.blueAccent.withValues(alpha: 0.4),
-                              blurRadius: 10,
-                              offset: const Offset(0, 3),
+                              color: AppTheme.arcadeRedDark,
+                              blurRadius: 0,
+                              offset: Offset(0, 3),
+                            ),
+                            BoxShadow(
+                              color: AppTheme.arcadeRedShadow,
+                              blurRadius: 8,
+                              offset: Offset(0, 4),
                             ),
                           ],
                         ),
