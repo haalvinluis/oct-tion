@@ -96,8 +96,20 @@
         <!-- Package visibility query for external browser links (Privacy Policy & Terms) -->
         <intent>
             <action android:name="android.intent.action.VIEW"/>
-            <category android:name="android.intent.category.BROWSABLE" />
             <data android:scheme="https"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="http"/>
+        </intent>
+        <!-- Support email intent queries -->
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="mailto"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SENDTO"/>
+            <data android:scheme="mailto"/>
         </intent>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
