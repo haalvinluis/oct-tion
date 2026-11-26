@@ -8,6 +8,7 @@ import '../services/settings_service.dart';
 import '../services/audio_service.dart';
 import '../services/voice_chat_service.dart';
 import '../utils/platform_helper.dart';
+import '../widgets/item_name_flag.dart';
 import 'results_screen.dart';
 
 class AuctionScreen extends StatefulWidget {
@@ -831,7 +832,8 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                                 spacing: 3,
                                 runSpacing: 2.5,
                                 children: p.acquiredItems.map((itemName) {
-                                  final shortName = itemName.length > 11 ? '${itemName.substring(0, 10)}…' : itemName;
+                                  final parts = ItemNameWithFlag.parse(itemName);
+                                  final baseShort = parts.baseName.length > 9 ? '${parts.baseName.substring(0, 8)}…' : parts.baseName;
                                   return Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1.5),
                                     decoration: BoxDecoration(
@@ -848,13 +850,23 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                                         const Icon(Icons.shield_rounded, size: 7.5, color: AppTheme.champagneGold),
                                         const SizedBox(width: 2.5),
                                         Text(
-                                          shortName,
+                                          baseShort,
                                           style: const TextStyle(
                                             fontSize: 8,
                                             fontWeight: FontWeight.w700,
                                             color: AppTheme.warmCream,
                                           ),
                                         ),
+                                        if (parts.flag != null) ...[
+                                          const SizedBox(width: 2),
+                                          Text(
+                                            parts.flag!,
+                                            style: const TextStyle(
+                                              fontSize: 7,
+                                              height: 1.0,
+                                            ),
+                                          ),
+                                        ],
                                       ],
                                     ),
                                   );
@@ -1047,13 +1059,12 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                                       const Icon(Icons.star_rounded, color: AppTheme.trueChampagneGold, size: 16),
                                       const SizedBox(width: 8),
                                       Expanded(
-                                        child: Text(
-                                          item.itemName,
-                                          style: const TextStyle(
-                                            color: AppTheme.warmIvory,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 13,
-                                          ),
+                                        child: ItemNameWithFlag(
+                                          itemName: item.itemName,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppTheme.warmIvory,
+                                          textAlign: TextAlign.start,
                                         ),
                                       ),
                                       Text(
@@ -1234,18 +1245,11 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                   ],
                 ),
                 const SizedBox(height: 10),
-                Text(
-                  itemName,
-                  maxLines: 2,
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontFamily: AppTheme.fontFamily,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 0.5,
-                    color: AppTheme.warmCream,
-                  ),
+                ItemNameWithFlag(
+                  itemName: itemName,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                  color: AppTheme.warmCream,
                 ),
                 const SizedBox(height: 6),
                 const Text(

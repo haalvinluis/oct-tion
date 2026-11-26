@@ -137,67 +137,67 @@ class CategoryModel {
 
   /// Official Level 1 Parent Categories
   static const List<CategoryModel> parentCategories = [
-    CategoryModel(id: 'anime', name: 'Anime', targetCount: 1500),
-    CategoryModel(id: 'sports', name: 'Sports', targetCount: 1500),
-    CategoryModel(id: 'cartoons', name: 'Cartoons', targetCount: 1000),
-    CategoryModel(id: 'superheroes', name: 'Superheroes', targetCount: 1000),
-    CategoryModel(id: 'marvel', name: 'Marvel', targetCount: 1000),
-    CategoryModel(id: 'other', name: 'Other', targetCount: 500),
+    CategoryModel(id: 'anime', name: 'Anime', targetCount: 1350),
+    CategoryModel(id: 'sports', name: 'Sports', targetCount: 1100),
+    CategoryModel(id: 'cartoons', name: 'Cartoons', targetCount: 750),
+    CategoryModel(id: 'superheroes', name: 'Superheroes', targetCount: 750),
+    CategoryModel(id: 'marvel', name: 'Marvel', targetCount: 1050),
+    CategoryModel(id: 'other', name: 'Other', targetCount: 150),
   ];
 
   /// Canonical categories list (includes original canonical list for backwards compatibility)
   static const List<CategoryModel> canonicalCategories = [
-    CategoryModel(id: 'cricket', name: 'Cricket', parentCategoryId: 'sports', targetCount: 200),
-    CategoryModel(id: 'naruto', name: 'Naruto', parentCategoryId: 'anime', targetCount: 200),
-    CategoryModel(id: 'one_piece', name: 'One Piece', parentCategoryId: 'anime', targetCount: 200),
-    CategoryModel(id: 'dragon_ball', name: 'Dragon Ball', parentCategoryId: 'anime', targetCount: 200),
-    CategoryModel(id: 'pokemon', name: 'Pokémon', parentCategoryId: 'cartoons', targetCount: 500),
+    CategoryModel(id: 'cricket', name: 'Cricket', parentCategoryId: 'sports', targetCount: 500),
+    CategoryModel(id: 'naruto', name: 'Naruto', parentCategoryId: 'anime', targetCount: 150),
+    CategoryModel(id: 'one_piece', name: 'One Piece', parentCategoryId: 'anime', targetCount: 150),
+    CategoryModel(id: 'dragon_ball', name: 'Dragon Ball', parentCategoryId: 'anime', targetCount: 150),
+    CategoryModel(id: 'pokemon', name: 'Pokémon', parentCategoryId: 'cartoons', targetCount: 150),
     CategoryModel(id: 'demon_slayer', name: 'Demon Slayer', parentCategoryId: 'anime', targetCount: 150),
     CategoryModel(id: 'jujutsu_kaisen', name: 'Jujutsu Kaisen', parentCategoryId: 'anime', targetCount: 150),
-    CategoryModel(id: 'classic_cartoons', name: 'Classic Cartoons', parentCategoryId: 'cartoons', targetCount: 200),
-    CategoryModel(id: 'superheroes', name: 'Superheroes', parentCategoryId: 'superheroes', targetCount: 200),
-    CategoryModel(id: 'marvel_avengers', name: 'Marvel Avengers', parentCategoryId: 'superheroes', targetCount: 200),
-    CategoryModel(id: 'other_anime', name: 'Other Anime', parentCategoryId: 'other', targetCount: 200),
+    CategoryModel(id: 'classic_cartoons', name: 'Classic Cartoons', parentCategoryId: 'cartoons', targetCount: 150),
+    CategoryModel(id: 'superheroes', name: 'Superheroes', parentCategoryId: 'superheroes', targetCount: 150),
+    CategoryModel(id: 'marvel_avengers', name: 'Marvel Avengers', parentCategoryId: 'superheroes', targetCount: 150),
+    CategoryModel(id: 'other_anime', name: 'Other Anime', parentCategoryId: 'other', targetCount: 150),
   ];
 
   /// Official Level 2 Canonical Topics with their parent category assignments
   static const List<CategoryModel> canonicalTopics = [
     // Anime
-    CategoryModel(id: 'naruto', name: 'Naruto', parentCategoryId: 'anime', actualCount: 25, targetCount: 250),
-    CategoryModel(id: 'one_piece', name: 'One Piece', parentCategoryId: 'anime', actualCount: 20, targetCount: 300),
-    CategoryModel(id: 'demon_slayer', name: 'Demon Slayer', parentCategoryId: 'anime', actualCount: 15, targetCount: 150),
-    CategoryModel(id: 'jujutsu_kaisen', name: 'Jujutsu Kaisen', parentCategoryId: 'anime', actualCount: 15, targetCount: 150),
-    CategoryModel(id: 'dragon_ball', name: 'Dragon Ball', parentCategoryId: 'anime', actualCount: 20, targetCount: 200),
-    CategoryModel(id: 'bleach', name: 'Bleach', parentCategoryId: 'anime', actualCount: 15, targetCount: 150),
-    CategoryModel(id: 'attack_on_titan', name: 'Attack on Titan', parentCategoryId: 'anime', actualCount: 15, targetCount: 150),
-    CategoryModel(id: 'my_hero_academia', name: 'My Hero Academia', parentCategoryId: 'anime', actualCount: 15, targetCount: 150),
+    CategoryModel(id: 'naruto', name: 'Naruto', parentCategoryId: 'anime', actualCount: 150, targetCount: 150),
+    CategoryModel(id: 'one_piece', name: 'One Piece', parentCategoryId: 'anime', actualCount: 150, targetCount: 150),
+    CategoryModel(id: 'demon_slayer', name: 'Demon Slayer', parentCategoryId: 'anime', actualCount: 150, targetCount: 150),
+    CategoryModel(id: 'jujutsu_kaisen', name: 'Jujutsu Kaisen', parentCategoryId: 'anime', actualCount: 150, targetCount: 150),
+    CategoryModel(id: 'dragon_ball', name: 'Dragon Ball', parentCategoryId: 'anime', actualCount: 150, targetCount: 150),
+    CategoryModel(id: 'bleach', name: 'Bleach', parentCategoryId: 'anime', actualCount: 150, targetCount: 150),
+    CategoryModel(id: 'attack_on_titan', name: 'Attack on Titan', parentCategoryId: 'anime', actualCount: 150, targetCount: 150),
+    CategoryModel(id: 'my_hero_academia', name: 'My Hero Academia', parentCategoryId: 'anime', actualCount: 150, targetCount: 150),
 
     // Sports
-    CategoryModel(id: 'cricket', name: 'Cricket', parentCategoryId: 'sports', actualCount: 30, targetCount: 800),
-    CategoryModel(id: 'football', name: 'Football', parentCategoryId: 'sports', actualCount: 15, targetCount: 200),
-    CategoryModel(id: 'basketball', name: 'Basketball', parentCategoryId: 'sports', actualCount: 15, targetCount: 200),
-    CategoryModel(id: 'tennis', name: 'Tennis', parentCategoryId: 'sports', actualCount: 15, targetCount: 150),
-    CategoryModel(id: 'wwe', name: 'WWE', parentCategoryId: 'sports', actualCount: 15, targetCount: 150),
+    CategoryModel(id: 'cricket', name: 'Cricket', parentCategoryId: 'sports', actualCount: 500, targetCount: 500),
+    CategoryModel(id: 'football', name: 'Football', parentCategoryId: 'sports', actualCount: 150, targetCount: 150),
+    CategoryModel(id: 'basketball', name: 'Basketball', parentCategoryId: 'sports', actualCount: 150, targetCount: 150),
+    CategoryModel(id: 'tennis', name: 'Tennis', parentCategoryId: 'sports', actualCount: 150, targetCount: 150),
+    CategoryModel(id: 'wwe', name: 'WWE', parentCategoryId: 'sports', actualCount: 150, targetCount: 150),
 
     // Cartoons
-    CategoryModel(id: 'ben_10', name: 'Ben 10', parentCategoryId: 'cartoons', actualCount: 15, targetCount: 150),
-    CategoryModel(id: 'classic_cartoons', name: 'Tom and Jerry', parentCategoryId: 'cartoons', actualCount: 15, targetCount: 200),
-    CategoryModel(id: 'doraemon', name: 'Doraemon', parentCategoryId: 'cartoons', actualCount: 15, targetCount: 150),
-    CategoryModel(id: 'shinchan', name: 'Shinchan', parentCategoryId: 'cartoons', actualCount: 15, targetCount: 150),
-    CategoryModel(id: 'pokemon', name: 'Pokémon', parentCategoryId: 'cartoons', actualCount: 20, targetCount: 500),
+    CategoryModel(id: 'ben_10', name: 'Ben 10', parentCategoryId: 'cartoons', actualCount: 150, targetCount: 150),
+    CategoryModel(id: 'classic_cartoons', name: 'Tom and Jerry', parentCategoryId: 'cartoons', actualCount: 150, targetCount: 150),
+    CategoryModel(id: 'doraemon', name: 'Doraemon', parentCategoryId: 'cartoons', actualCount: 150, targetCount: 150),
+    CategoryModel(id: 'shinchan', name: 'Shinchan', parentCategoryId: 'cartoons', actualCount: 150, targetCount: 150),
+    CategoryModel(id: 'pokemon', name: 'Pokémon', parentCategoryId: 'cartoons', actualCount: 150, targetCount: 150),
 
     // Superheroes
-    CategoryModel(id: 'superheroes', name: 'DC Universe', parentCategoryId: 'superheroes', actualCount: 15, targetCount: 200),
-    CategoryModel(id: 'batman', name: 'Batman', parentCategoryId: 'superheroes', actualCount: 15, targetCount: 150),
-    CategoryModel(id: 'superman', name: 'Superman', parentCategoryId: 'superheroes', actualCount: 15, targetCount: 150),
-    CategoryModel(id: 'spider_man', name: 'Spider-Man', parentCategoryId: 'superheroes', actualCount: 15, targetCount: 150),
-    CategoryModel(id: 'marvel_avengers', name: 'Avengers', parentCategoryId: 'superheroes', actualCount: 15, targetCount: 200),
+    CategoryModel(id: 'superheroes', name: 'DC Universe', parentCategoryId: 'superheroes', actualCount: 150, targetCount: 150),
+    CategoryModel(id: 'batman', name: 'Batman', parentCategoryId: 'superheroes', actualCount: 150, targetCount: 150),
+    CategoryModel(id: 'superman', name: 'Superman', parentCategoryId: 'superheroes', actualCount: 150, targetCount: 150),
+    CategoryModel(id: 'spider_man', name: 'Spider-Man', parentCategoryId: 'superheroes', actualCount: 150, targetCount: 150),
+    CategoryModel(id: 'marvel_avengers', name: 'Avengers', parentCategoryId: 'superheroes', actualCount: 150, targetCount: 150),
 
     // Marvel - SPECIAL RULE: Exactly ONE selectable catalogue containing all Marvel characters
-    CategoryModel(id: 'marvel', name: 'Marvel Characters', parentCategoryId: 'marvel', actualCount: 30, targetCount: 1000),
+    CategoryModel(id: 'marvel', name: 'Marvel Characters', parentCategoryId: 'marvel', actualCount: 150, targetCount: 150),
 
     // Other
-    CategoryModel(id: 'other_anime', name: 'Other Anime', parentCategoryId: 'other', actualCount: 15, targetCount: 200),
+    CategoryModel(id: 'other_anime', name: 'Other Anime', parentCategoryId: 'other', actualCount: 150, targetCount: 150),
   ];
 
   /// Returns the parent category ID for a topic ID
@@ -256,8 +256,8 @@ class CategoryModel {
           id: 'marvel',
           name: 'Marvel Characters',
           parentCategoryId: 'marvel',
-          actualCount: 30,
-          targetCount: 1000,
+          actualCount: 150,
+          targetCount: 150,
         ),
       ];
     }

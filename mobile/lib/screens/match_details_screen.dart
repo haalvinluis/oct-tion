@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import '../widgets/item_name_flag.dart';
 import '../services/socket_service.dart';
 
 class MatchDetailsScreen extends StatefulWidget {
@@ -305,13 +306,38 @@ class _MatchDetailsScreenState extends State<MatchDetailsScreen> {
                                                 border: Border.all(
                                                     color: AppTheme.primary.withValues(alpha: 0.3)),
                                               ),
-                                              child: Text(
-                                                '$itemName • \$$price',
-                                                style: const TextStyle(
-                                                  color: AppTheme.textPrimary,
-                                                  fontSize: 11,
-                                                ),
-                                              ),
+                                              child: Builder(builder: (context) {
+                                                final parts = ItemNameWithFlag.parse(itemName);
+                                                return Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Text(
+                                                      parts.baseName,
+                                                      style: const TextStyle(
+                                                        color: AppTheme.textPrimary,
+                                                        fontSize: 11,
+                                                      ),
+                                                    ),
+                                                    if (parts.flag != null) ...[
+                                                      const SizedBox(width: 3),
+                                                      Text(
+                                                        parts.flag!,
+                                                        style: const TextStyle(
+                                                          fontSize: 9,
+                                                          height: 1.0,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                    Text(
+                                                      ' • \$$price',
+                                                      style: const TextStyle(
+                                                        color: AppTheme.textPrimary,
+                                                        fontSize: 11,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              }),
                                             );
                                           }).toList(),
                                         ),

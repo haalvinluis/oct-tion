@@ -1,0 +1,902 @@
+[
+  {
+    "displayName": "Naruto Uzumaki",
+    "powerPoints": 99,
+    "provenance": "Six Paths Sage Mode & Nine-Tails Jinchuriki",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sasuke Uchiha",
+    "powerPoints": 98,
+    "provenance": "Rinnegan & Eternal Mangekyo Sharingan",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Madara Uchiha",
+    "powerPoints": 99,
+    "provenance": "Ten-Tails Jinchuriki & Perfect Susanoo",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Hashirama Senju",
+    "powerPoints": 97,
+    "provenance": "First Hokage & Wood Release Sage Mode",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kaguya Otsutsuki",
+    "powerPoints": 100,
+    "provenance": "Chakra Ancestor & Infinite Tsukuyomi",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Itachi Uchiha",
+    "powerPoints": 95,
+    "provenance": "Tsukuyomi, Amaterasu & Totsuka Blade Susanoo",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kakashi Hatake",
+    "powerPoints": 94,
+    "provenance": "DMS Kakashi Kamui Shuriken & Sixth Hokage",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Minato Namikaze",
+    "powerPoints": 95,
+    "provenance": "Yellow Flash & Flying Raijin Master",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jiraiya",
+    "powerPoints": 91,
+    "provenance": "Toad Sage of Mount Myoboku",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Obito Uchiha",
+    "powerPoints": 96,
+    "provenance": "Ten-Tails Jinchuriki & Kamui Intangibility",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Pain (Nagato)",
+    "powerPoints": 94,
+    "provenance": "Six Paths of Pain & Shinra Tensei",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Might Guy",
+    "powerPoints": 97,
+    "provenance": "Eighth Gate of Death Night Guy",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Tobirama Senju",
+    "powerPoints": 93,
+    "provenance": "Second Hokage & Creator of Flying Raijin",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Tsunade Senju",
+    "powerPoints": 90,
+    "provenance": "Fifth Hokage & 100 Healings Strength",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Orochimaru",
+    "powerPoints": 92,
+    "provenance": "Legendary Sannin & Immortality Reanimation",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Gaara",
+    "powerPoints": 90,
+    "provenance": "Fifth Kazekage & Absolute Sand Defense",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shikamaru Nara",
+    "powerPoints": 87,
+    "provenance": "IQ 200+ Shadow Possession Strategist",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Killer Bee",
+    "powerPoints": 92,
+    "provenance": "Eight-Tails Perfect Jinchuriki & Seven Swords",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kabuto Yakushi",
+    "powerPoints": 93,
+    "provenance": "Dragon Sage Mode & Edo Tensei Army",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Hiruzen Sarutobi",
+    "powerPoints": 91,
+    "provenance": "Third Hokage The Professor Master of 5 Elements",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Neji Hyuga",
+    "powerPoints": 86,
+    "provenance": "Gentle Fist 8 Trigrams 64 Palms Genius",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Hinata Hyuga",
+    "powerPoints": 84,
+    "provenance": "Twin Lion Fists Byakugan Master",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shisui Uchiha",
+    "powerPoints": 94,
+    "provenance": "Body Flicker & Kotoamatsukami Ultimate Genjutsu",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Rasa (4th Kazekage)",
+    "powerPoints": 87,
+    "provenance": "Gold Dust Magnet Release Master",
+    "basePrice": 0
+  },
+  {
+    "displayName": "A (4th Raikage)",
+    "powerPoints": 92,
+    "provenance": "Lightning Release Chakra Mode Super Speed",
+    "basePrice": 0
+  },
+  {
+    "displayName": "A (3rd Raikage)",
+    "powerPoints": 95,
+    "provenance": "Hell Stab Four-Finger Spear & Lightning Armor",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Onoki (3rd Tsuchikage)",
+    "powerPoints": 92,
+    "provenance": "Particle Style Atomic Dismantling Jutsu",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mu (2nd Tsuchikage)",
+    "powerPoints": 93,
+    "provenance": "Particle Style Dust Release & Invisibility",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Gengetsu Hozuki (2nd Mizukage)",
+    "powerPoints": 92,
+    "provenance": "Steaming Danger Tyranny & Clam Genjutsu",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mei Terumi (5th Mizukage)",
+    "powerPoints": 89,
+    "provenance": "Lava Release & Boil Release Vapor",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Yagura Karatachi (4th Mizukage)",
+    "powerPoints": 89,
+    "provenance": "Three-Tails Isobu Perfect Jinchuriki",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kisame Hoshigaki",
+    "powerPoints": 91,
+    "provenance": "Monster of the Hidden Mist & Samehada Fusion",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sasori",
+    "powerPoints": 89,
+    "provenance": "Puppet Master of 100 Puppets & Iron Sand",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Deidara",
+    "powerPoints": 88,
+    "provenance": "Explosive Clay C4 Karura & C0 Detonation",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Hidan",
+    "powerPoints": 86,
+    "provenance": "Immortal Jashin Curse Technique",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kakuzu",
+    "powerPoints": 89,
+    "provenance": "Five Hearts Earth Grudge Fear Immortality",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Konan",
+    "powerPoints": 89,
+    "provenance": "Paper Person of God 600 Billion Bombs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Zetsu (Black & White)",
+    "powerPoints": 85,
+    "provenance": "Will of Kaguya & Spore Clone Infiltration",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Hagoromo Otsutsuki",
+    "powerPoints": 100,
+    "provenance": "Sage of the Six Paths & Creation of All Things",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Hamura Otsutsuki",
+    "powerPoints": 99,
+    "provenance": "Tenseigan Ancestor of the Moon Clan",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Indra Otsutsuki",
+    "powerPoints": 97,
+    "provenance": "Progenitor of Uchiha & Mangekyo Sharingan",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Asura Otsutsuki",
+    "powerPoints": 97,
+    "provenance": "Progenitor of Senju & Wood Release Avatar",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Momoshiki Otsutsuki",
+    "powerPoints": 98,
+    "provenance": "Fused Momoshiki Inukai Takeru no Mikoto",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kinshiki Otsutsuki",
+    "powerPoints": 94,
+    "provenance": "Otsutsuki Red Chakra Weapon Creator",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Urashiki Otsutsuki",
+    "powerPoints": 93,
+    "provenance": "Chakra Fishing Rod & Red Rinnegan",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Isshiki Otsutsuki",
+    "powerPoints": 100,
+    "provenance": "Sukunahikona & Daikokuten Shrinking",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jigen",
+    "powerPoints": 97,
+    "provenance": "Karma Vessel of Isshiki Otsutsuki",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Code",
+    "powerPoints": 95,
+    "provenance": "White Karma & Claw Mark Teleportation",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kawaki",
+    "powerPoints": 94,
+    "provenance": "Karma Resonance & Sukunahikona Eye",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Boruto Uzumaki",
+    "powerPoints": 95,
+    "provenance": "Jougan & Karma True Essence Flying Raijin",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sarada Uchiha",
+    "powerPoints": 88,
+    "provenance": "Mangekyo Sharingan & Super Cherry Blossom Strength",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mitsuki",
+    "powerPoints": 90,
+    "provenance": "Sage Transformation Synthetic Shinobi",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Rock Lee",
+    "powerPoints": 89,
+    "provenance": "Sixth Gate Hidden Lotus Taijutsu Master",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kiba Inuzuka",
+    "powerPoints": 82,
+    "provenance": "Fang Over Fang & Akamaru Beast Mimicry",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shino Aburame",
+    "powerPoints": 85,
+    "provenance": "Parasitic Kikaichu Destruction Bugs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Choji Akimichi",
+    "powerPoints": 86,
+    "provenance": "Butterfly Mode Super Multi-Size Expansion",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ino Yamanaka",
+    "powerPoints": 84,
+    "provenance": "Mind Body Switch Sensory Transmission",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Tenten",
+    "powerPoints": 80,
+    "provenance": "Bashosen Ninja Weapon Tools Master",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kankuro",
+    "powerPoints": 86,
+    "provenance": "Black Secret Technique Sasori Puppet Master",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Temari",
+    "powerPoints": 87,
+    "provenance": "Giant Folding Fan Wind Scythe Jutsu",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sai",
+    "powerPoints": 85,
+    "provenance": "Super Beast Imitating Cartoon Ink Scroll",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Yamato",
+    "powerPoints": 87,
+    "provenance": "Wood Release Hashirama Cell Enforcer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Danzo Shimura",
+    "powerPoints": 91,
+    "provenance": "Izanagi Arm of 10 Sharingan & Kotoamatsukami",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kushina Uzumaki",
+    "powerPoints": 90,
+    "provenance": "Adamantine Sealing Chains & Nine-Tails Mother",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mito Uzumaki",
+    "powerPoints": 91,
+    "provenance": "First Nine-Tails Jinchuriki & Byakugou Seal",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Chiyo",
+    "powerPoints": 88,
+    "provenance": "White Secret Technique 10 Puppets of Chikamatsu",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Hanzo of the Salamander",
+    "powerPoints": 91,
+    "provenance": "Ibuse Salamander Poison & Named the Sannin",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Fugaku Uchiha",
+    "powerPoints": 89,
+    "provenance": "Wicked Eye Fugaku Mangekyo Sharingan",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mikoto Uchiha",
+    "powerPoints": 80,
+    "provenance": "Jonin Mother of Itachi and Sasuke",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Konohamaru Sarutobi",
+    "powerPoints": 86,
+    "provenance": "Rasengan & Eight Trigrams Sealing Master",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mirai Sarutobi",
+    "powerPoints": 83,
+    "provenance": "Wind Release & Yin Genjutsu Blade",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Asuma Sarutobi",
+    "powerPoints": 87,
+    "provenance": "Flying Swallow Wind Chakra Trench Knives",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kurenai Yuhi",
+    "powerPoints": 83,
+    "provenance": "Tree Binding Death Genjutsu Specialist",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Anko Mitarashi",
+    "powerPoints": 83,
+    "provenance": "Hidden Shadow Snake Hands & Cursed Seal",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shizune",
+    "powerPoints": 82,
+    "provenance": "Poison Mist & Medical Ninjutsu Specialist",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Darui (5th Raikage)",
+    "powerPoints": 90,
+    "provenance": "Storm Release Laser Circus & Black Lightning",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Cee",
+    "powerPoints": 84,
+    "provenance": "Lightning Release Sensory & Flash Illusion",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Omoi",
+    "powerPoints": 84,
+    "provenance": "Cloud Style Crescent Moon Beheading",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Karui",
+    "powerPoints": 82,
+    "provenance": "Cloud Style Taijutsu Swordsman",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kurotsuchi (4th Tsuchikage)",
+    "powerPoints": 88,
+    "provenance": "Lava Release Quicklime Technique",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Akatsuchi",
+    "powerPoints": 85,
+    "provenance": "Earth Release Golem Creation Technique",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Chojuro (6th Mizukage)",
+    "powerPoints": 88,
+    "provenance": "Hiramekarei Dual Bone Mutilation",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ao",
+    "powerPoints": 85,
+    "provenance": "Byakugan of the Mist & Barrier Master",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Zabuza Momochi",
+    "powerPoints": 87,
+    "provenance": "Demon of the Mist & Silent Killing Technique",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Haku",
+    "powerPoints": 86,
+    "provenance": "Demonic Ice Mirrors & Senbon Precision",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mangetsu Hozuki",
+    "powerPoints": 88,
+    "provenance": "Master of All 7 Mist Swords",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kushimaru Kuriarare",
+    "powerPoints": 86,
+    "provenance": "Nuibari Needle Sword Threading Stitch",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jinjin Akebino",
+    "powerPoints": 85,
+    "provenance": "Kabutowari Blunt Axe and Hammer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ameyuri Ringo",
+    "powerPoints": 87,
+    "provenance": "Kiba Lightning Twin Swords",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jirobo",
+    "powerPoints": 82,
+    "provenance": "Sound Four Earth Style Prison Dome",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kidomaru",
+    "powerPoints": 84,
+    "provenance": "Sound Four Spider Web Golden Armor",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sakon and Ukon",
+    "powerPoints": 84,
+    "provenance": "Sound Four Demon Parasite Fusion",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Tayuya",
+    "powerPoints": 84,
+    "provenance": "Sound Four Demon Flute Phantom Wave",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kimimaro",
+    "powerPoints": 89,
+    "provenance": "Shikotsumyaku Bone Dance & Cursed Seal Level 2",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Suigetsu Hozuki",
+    "powerPoints": 86,
+    "provenance": "Hydrification Technique & Kubikiribocho",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Karin Uzumaki",
+    "powerPoints": 85,
+    "provenance": "Mind's Eye of the Kagura & Healing Bite",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jugo",
+    "powerPoints": 87,
+    "provenance": "Natural Sage Energy Berserker Cannon",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Fukasaku",
+    "powerPoints": 88,
+    "provenance": "Great Toad Sage Toad Song Genjutsu",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shima",
+    "powerPoints": 88,
+    "provenance": "Great Toad Sage Tongue Scythe",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Gamabunta",
+    "powerPoints": 88,
+    "provenance": "Chief Toad of Mount Myoboku Water Bullets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Gamaken",
+    "powerPoints": 84,
+    "provenance": "Unpretentious Brawler Toad SAS Shield",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Gamahiro",
+    "powerPoints": 84,
+    "provenance": "Dual Broadsword Heavy Assault Toad",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Gamariki",
+    "powerPoints": 80,
+    "provenance": "Water Release Genjutsu Toad",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Manda",
+    "powerPoints": 88,
+    "provenance": "Colossal Giant Snake of Ryuchi Cave",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Aoda",
+    "powerPoints": 86,
+    "provenance": "Sasuke's Loyal Ryuchi Cave Serpent",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Katsuyu",
+    "powerPoints": 89,
+    "provenance": "Giant Slug of Shikkotsu Forest Acid Slime",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Enma",
+    "powerPoints": 88,
+    "provenance": "Monkey King Adamantine Staff Transformation",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Pakun",
+    "powerPoints": 76,
+    "provenance": "Ninja Hound Tracking Expert",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Yugito Nii",
+    "powerPoints": 89,
+    "provenance": "Two-Tails Matatabi Blue Fire Jinchuriki",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Roshi",
+    "powerPoints": 89,
+    "provenance": "Four-Tails Son Goku Lava Release Jinchuriki",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Han",
+    "powerPoints": 89,
+    "provenance": "Five-Tails Kokuo Steam Power Armor Jinchuriki",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Utakata",
+    "powerPoints": 89,
+    "provenance": "Six-Tails Saiken Soap Bubble Acid Jinchuriki",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Fuu",
+    "powerPoints": 88,
+    "provenance": "Seven-Tails Chomei Flying Scale Powder Jinchuriki",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shin Uchiha",
+    "powerPoints": 87,
+    "provenance": "Telekinetic Blade Sharingan Clone Army",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Torune Aburame",
+    "powerPoints": 86,
+    "provenance": "Rinkaichu Nano-Sized Venomous Beetles",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Foo Yamanaka",
+    "powerPoints": 85,
+    "provenance": "Root Mind Transfer Puppet Curse",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Gari",
+    "powerPoints": 85,
+    "provenance": "Explosion Release Landmine Fist",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Pakura",
+    "powerPoints": 87,
+    "provenance": "Scorch Release Incinerating Flare Technique",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Toroi",
+    "powerPoints": 84,
+    "provenance": "Magnet Release Consumptive Shuriken",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Hayate Gekko",
+    "powerPoints": 82,
+    "provenance": "Dance of the Crescent Moon Sword Style",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Genma Shiranui",
+    "powerPoints": 83,
+    "provenance": "Senbon Spitting Special Jonin Bodyguard",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Raido Namiashi",
+    "powerPoints": 83,
+    "provenance": "Black Flying Dagger Bodyguard",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Aoba Yamashiro",
+    "powerPoints": 83,
+    "provenance": "Secret Technique Stone Needle Crow Scatter",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kotetsu Hagane",
+    "powerPoints": 81,
+    "provenance": "Conch Shell Giant Mace Dual Gatekeeper",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Izumo Kamizuki",
+    "powerPoints": 81,
+    "provenance": "Water Release Starch Syrup Capturing Field",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ebisu",
+    "powerPoints": 78,
+    "provenance": "Elite Special Tutor Jonin",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mizuki",
+    "powerPoints": 75,
+    "provenance": "Giant Shuriken Treacherous Chunin",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Iruka Umino",
+    "powerPoints": 80,
+    "provenance": "Academy Instructor & Father Figure to Naruto",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Teuchi (Ramen Guy)",
+    "powerPoints": 75,
+    "provenance": "Ichiraku Ramen Creator Sage of Six Bowls",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ayame",
+    "powerPoints": 72,
+    "provenance": "Ichiraku Ramen Waitress",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Tawashi",
+    "powerPoints": 76,
+    "provenance": "Hidden Leaf Guard",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Baki",
+    "powerPoints": 84,
+    "provenance": "Wind Blade Sand Jonin Council Leader",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Yashamaru",
+    "powerPoints": 80,
+    "provenance": "Anbu Medic Sand Ninja",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kitsuchi",
+    "powerPoints": 89,
+    "provenance": "Earth Release Mountain Sandwich Technique",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kurobachi",
+    "powerPoints": 78,
+    "provenance": "Hidden Grass Ninja",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shigure",
+    "powerPoints": 77,
+    "provenance": "Hidden Rain Senbon Needle Rain",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Baiu",
+    "powerPoints": 76,
+    "provenance": "Hidden Rain Chunin Candidate",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Midare",
+    "powerPoints": 76,
+    "provenance": "Hidden Rain Chunin Candidate",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Oboro",
+    "powerPoints": 77,
+    "provenance": "Haze Clone Technique Mist Ninja",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kagari",
+    "powerPoints": 77,
+    "provenance": "Hidden Rain Illusionist",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mubi",
+    "powerPoints": 77,
+    "provenance": "Hidden Rain Ground Swimmer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Dosu Kinuta",
+    "powerPoints": 79,
+    "provenance": "Resonating Sound Drill Gauntlet",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Zaku Abumi",
+    "powerPoints": 78,
+    "provenance": "Supersonic Air Slicing Tubes",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kin Tsuchi",
+    "powerPoints": 77,
+    "provenance": "Bell Ringing Shadow Needle Illusion",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Yoroi Akado",
+    "powerPoints": 78,
+    "provenance": "Chakra Absorption Palm Candidate",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Misumi Tsurugi",
+    "powerPoints": 77,
+    "provenance": "Soft Body Modification Flexible Strike",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Guren",
+    "powerPoints": 88,
+    "provenance": "Crystal Release Jade Hexagonal Shuriken",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Yukimaru",
+    "powerPoints": 80,
+    "provenance": "Three-Tails Control Child Prodigy",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sora",
+    "powerPoints": 84,
+    "provenance": "Nine-Tails Pseudo-Jinchuriki Wind Beast Claw",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Chiriku",
+    "powerPoints": 87,
+    "provenance": "Welcoming Approach 1000-Hand Kannon Temple Monk",
+    "basePrice": 0
+  }
+]

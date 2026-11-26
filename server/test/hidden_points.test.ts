@@ -47,7 +47,7 @@ describe('PowerBid: Hidden Points System Tests', function () {
     const res: any = await new Promise((resolve) => {
       host.emit(
         'create_room',
-        { username: 'SecretHost', category: 'cricket', gameMode: 'AUCTION_TEAM_CHALLENGE', itemCount: 3 },
+        { username: 'SecretHost', category: 'cricket', gameMode: 'AUCTION_TEAM_CHALLENGE', itemCount: 4 },
         resolve
       );
     });
@@ -71,7 +71,7 @@ describe('PowerBid: Hidden Points System Tests', function () {
     const res: any = await new Promise((resolve) => {
       host.emit(
         'create_room',
-        { username: 'StateHost', category: 'cricket', gameMode: 'AUCTION_TEAM_CHALLENGE', itemCount: 3 },
+        { username: 'StateHost', category: 'cricket', gameMode: 'AUCTION_TEAM_CHALLENGE', itemCount: 4 },
         resolve
       );
     });
@@ -95,7 +95,7 @@ describe('PowerBid: Hidden Points System Tests', function () {
     const res: any = await new Promise((resolve) => {
       host.emit(
         'create_room',
-        { username: 'SaleHost', category: 'cricket', gameMode: 'AUCTION_TEAM_CHALLENGE', itemCount: 2 },
+        { username: 'SaleHost', category: 'cricket', gameMode: 'AUCTION_TEAM_CHALLENGE', itemCount: 4 },
         resolve
       );
     });
@@ -123,7 +123,7 @@ describe('PowerBid: Hidden Points System Tests', function () {
     const res: any = await new Promise((resolve) => {
       host.emit(
         'create_room',
-        { username: 'ModeAHost', category: 'cricket', gameMode: 'POWER_COMPARISON', itemCount: 2 },
+        { username: 'ModeAHost', category: 'cricket', gameMode: 'POWER_COMPARISON', itemCount: 4 },
         resolve
       );
     });
@@ -146,7 +146,7 @@ describe('PowerBid: Hidden Points System Tests', function () {
     const res: any = await new Promise((resolve) => {
       host.emit(
         'create_room',
-        { username: 'StandingsHost', category: 'cricket', gameMode: 'AUCTION_TEAM_CHALLENGE', itemCount: 1 },
+        { username: 'StandingsHost', category: 'cricket', gameMode: 'AUCTION_TEAM_CHALLENGE', itemCount: 4 },
         resolve
       );
     });
@@ -155,9 +155,10 @@ describe('PowerBid: Hidden Points System Tests', function () {
     await new Promise((resolve) => host.emit('start_auction', { roomCode }, resolve));
     const engine = roomManager.getAuctionEngine(roomCode)!;
     engine.phase = 'BIDDING';
+    engine.currentItemIndex = engine.items.length - 1;
 
     engine.placeBid(host.id!, 300);
-    // Finalize item sale which will finish the 1-item auction
+    // Finalize item sale which will finish the auction
     const completedPromise = new Promise<any>((resolve) => host.on('auction_completed', resolve));
     engine.finalizeItemSale();
 
@@ -183,7 +184,7 @@ describe('PowerBid: Hidden Points System Tests', function () {
     const res: any = await new Promise((resolve) => {
       host.emit(
         'create_room',
-        { username: 'HistoryHost', category: 'cricket', gameMode: 'AUCTION_TEAM_CHALLENGE', itemCount: 1 },
+        { username: 'HistoryHost', category: 'cricket', gameMode: 'AUCTION_TEAM_CHALLENGE', itemCount: 4 },
         resolve
       );
     });
@@ -192,6 +193,7 @@ describe('PowerBid: Hidden Points System Tests', function () {
     await new Promise((resolve) => host.emit('start_auction', { roomCode }, resolve));
     const engine = roomManager.getAuctionEngine(roomCode)!;
     engine.phase = 'BIDDING';
+    engine.currentItemIndex = engine.items.length - 1;
     engine.placeBid(host.id!, 300);
 
     const completedPromise = new Promise<any>((resolve) => host.on('auction_completed', resolve));
@@ -235,7 +237,7 @@ describe('PowerBid: Hidden Points System Tests', function () {
     expect(catRes.categories).to.be.an('array').with.lengthOf(11);
     const cricket = catRes.categories.find((c: any) => c.id === 'cricket');
     expect(cricket).to.not.be.undefined;
-    expect(cricket.actualCount).to.equal(30);
+    expect(cricket.actualCount).to.equal(500);
     expect(cricket.scoringMethod).to.be.undefined;
     expect(cricket.provenance).to.be.undefined;
   });

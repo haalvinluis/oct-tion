@@ -47,16 +47,16 @@ describe('Step 5: Categories, Character Database, Power Points & Winner System T
     expect(categories).to.have.lengthOf(11);
 
     const cricket = categories.find((c) => c.id === 'cricket')!;
-    expect(cricket.actualCount).to.equal(30);
+    expect(cricket.actualCount).to.equal(500);
     expect(cricket.targetCount).to.equal(800);
     expect(cricket.scoringMethod).to.include('ICC Career Performance');
 
     const naruto = categories.find((c) => c.id === 'naruto')!;
-    expect(naruto.actualCount).to.equal(25);
+    expect(naruto.actualCount).to.equal(150);
     expect(naruto.targetCount).to.equal(250);
 
     const pokemon = categories.find((c) => c.id === 'pokemon')!;
-    expect(pokemon.actualCount).to.equal(20);
+    expect(pokemon.actualCount).to.equal(150);
     expect(pokemon.targetCount).to.equal(500);
   });
 
@@ -89,8 +89,8 @@ describe('Step 5: Categories, Character Database, Power Points & Winner System T
     const items10 = db.getCharacterRecords('naruto', 10);
     expect(items10).to.have.lengthOf(10);
 
-    // Requesting more items than available valid records (e.g. 50 items when only 30 exist)
-    expect(() => db.getCharacterRecords('cricket', 50)).to.throw(/Insufficient valid records/);
+    // Requesting more items than available valid records (e.g. 600 items when only 500 exist)
+    expect(() => db.getCharacterRecords('cricket', 600)).to.throw(/Insufficient valid records/);
   });
 
   it('4. Should broadcast identical lineup & power points to all connected room clients', async () => {
@@ -154,18 +154,23 @@ describe('Step 5: Categories, Character Database, Power Points & Winner System T
     const res: any = await new Promise((resolve) => {
       host.emit(
         'create_room',
-        { username: 'HostUser', category: 'cricket', gameMode: 'AUCTION_TEAM_CHALLENGE', itemCount: 2 },
+        { username: 'HostUser', category: 'cricket', gameMode: 'AUCTION_TEAM_CHALLENGE', itemCount: 4 },
         resolve
       );
     });
     const roomCode = res.roomCode;
+
+    const guest = createClient();
+    await waitForConnect(guest);
+    await new Promise((resolve) => guest.emit('join_room', { roomCode, username: 'GuestUser' }, resolve));
 
     await new Promise((resolve) => host.emit('start_auction', { roomCode }, resolve));
     const engine = roomManager.getAuctionEngine(roomCode)!;
     engine.phase = 'BIDDING';
 
     const firstItem = engine.items[0];
-    engine.placeBid(host.id!, firstItem.basePrice);
+    const bidAmount = firstItem.basePrice > 0 ? firstItem.basePrice : 50;
+    engine.placeBid(host.id!, bidAmount);
     engine.finalizeItemSale();
 
     const standings = engine.calculateFinalStandings();
@@ -175,7 +180,7 @@ describe('Step 5: Categories, Character Database, Power Points & Winner System T
     expect(standings[0].itemsWon).to.equal(1);
     expect(standings[0].totalTeamPoints).to.equal(firstItem.powerPoints);
     expect((standings[0].itemsList[0] as any).powerPoints).to.be.undefined;
-    expect(standings[0].remainingBudget).to.equal(1000 - firstItem.basePrice);
+    expect(standings[0].remainingBudget).to.equal(1000 - bidAmount);
   });
 
   it('7. Should verify pure text-only structure (no image URL properties)', () => {

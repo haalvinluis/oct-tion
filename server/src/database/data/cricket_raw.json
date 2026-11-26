@@ -1,0 +1,4250 @@
+[
+  {
+    "displayName": "Sachin Tendulkar",
+    "powerPoints": 99,
+    "provenance": "ICC Hall of Fame / 100 Int Centuries & 34,357 Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Virat Kohli",
+    "powerPoints": 98,
+    "provenance": "ICC ODI Player of Decade / 80 Int Centuries",
+    "basePrice": 0
+  },
+  {
+    "displayName": "MS Dhoni",
+    "powerPoints": 95,
+    "provenance": "ICC 3 World Trophies / Legend Captain & Wicketkeeper",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Rohit Sharma",
+    "powerPoints": 94,
+    "provenance": "ICC T20 World Cup Champion / 3 Double ODI Centuries",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jasprit Bumrah",
+    "powerPoints": 96,
+    "provenance": "ICC No.1 Test Bowler / Yorker Specialist",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kapil Dev",
+    "powerPoints": 95,
+    "provenance": "1983 World Cup Winning Captain / 434 Test Wickets & 5,248 Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sunil Gavaskar",
+    "powerPoints": 95,
+    "provenance": "First Player to 10,000 Test Runs / 34 Test Centuries",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Rahul Dravid",
+    "powerPoints": 94,
+    "provenance": "The Wall / 13,288 Test Runs & 210 Catches",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sourav Ganguly",
+    "powerPoints": 92,
+    "provenance": "God of the Offside / 11,363 ODI Runs & Iconic Captain",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Anil Kumble",
+    "powerPoints": 95,
+    "provenance": "619 Test Wickets & Perfect 10 Wickets in an Innings",
+    "basePrice": 0
+  },
+  {
+    "displayName": "VVS Laxman",
+    "powerPoints": 92,
+    "provenance": "Very Very Special / 281 vs Australia & 8,781 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Virender Sehwag",
+    "powerPoints": 94,
+    "provenance": "2x Test Triple Centuries & 8,586 Test Runs at 82.23 SR",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Yuvraj Singh",
+    "powerPoints": 92,
+    "provenance": "2011 World Cup Player of Tournament / 6 Sixes in an Over",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Harbhajan Singh",
+    "powerPoints": 91,
+    "provenance": "Turbanator / 417 Test Wickets & Hat-trick vs Aus",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Zaheer Khan",
+    "powerPoints": 91,
+    "provenance": "2011 World Cup Leading Wicket Taker / 311 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Javagal Srinath",
+    "powerPoints": 88,
+    "provenance": "Fast Bowling Pioneer / 315 ODI Wickets & 236 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ravichandran Ashwin",
+    "powerPoints": 94,
+    "provenance": "500+ Test Wickets & 36 Five-Wicket Hauls",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ravindra Jadeja",
+    "powerPoints": 93,
+    "provenance": "ICC No.1 Test All-Rounder / 3,000 Runs & 300 Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mohammed Shami",
+    "powerPoints": 92,
+    "provenance": "2023 World Cup Leading Wicket Taker / Seam Master",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Cheteshwar Pujara",
+    "powerPoints": 89,
+    "provenance": "Test Specialist / 7,195 Runs & 19 Centuries",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ajinkya Rahane",
+    "powerPoints": 88,
+    "provenance": "Border-Gavaskar Trophy Winning Captain / 5,077 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shikhar Dhawan",
+    "powerPoints": 89,
+    "provenance": "ICC Champions Trophy Golden Bat / 6,793 ODI Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Gautam Gambhir",
+    "powerPoints": 90,
+    "provenance": "2007 T20 & 2011 World Cup Final Top Scorer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Suresh Raina",
+    "powerPoints": 88,
+    "provenance": "2011 World Cup Champion / First Indian T20I Centurion",
+    "basePrice": 0
+  },
+  {
+    "displayName": "KL Rahul",
+    "powerPoints": 89,
+    "provenance": "Class Stroke Player / Test Centuries in SA, Eng, Aus",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Rishabh Pant",
+    "powerPoints": 91,
+    "provenance": "Gabba Historic Chase Hero / Explosive Wicketkeeper",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Hardik Pandya",
+    "powerPoints": 90,
+    "provenance": "T20 World Cup Champion All-Rounder & Finisher",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shubman Gill",
+    "powerPoints": 89,
+    "provenance": "ODI Double Centurion & Youngest 200+ Scorer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Yashasvi Jaiswal",
+    "powerPoints": 89,
+    "provenance": "Record Test Double Centuries vs England",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Suryakumar Yadav",
+    "powerPoints": 92,
+    "provenance": "ICC No.1 T20I Batter / 360-Degree Phenomenon",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kuldeep Yadav",
+    "powerPoints": 89,
+    "provenance": "Dual ODI Hat-tricks / Left-Arm Wrist Spinner",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Yuzvendra Chahal",
+    "powerPoints": 88,
+    "provenance": "Fastest to 100 T20I Wickets / Leg-Spin Trickster",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mohammed Siraj",
+    "powerPoints": 89,
+    "provenance": "ICC No.1 ODI Bowler / Asia Cup Final 6-Wicket Spell",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Axar Patel",
+    "powerPoints": 88,
+    "provenance": "T20 World Cup Final Game-Changer / Spin All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ishant Sharma",
+    "powerPoints": 88,
+    "provenance": "100 Test Matches / 311 Test Wickets Pace Spearhead",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ashish Nehra",
+    "powerPoints": 86,
+    "provenance": "6/23 vs England World Cup 2003 / Left-Arm Swing",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Irfan Pathan",
+    "powerPoints": 88,
+    "provenance": "First-Over Test Hat-Trick vs Pak / 2007 T20 Final MoM",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Bhuvaneshwar Kumar",
+    "powerPoints": 89,
+    "provenance": "Two-Time IPL Purple Cap / Swing Master",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shardul Thakur",
+    "powerPoints": 85,
+    "provenance": "Lord Shardul / Golden Arm Partnership Breaker",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Dinesh Karthik",
+    "powerPoints": 86,
+    "provenance": "Nidahas Trophy Hero & 20-Year International Career",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ambati Rayudu",
+    "powerPoints": 85,
+    "provenance": "6x IPL Champion / Career ODI Average 47.05",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Robin Uthappa",
+    "powerPoints": 85,
+    "provenance": "2007 T20 World Cup Champion / Aggressive Opener",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Murali Vijay",
+    "powerPoints": 87,
+    "provenance": "Overseas Test Opener / 3,982 Runs & 12 Centuries",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Wriddhiman Saha",
+    "powerPoints": 85,
+    "provenance": "Superman Glovework / ICC Top Ranked Wicketkeeper",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Pragyan Ojha",
+    "powerPoints": 85,
+    "provenance": "113 Test Wickets / Left-Arm Orthodox Spinner",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Venkatesh Prasad",
+    "powerPoints": 86,
+    "provenance": "96 Test & 196 ODI Wickets / Leg-Cutter Master",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Madan Lal",
+    "powerPoints": 86,
+    "provenance": "1983 World Cup Final Hero / 3 Key Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mohinder Amarnath",
+    "powerPoints": 89,
+    "provenance": "1983 World Cup Semi & Final Man of the Match",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Dilip Vengsarkar",
+    "powerPoints": 89,
+    "provenance": "Lord's Triple Centurion / 6,868 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Gundappa Viswanath",
+    "powerPoints": 91,
+    "provenance": "Wristy Maestro / 6,080 Test Runs & Square Cut Master",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Polly Umrigar",
+    "powerPoints": 88,
+    "provenance": "First Indian Double Centurion / Historic Captain",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Vijay Hazare",
+    "powerPoints": 90,
+    "provenance": "Two Centuries in Adelaide 1948 / Legend Batsman",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Vinoo Mankad",
+    "powerPoints": 90,
+    "provenance": "Lord's 184 & 5 Wickets / 2,109 Runs & 162 Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "BS Chandrasekhar",
+    "powerPoints": 92,
+    "provenance": "Polio-Arm Leg-Spin Magician / 242 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "EAS Prasanna",
+    "powerPoints": 91,
+    "provenance": "Spin Quartet Maestro / Flight & Dip Master",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Bishan Singh Bedi",
+    "powerPoints": 93,
+    "provenance": "Poetry in Motion / 266 Test Wickets & Spin Leader",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Syed Kirmani",
+    "powerPoints": 87,
+    "provenance": "1983 Best Wicketkeeper / 198 Dismissals",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Farokh Engineer",
+    "powerPoints": 87,
+    "provenance": "Aggressive Wicketkeeper Batter / Mumbai Legend",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ravi Shastri",
+    "powerPoints": 88,
+    "provenance": "Champion of Champions 1985 / 3,830 Runs & 151 Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Navjot Singh Sidhu",
+    "powerPoints": 86,
+    "provenance": "Sixer Sidhu / 3,202 Test Runs & Spin Destroyer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ajay Jadeja",
+    "powerPoints": 86,
+    "provenance": "5,359 ODI Runs & Finisher vs Pakistan 1996",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sanjay Manjrekar",
+    "powerPoints": 85,
+    "provenance": "Technical Master / 2,043 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Manoj Prabhakar",
+    "powerPoints": 85,
+    "provenance": "All-Rounder / Swing & Seam Pioneer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kiran More",
+    "powerPoints": 85,
+    "provenance": "Stumpings Record Holder / 130 Dismissals",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Nayan Mongia",
+    "powerPoints": 85,
+    "provenance": "1990s Wicketkeeper Anchor / 99 Test Dismissals",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Deepak Chahar",
+    "powerPoints": 85,
+    "provenance": "6/7 T20I World Record Spell vs Bangladesh",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Arshdeep Singh",
+    "powerPoints": 89,
+    "provenance": "T20 World Cup Leading Wicket Taker / Death Overs Yorker",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Umran Malik",
+    "powerPoints": 84,
+    "provenance": "157 km/h Express Pace Phenom",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Washington Sundar",
+    "powerPoints": 86,
+    "provenance": "Gabba Test Hero / Off-Spin All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sanju Samson",
+    "powerPoints": 88,
+    "provenance": "Back-to-Back T20I Centuries / Explosive Batter",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ishan Kishan",
+    "powerPoints": 88,
+    "provenance": "Fastest Double Century in ODI History (126 balls)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Rinku Singh",
+    "powerPoints": 87,
+    "provenance": "5 Sixes in Final Over / Ice-Cool Finisher",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shivam Dube",
+    "powerPoints": 86,
+    "provenance": "T20 World Cup Champion / Power-Hitter Spin Crusher",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ruturaj Gaikwad",
+    "powerPoints": 87,
+    "provenance": "Orange Cap Winner & Asian Games Gold Captain",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Tilak Varma",
+    "powerPoints": 87,
+    "provenance": "Consecutive T20I Centuries in South Africa",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Avesh Khan",
+    "powerPoints": 84,
+    "provenance": "Hit-the-Deck Express Fast Bowler",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Prasidh Krishna",
+    "powerPoints": 84,
+    "provenance": "High-Arm Bounce Pacer / 6-Wicket ODI Spells",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ravi Bishnoi",
+    "powerPoints": 86,
+    "provenance": "ICC No.1 T20I Bowler / Googly Specialist",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Varun Chakravarthy",
+    "powerPoints": 86,
+    "provenance": "Mystery Spinner / 5-Wicket Haul vs South Africa",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Krunal Pandya",
+    "powerPoints": 84,
+    "provenance": "IPL Final MoM / Left-Arm All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Amit Mishra",
+    "powerPoints": 86,
+    "provenance": "3x IPL Hat-tricks Record Holder / Leg-Spinner",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Piyush Chawla",
+    "powerPoints": 86,
+    "provenance": "2007 T20 & 2011 World Cup Winner / 150+ IPL Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Praveen Kumar",
+    "powerPoints": 86,
+    "provenance": "CB Series 2008 Swing Master vs Australia",
+    "basePrice": 0
+  },
+  {
+    "displayName": "RP Singh",
+    "powerPoints": 87,
+    "provenance": "2007 T20 World Cup Leading Wicket Taker",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sreesanth",
+    "powerPoints": 87,
+    "provenance": "2007 T20 & 2011 World Cup Champion Pacer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Munaf Patel",
+    "powerPoints": 86,
+    "provenance": "2011 World Cup Champion / Line & Length Surgeon",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mohit Sharma",
+    "powerPoints": 85,
+    "provenance": "2015 World Cup Pacer / Back-of-Hand Slower Ball",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Vinod Kambli",
+    "powerPoints": 86,
+    "provenance": "Back-to-Back Double Centuries / 1,084 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Woorkeri Raman",
+    "powerPoints": 83,
+    "provenance": "First Indian Century in South Africa",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sadagoppan Ramesh",
+    "powerPoints": 84,
+    "provenance": "Stylish Left-Handed Test Opener",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Wasim Jaffer",
+    "powerPoints": 86,
+    "provenance": "Ranji Trophy All-Time Leading Run-Scorer (12,000+ Runs)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Amol Muzumdar",
+    "powerPoints": 85,
+    "provenance": "Domestic Cricket Legend / 9,232 First-Class Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Don Bradman",
+    "powerPoints": 100,
+    "provenance": "Greatest of All Time / Career Test Batting Avg 99.94",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shane Warne",
+    "powerPoints": 98,
+    "provenance": "Wisden Cricketer of Century / 708 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ricky Ponting",
+    "powerPoints": 97,
+    "provenance": "2x World Cup Winning Captain & 13,378 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Glenn McGrath",
+    "powerPoints": 97,
+    "provenance": "Pigeon / 563 Test Wickets & 3x World Cup Champion",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Steve Waugh",
+    "powerPoints": 95,
+    "provenance": "Tugga / 16 Consecutive Test Wins Record Captain",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mark Waugh",
+    "powerPoints": 93,
+    "provenance": "Junior / Most Elegant Slip Catcher & 8,029 Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Allan Border",
+    "powerPoints": 95,
+    "provenance": "1987 World Cup Winner / 11,174 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Steve Smith",
+    "powerPoints": 96,
+    "provenance": "Career Test Batting Avg 56.97 & 32 Test Centuries",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Pat Cummins",
+    "powerPoints": 95,
+    "provenance": "WTC, ODI World Cup Winning Captain & Test Cricketer of Year",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mitchell Starc",
+    "powerPoints": 94,
+    "provenance": "World Cup Highest Wicket Taker / 350+ Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Adam Gilchrist",
+    "powerPoints": 96,
+    "provenance": "Greatest Wicketkeeper-Batter / 100+ Strike Rate",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Matthew Hayden",
+    "powerPoints": 94,
+    "provenance": "380 Test Innings vs Zimbabwe / 8,625 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Justin Langer",
+    "powerPoints": 91,
+    "provenance": "Hayden Opening Partner / 7,696 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "David Warner",
+    "powerPoints": 94,
+    "provenance": "335* Triple Centurion & 3-Format World Champion",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Brett Lee",
+    "powerPoints": 95,
+    "provenance": "161.1 km/h Express Pace & 310 Test / 380 ODI Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jason Gillespie",
+    "powerPoints": 90,
+    "provenance": "Dizzy / 259 Test Wickets & Nightwatchman 201*",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mitchell Johnson",
+    "powerPoints": 93,
+    "provenance": "Ashes 2013-14 37 Wickets / ICC Player of the Year",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Josh Hazlewood",
+    "powerPoints": 93,
+    "provenance": "Modern McGrath / Precision Line & Length",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Nathan Lyon",
+    "powerPoints": 94,
+    "provenance": "GOAT / 530+ Test Wickets & Finger-Spin Legend",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Michael Clarke",
+    "powerPoints": 93,
+    "provenance": "2015 World Cup Winning Captain & 329* Triple Century",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Michael Hussey",
+    "powerPoints": 92,
+    "provenance": "Mr. Cricket / 51.52 Test Avg & Ice Finisher",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shane Watson",
+    "powerPoints": 92,
+    "provenance": "2x ICC Player of Year & T20 World Cup Player of Tournament",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Glenn Maxwell",
+    "powerPoints": 92,
+    "provenance": "201* vs Afghanistan at 2023 World Cup / Big Show",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Travis Head",
+    "powerPoints": 93,
+    "provenance": "2023 WTC & World Cup Final Match-Winner",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Marnus Labuschagne",
+    "powerPoints": 90,
+    "provenance": "ICC No.1 Test Batter / 4,000+ Runs at 50 Avg",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mitchell Marsh",
+    "powerPoints": 89,
+    "provenance": "T20 World Cup Final Hero & Captain",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Marcus Stoinis",
+    "powerPoints": 87,
+    "provenance": "Heavy-Ball All-Rounder & Match Finisher",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Aaron Finch",
+    "powerPoints": 89,
+    "provenance": "T20 World Cup Winning Captain & 172 T20I Score",
+    "basePrice": 0
+  },
+  {
+    "displayName": "George Bailey",
+    "powerPoints": 86,
+    "provenance": "Australia ODI Captain & Middle-Order Anchor",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Brad Haddin",
+    "powerPoints": 88,
+    "provenance": "2013-14 Ashes Wicketkeeper Hero & World Cup Winner",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Damien Martyn",
+    "powerPoints": 90,
+    "provenance": "Elite Strokeplay / 2003 World Cup Final 88*",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Andrew Symonds",
+    "powerPoints": 91,
+    "provenance": "Unstoppable All-Rounder / 2003 World Cup 143*",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Greg Chappell",
+    "powerPoints": 94,
+    "provenance": "7,110 Test Runs at 53.86 & Master Tactician",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ian Chappell",
+    "powerPoints": 92,
+    "provenance": "Iconic Captain & Aggressive Test Leader",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Dennis Lillee",
+    "powerPoints": 96,
+    "provenance": "Complete Fast Bowler / 355 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jeff Thomson",
+    "powerPoints": 95,
+    "provenance": "Fastest Slinger in History / 160.45 km/h",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Neil Harvey",
+    "powerPoints": 92,
+    "provenance": "Invincibles Legend / 6,149 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Keith Miller",
+    "powerPoints": 94,
+    "provenance": "Greatest Australian All-Rounder / 2,958 Runs & 170 Wkts",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Arthur Morris",
+    "powerPoints": 90,
+    "provenance": "1948 Invincibles Top Scorer / 3,533 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Bill Ponsford",
+    "powerPoints": 91,
+    "provenance": "Quadruple Centurion (437 & 429 in First-Class)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Victor Trumper",
+    "powerPoints": 93,
+    "provenance": "Golden Age Genius / Romantic Strokeplay Legend",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Clarrie Grimmett",
+    "powerPoints": 93,
+    "provenance": "Inventor of the Flipper / 216 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Bill O'Reilly",
+    "powerPoints": 95,
+    "provenance": "Tiger / Bradman's Toughest Bowler & 144 Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ray Lindwall",
+    "powerPoints": 93,
+    "provenance": "Classic Fast Bowler / 228 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kim Hughes",
+    "powerPoints": 87,
+    "provenance": "100* at Lord's vs West Indies Pace Attack",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Bob Simpson",
+    "powerPoints": 90,
+    "provenance": "Triple Century 311 & Historic Player-Coach",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Doug Walters",
+    "powerPoints": 90,
+    "provenance": "Century in a Session / 5,357 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mark Taylor",
+    "powerPoints": 91,
+    "provenance": "334* vs Pakistan & 1999 World Cup Finalist Captain",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Stuart MacGill",
+    "powerPoints": 89,
+    "provenance": "208 Test Wickets at Strike Rate 54",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Simon Katich",
+    "powerPoints": 86,
+    "provenance": "Grit & Determination Opener / 4,188 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Brad Hogg",
+    "powerPoints": 88,
+    "provenance": "Chinaman Specialist / 2x World Cup Winner",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Nathan Bracken",
+    "powerPoints": 87,
+    "provenance": "Left-Arm ODI No.1 Bowler & Swing Master",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Stuart Clark",
+    "powerPoints": 87,
+    "provenance": "2006-07 Ashes Hero / 94 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ryan Harris",
+    "powerPoints": 90,
+    "provenance": "Devastating Seamer / 113 Test Wickets at 23.52",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Peter Siddle",
+    "powerPoints": 87,
+    "provenance": "Birthday Test Hat-trick / 221 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "James Pattinson",
+    "powerPoints": 86,
+    "provenance": "Express Outswing Pacer / 81 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Usman Khawaja",
+    "powerPoints": 89,
+    "provenance": "2023 ICC Test Cricketer of the Year / 5,000+ Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Alex Carey",
+    "powerPoints": 87,
+    "provenance": "WTC Champion Wicketkeeper / Master Gloveman",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Cameron Green",
+    "powerPoints": 88,
+    "provenance": "Generational All-Rounder / Test Century & 5-Wicket",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Adam Zampa",
+    "powerPoints": 89,
+    "provenance": "2021 T20 & 2023 ODI World Cup Leading Spinner",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kane Richardson",
+    "powerPoints": 84,
+    "provenance": "T20 Death Overs Seam Specialist",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ashton Agar",
+    "powerPoints": 85,
+    "provenance": "98 on Test Debut as No.11 vs England",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shaun Marsh",
+    "powerPoints": 86,
+    "provenance": "Silky Left-Hander / 6 Test & 7 ODI Centuries",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mitch Marsh",
+    "powerPoints": 88,
+    "provenance": "2021 T20 World Cup Final Player of the Match",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Tim Paine",
+    "powerPoints": 85,
+    "provenance": "Rebuilding Australian Captain & Gloveman",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Matthew Wade",
+    "powerPoints": 86,
+    "provenance": "2021 T20 Semi-Final 3 Sixes vs Shaheen Afridi",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Moises Henriques",
+    "powerPoints": 84,
+    "provenance": "Big Bash Legend & All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Nathan Coulter-Nile",
+    "powerPoints": 85,
+    "provenance": "World Cup 92 vs West Indies & Fast Bowler",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jason Behrendorff",
+    "powerPoints": 85,
+    "provenance": "5/44 at Lord's vs England / Left-Arm Swing",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jhye Richardson",
+    "powerPoints": 85,
+    "provenance": "Speedster / 5-Wicket Ashes Haul",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Scott Boland",
+    "powerPoints": 88,
+    "provenance": "6/7 on Ashes Debut at MCG",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Alastair Cook",
+    "powerPoints": 95,
+    "provenance": "Chef / 12,472 Test Runs & 33 Test Centuries",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Joe Root",
+    "powerPoints": 97,
+    "provenance": "England Record 35 Test Centuries & 12,500+ Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ben Stokes",
+    "powerPoints": 94,
+    "provenance": "Headingley Miracle & 2019 World Cup Final Hero",
+    "basePrice": 0
+  },
+  {
+    "displayName": "James Anderson",
+    "powerPoints": 97,
+    "provenance": "704 Test Wickets / Most Wickets by a Fast Bowler",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Stuart Broad",
+    "powerPoints": 95,
+    "provenance": "604 Test Wickets / 8/15 Trent Bridge Ashes Spell",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kevin Pietersen",
+    "powerPoints": 94,
+    "provenance": "Switch-Hit Pioneer / 2005 Ashes Hero & 8,181 Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ian Botham",
+    "powerPoints": 96,
+    "provenance": "Botham's Ashes 1981 / 5,283 Runs & 383 Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Andrew Flintoff",
+    "powerPoints": 93,
+    "provenance": "2005 Ashes Legend All-Rounder & Reverse Swing",
+    "basePrice": 0
+  },
+  {
+    "displayName": "David Gower",
+    "powerPoints": 92,
+    "provenance": "Pure Elegance / 8,231 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Geoffrey Boycott",
+    "powerPoints": 91,
+    "provenance": "Defensive Master / 8,114 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Graham Gooch",
+    "powerPoints": 93,
+    "provenance": "Triple Century 333 & 8,900 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Michael Atherton",
+    "powerPoints": 90,
+    "provenance": "185* vs Donald at Johannesburg / Grit Anchor",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Nasser Hussain",
+    "powerPoints": 89,
+    "provenance": "Iconic Captain & Master Field Strategist",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Michael Vaughan",
+    "powerPoints": 92,
+    "provenance": "2005 Ashes Winning Captain & Elegance Batter",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Marcus Trescothick",
+    "powerPoints": 89,
+    "provenance": "Aggressive Left-Hand Opener / 5,825 Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jonathan Trott",
+    "powerPoints": 89,
+    "provenance": "No.3 Rock / 3,835 Test Runs at 44.08",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ian Bell",
+    "powerPoints": 90,
+    "provenance": "2013 Ashes Player of Series / 7,727 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Eoin Morgan",
+    "powerPoints": 93,
+    "provenance": "2019 World Cup Winning Captain & White-Ball Visionary",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jos Buttler",
+    "powerPoints": 93,
+    "provenance": "2022 T20 World Cup Winning Captain & 360 Finisher",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jonny Bairstow",
+    "powerPoints": 91,
+    "provenance": "Bazball Enforcer / 12 Test Centuries",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ben Duckett",
+    "powerPoints": 87,
+    "provenance": "Bazball Opener / High Strike Rate Test Specialist",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Harry Brook",
+    "powerPoints": 90,
+    "provenance": "Fastest to 1,000 Test Runs in Century",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Zak Crawley",
+    "powerPoints": 86,
+    "provenance": "267 vs Pakistan & Ashes Century Opener",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ollie Pope",
+    "powerPoints": 87,
+    "provenance": "Vice-Captain / 196 vs India in Hyderabad",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jofra Archer",
+    "powerPoints": 92,
+    "provenance": "2019 World Cup Super Over Bowler / 95mph Pace",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mark Wood",
+    "powerPoints": 91,
+    "provenance": "97 mph Fastest Spell in Modern Ashes",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Chris Woakes",
+    "powerPoints": 89,
+    "provenance": "2023 Ashes Player of Series & Swing All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Moeen Ali",
+    "powerPoints": 88,
+    "provenance": "200+ Test Wickets & 3,000 Runs / World Cup Winner",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Adil Rashid",
+    "powerPoints": 90,
+    "provenance": "Double World Cup Winning Leg-Spinner / Googly Master",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Graeme Swann",
+    "powerPoints": 91,
+    "provenance": "255 Test Wickets & Ashes Dominator",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Monty Panesar",
+    "powerPoints": 87,
+    "provenance": "167 Test Wickets / Sydney & Mumbai Hero",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Matt Prior",
+    "powerPoints": 90,
+    "provenance": "World No.1 Test Team Wicketkeeper / 4,099 Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Alec Stewart",
+    "powerPoints": 90,
+    "provenance": "133 Test Matches / 8,463 Runs & Wicketkeeper",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jack Russell",
+    "powerPoints": 88,
+    "provenance": "Master Gloveman / 11 Dismissals in a Test",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Bob Willis",
+    "powerPoints": 93,
+    "provenance": "8/43 Headingley 1981 / 325 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Fred Trueman",
+    "powerPoints": 94,
+    "provenance": "First to 300 Test Wickets / Fiery Yorkshire Pacer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Brian Statham",
+    "powerPoints": 92,
+    "provenance": "George / 252 Test Wickets with Pinpoint Accuracy",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jim Laker",
+    "powerPoints": 96,
+    "provenance": "19 Wickets in One Test Match at Old Trafford 1956",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Len Hutton",
+    "powerPoints": 95,
+    "provenance": "364 World Record Test Score at The Oval",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jack Hobbs",
+    "powerPoints": 98,
+    "provenance": "The Master / 61,760 First-Class Runs & 199 Centuries",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Wally Hammond",
+    "powerPoints": 96,
+    "provenance": "7,249 Test Runs at 58.45 / Cover Drive King",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Colin Cowdrey",
+    "powerPoints": 91,
+    "provenance": "First to 100 Tests / 7,624 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ken Barrington",
+    "powerPoints": 93,
+    "provenance": "6,806 Test Runs at 58.67 Batting Average",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ted Dexter",
+    "powerPoints": 89,
+    "provenance": "Lord Ted / Power-Hitting Classical Batter",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Derek Underwood",
+    "powerPoints": 92,
+    "provenance": "Deadly / 297 Test Wickets on Drying Pitches",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Angus Fraser",
+    "powerPoints": 86,
+    "provenance": "Gus / 177 Test Wickets with Relentless Accuracy",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Darren Gough",
+    "powerPoints": 88,
+    "provenance": "Dazzler / 229 Test & 235 ODI Wickets Yorker Master",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Dominic Cork",
+    "powerPoints": 86,
+    "provenance": "Debut Hat-Trick vs West Indies / All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Steve Harmison",
+    "powerPoints": 89,
+    "provenance": "7/12 at Jamaica / 2005 Ashes Opening Over",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Matthew Hoggard",
+    "powerPoints": 88,
+    "provenance": "Swing Master / Hat-Trick vs West Indies",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Simon Jones",
+    "powerPoints": 88,
+    "provenance": "2005 Ashes Reverse Swing Phenom",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Andrew Strauss",
+    "powerPoints": 91,
+    "provenance": "Back-to-Back Ashes Winning Captain & Opener",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Liam Livingstone",
+    "powerPoints": 87,
+    "provenance": "Massive Six-Hitter & Dual Spin Bowler",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sam Curran",
+    "powerPoints": 89,
+    "provenance": "2022 T20 World Cup Final & Tournament MVP",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Dawid Malan",
+    "powerPoints": 87,
+    "provenance": "Former ICC No.1 T20I Batter",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jason Roy",
+    "powerPoints": 89,
+    "provenance": "2019 World Cup Opener / Destructive Strike Rate",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Alex Hales",
+    "powerPoints": 88,
+    "provenance": "T20 World Cup Champion / 180 ODI Highest Score",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Phil Salt",
+    "powerPoints": 88,
+    "provenance": "Twin T20I Centuries vs West Indies",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Gus Atkinson",
+    "powerPoints": 87,
+    "provenance": "12 Wickets on Test Debut at Lord's vs West Indies",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shoaib Bashir",
+    "powerPoints": 85,
+    "provenance": "Tall Off-Spinner / 5-Wicket Hauls in India & Eng",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Tom Hartley",
+    "powerPoints": 85,
+    "provenance": "7/62 on Debut in Hyderabad Victory",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Reece Topley",
+    "powerPoints": 86,
+    "provenance": "6/24 at Lord's vs India / Left-Arm Tall Angle",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Steven Finn",
+    "powerPoints": 86,
+    "provenance": "125 Test Wickets at Height Advantage",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Craig Overton",
+    "powerPoints": 84,
+    "provenance": "Lion-Hearted Seamer & Lower-Order Batter",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Viv Richards",
+    "powerPoints": 99,
+    "provenance": "Master Blaster / 8,540 Runs at 90.20 SR Without Helmet",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Brian Lara",
+    "powerPoints": 98,
+    "provenance": "World Record 400* & 501* / Prince of Trinidad",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Clive Lloyd",
+    "powerPoints": 96,
+    "provenance": "2x World Cup Winning Captain / 110 Tests & 7,515 Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Malcolm Marshall",
+    "powerPoints": 99,
+    "provenance": "Greatest Fast Bowler in History / 376 Test Wickets at 20.94",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Curtly Ambrose",
+    "powerPoints": 97,
+    "provenance": "7/1 vs Australia / 405 Test Wickets at 20.99",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Courtney Walsh",
+    "powerPoints": 96,
+    "provenance": "First Bowler to 500 Test Wickets (519 Total)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Michael Holding",
+    "powerPoints": 97,
+    "provenance": "Whispering Death / Over of the Century vs Boycott",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Joel Garner",
+    "powerPoints": 96,
+    "provenance": "Big Bird / 5/38 1979 World Cup Final / 259 Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Andy Roberts",
+    "powerPoints": 95,
+    "provenance": "Father of Modern Windies Pace / 202 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Colin Croft",
+    "powerPoints": 92,
+    "provenance": "8/29 vs Pakistan / Fierce Bouncer Specialist",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Gordon Greenidge",
+    "powerPoints": 94,
+    "provenance": "Destructive Opener / 214* at Lord's Chase",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Desmond Haynes",
+    "powerPoints": 93,
+    "provenance": "Greatest Opening Pair with Greenidge / 7,487 Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Garfield Sobers",
+    "powerPoints": 100,
+    "provenance": "Greatest All-Rounder / 8,032 Runs & 235 Wickets & 6 Sixes",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Rohan Kanhai",
+    "powerPoints": 93,
+    "provenance": "Falling Hook Shot Creator / 6,227 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Everton Weekes",
+    "powerPoints": 94,
+    "provenance": "5 Consecutive Test Centuries Record",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Frank Worrell",
+    "powerPoints": 94,
+    "provenance": "Sir Frank / First Black Captain & Tied Test Leader",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Clyde Walcott",
+    "powerPoints": 93,
+    "provenance": "3Ws Legend / 3,798 Runs at 56.68",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Wes Hall",
+    "powerPoints": 93,
+    "provenance": "Fiery Long Runup / 197 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Charlie Griffith",
+    "powerPoints": 91,
+    "provenance": "Fierce Partner of Hall / 119 Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Lance Gibbs",
+    "powerPoints": 93,
+    "provenance": "First Spinner to 300 Test Wickets (309 Total)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Alvin Kallicharran",
+    "powerPoints": 90,
+    "provenance": "Tiny Master / Smashed Lillee 1975 World Cup",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shivnarine Chanderpaul",
+    "powerPoints": 94,
+    "provenance": "Crab Stance / 11,867 Test Runs & 30 Centuries",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Chris Gayle",
+    "powerPoints": 93,
+    "provenance": "Universe Boss / 2x Triple Centuries & 14,000 T20 Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ramnaresh Sarwan",
+    "powerPoints": 89,
+    "provenance": "5,842 Test Runs & Master of the Pull Shot",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Daren Ganga",
+    "powerPoints": 84,
+    "provenance": "Solid Test Opener & Captain",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ridley Jacobs",
+    "powerPoints": 86,
+    "provenance": "Carrying Bat 107* vs Australia / Wicketkeeper",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Deryck Murray",
+    "powerPoints": 88,
+    "provenance": "2x World Cup Winning Wicketkeeper",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jeff Dujon",
+    "powerPoints": 90,
+    "provenance": "Acrobatic Wicketkeeper / 272 Dismissals",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ian Bishop",
+    "powerPoints": 91,
+    "provenance": "161 Test Wickets at 24.27 Before Injury",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Carl Hooper",
+    "powerPoints": 89,
+    "provenance": "Graceful All-Rounder / 5,000 Runs & 100 Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jimmy Adams",
+    "powerPoints": 87,
+    "provenance": "Padlock / 2,500 Test Runs at 41.26",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Marlon Samuels",
+    "powerPoints": 89,
+    "provenance": "2x T20 World Cup Final Man of the Match (2012 & 2016)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Dwayne Bravo",
+    "powerPoints": 90,
+    "provenance": "Champion / 600+ T20 Wickets & Slower Ball Master",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kieron Pollard",
+    "powerPoints": 90,
+    "provenance": "6 Sixes in Over vs Sri Lanka / 12,000+ T20 Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Andre Russell",
+    "powerPoints": 92,
+    "provenance": "Dre Russ / World Highest T20 Strike Rate (170+)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sunil Narine",
+    "powerPoints": 91,
+    "provenance": "Mystery Spinner / IPL MVP & 500+ T20 Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Darren Sammy",
+    "powerPoints": 89,
+    "provenance": "2x T20 World Cup Winning Captain",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Carlos Brathwaite",
+    "powerPoints": 87,
+    "provenance": "Remember the Name / 4 Sixes in Last Over 2016",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Nicholas Pooran",
+    "powerPoints": 90,
+    "provenance": "Cleanest Six-Hitter / Most T20 Runs in a Calendar Year",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shimron Hetmyer",
+    "powerPoints": 87,
+    "provenance": "Middle-Order Powerhouse",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shai Hope",
+    "powerPoints": 89,
+    "provenance": "Headingley Twin Centuries / 16 ODI Centuries",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kraigg Brathwaite",
+    "powerPoints": 87,
+    "provenance": "Marathon Test Opener / 5,500+ Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jason Holder",
+    "powerPoints": 89,
+    "provenance": "Test Double Century 202* vs England & 150+ Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kemar Roach",
+    "powerPoints": 90,
+    "provenance": "270+ Test Wickets at High Skill & Seam",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shannon Gabriel",
+    "powerPoints": 88,
+    "provenance": "150 km/h Bullet Pacer / 160+ Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Alzarri Joseph",
+    "powerPoints": 88,
+    "provenance": "IPL Record 6/12 / 150 km/h Spearhead",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shamar Joseph",
+    "powerPoints": 91,
+    "provenance": "7/68 with Broken Toe at Gabba Historic Win",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Akeal Hosein",
+    "powerPoints": 86,
+    "provenance": "Arm-Ball Powerplay Spinner",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Rovman Powell",
+    "powerPoints": 87,
+    "provenance": "West Indies T20 Captain & Brutal Finisher",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Wasim Akram",
+    "powerPoints": 98,
+    "provenance": "King of Swing / 414 Test & 502 ODI Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Waqar Younis",
+    "powerPoints": 97,
+    "provenance": "Burewala Express / Inswinging Toe-Crusher Yorkers",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Imran Khan",
+    "powerPoints": 97,
+    "provenance": "1992 World Cup Winning Captain / 362 Wickets & 3,807 Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Javed Miandad",
+    "powerPoints": 96,
+    "provenance": "Sharjah Last-Ball Six / 8,832 Test Runs at 52.57",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Inzamam-ul-Haq",
+    "powerPoints": 94,
+    "provenance": "1992 World Cup Hero / 11,739 ODI Runs & 25 Test 100s",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Zaheer Abbas",
+    "powerPoints": 94,
+    "provenance": "Asian Bradman / 108 First-Class Centuries",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Hanif Mohammad",
+    "powerPoints": 95,
+    "provenance": "Original Little Master / 337 Run 16-Hour Marathon",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Fazal Mahmood",
+    "powerPoints": 92,
+    "provenance": "Oval 1954 12-Wicket Hero / First Pakistan Great Pacer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Abdul Qadir",
+    "powerPoints": 94,
+    "provenance": "Revived the Art of Leg-Spin / 236 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mushtaq Ahmed",
+    "powerPoints": 90,
+    "provenance": "Googly Magician / 1992 World Cup Winner",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Saqlain Mushtaq",
+    "powerPoints": 94,
+    "provenance": "Inventor of the Doosra / Fastest to 200 & 250 ODI Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Saeed Ajmal",
+    "powerPoints": 92,
+    "provenance": "Mystery Off-Spinner / 178 Test Wickets in 35 Matches",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shoaib Akhtar",
+    "powerPoints": 96,
+    "provenance": "Rawalpindi Express / World Record 161.3 km/h Ball",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mohammad Yousuf",
+    "powerPoints": 95,
+    "provenance": "World Record 1,788 Test Runs in Single Calendar Year (2006)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Younis Khan",
+    "powerPoints": 95,
+    "provenance": "Only Pakistani to 10,000 Test Runs / 34 Centuries",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Misbah-ul-Haq",
+    "powerPoints": 92,
+    "provenance": "Captain Cool / Fastest Test Century (56 balls)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Saeed Anwar",
+    "powerPoints": 94,
+    "provenance": "194 vs India at Chennai / Silk-Touch Opener",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Aamer Sohail",
+    "powerPoints": 88,
+    "provenance": "1992 World Cup Opener / Fierce Competitor",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shahid Afridi",
+    "powerPoints": 93,
+    "provenance": "Boom Boom / 37-Ball Century & 395 ODI Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Abdul Razzaq",
+    "powerPoints": 90,
+    "provenance": "Clutch All-Rounder / Smashed McGrath 5 Fours in Over",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Azhar Mahmood",
+    "powerPoints": 88,
+    "provenance": "Debutant 3 Centuries vs South Africa / All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Moin Khan",
+    "powerPoints": 88,
+    "provenance": "1992 World Cup Winner & Sweeping Wicketkeeper",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Rashid Latif",
+    "powerPoints": 88,
+    "provenance": "Master Gloveman & 130 Test Dismissals",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kamran Akmal",
+    "powerPoints": 87,
+    "provenance": "Centuries vs India / Aggressive Opener",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sarfaraz Ahmed",
+    "powerPoints": 89,
+    "provenance": "2017 Champions Trophy Winning Captain",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Babar Azam",
+    "powerPoints": 93,
+    "provenance": "ICC No.1 ODI Batter / King of Cover Drive",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mohammad Rizwan",
+    "powerPoints": 91,
+    "provenance": "Warrior Wicketkeeper / 50+ T20I Average",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shaheen Shah Afridi",
+    "powerPoints": 93,
+    "provenance": "First-Over Inswinging Yorker Demon",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Naseem Shah",
+    "powerPoints": 90,
+    "provenance": "Youngest Test Hat-trick at 16 Years Old",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Haris Rauf",
+    "powerPoints": 89,
+    "provenance": "150 km/h Death-Over T20 Specialist",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shadab Khan",
+    "powerPoints": 88,
+    "provenance": "All-Round Vice Captain / Leg-Spin Googly",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mohammad Amir",
+    "powerPoints": 91,
+    "provenance": "2017 Champions Trophy Final Spell vs India",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Wahab Riaz",
+    "powerPoints": 88,
+    "provenance": "Adelaide 2015 Bouncer Barrage vs Watson",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Umar Gul",
+    "powerPoints": 90,
+    "provenance": "Yorker King of Early T20 World Cups",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sohail Tanvir",
+    "powerPoints": 87,
+    "provenance": "Wrong-Foot Action / IPL Inaugural Purple Cap",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Yasir Shah",
+    "powerPoints": 91,
+    "provenance": "Fastest to 200 Test Wickets in History (33 Tests)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Asad Shafiq",
+    "powerPoints": 88,
+    "provenance": "Record 9 Test Centuries at No.6",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Azhar Ali",
+    "powerPoints": 89,
+    "provenance": "Triple Century 302* with Pink Ball",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Fakhar Zaman",
+    "powerPoints": 89,
+    "provenance": "2017 Champions Trophy Final Century & 210* in ODI",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Imam-ul-Haq",
+    "powerPoints": 86,
+    "provenance": "Solid ODI Opener / 3,000+ Runs at 48 Avg",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shan Masood",
+    "powerPoints": 86,
+    "provenance": "Pakistan Test Captain / Elegant Left-Hander",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mohammad Hafeez",
+    "powerPoints": 89,
+    "provenance": "Professor / Top All-Rounder in T20 & ODI",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shoaib Malik",
+    "powerPoints": 89,
+    "provenance": "20-Year Career / 12,000+ T20 Runs & Finisher",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jacques Kallis",
+    "powerPoints": 99,
+    "provenance": "Greatest Modern All-Rounder / 13,289 Runs & 292 Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "AB de Villiers",
+    "powerPoints": 97,
+    "provenance": "Mr. 360 / Fastest 31-Ball Century / 20,000 Int Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Dale Steyn",
+    "powerPoints": 98,
+    "provenance": "Steyn Gun / 439 Test Wickets at 42.3 Strike Rate",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shaun Pollock",
+    "powerPoints": 95,
+    "provenance": "421 Test Wickets & 3,781 Runs / Pinpoint Line",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Allan Donald",
+    "powerPoints": 96,
+    "provenance": "White Lightning / 330 Test Wickets at 22.25",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Makhaya Ntini",
+    "powerPoints": 92,
+    "provenance": "People's Champ / 390 Test Wickets & 13 Wkts at Lord's",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Graeme Smith",
+    "powerPoints": 95,
+    "provenance": "Most Successful Test Captain (53 Wins) & 9,265 Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Hashim Amla",
+    "powerPoints": 95,
+    "provenance": "Mighty Hash / Fastest to 2,000 to 7,000 ODI Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Gary Kirsten",
+    "powerPoints": 92,
+    "provenance": "188* World Cup Highest / 7,289 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Herschelle Gibbs",
+    "powerPoints": 92,
+    "provenance": "6 Sixes in Over World Cup 2007 & 438 Game 175",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Faf du Plessis",
+    "powerPoints": 91,
+    "provenance": "Adelaide Blockathon Hero & Modern T20 Icon",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Quinton de Kock",
+    "powerPoints": 93,
+    "provenance": "4 Centuries in 2023 World Cup / Elite Keeper-Batter",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kagiso Rabada",
+    "powerPoints": 94,
+    "provenance": "Fastest to 300 Test Wickets by Balls / Strike Rate 39",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Anrich Nortje",
+    "powerPoints": 91,
+    "provenance": "156 km/h Express Thunderbolt",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Lungi Ngidi",
+    "powerPoints": 88,
+    "provenance": "6/39 on Test Debut vs India",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Marco Jansen",
+    "powerPoints": 89,
+    "provenance": "6ft 8in Left-Arm Swing All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Keshav Maharaj",
+    "powerPoints": 89,
+    "provenance": "9/129 in Sri Lanka / South Africa Premier Spinner",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Imran Tahir",
+    "powerPoints": 90,
+    "provenance": "Celebration Sprint / 2019 World Cup Hat-trick Hero",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Paul Adams",
+    "powerPoints": 87,
+    "provenance": "Frog in a Blender Mystery Action / 134 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jonty Rhodes",
+    "powerPoints": 93,
+    "provenance": "Greatest Fielder in Cricket History / Inzamam Runout",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Hansie Cronje",
+    "powerPoints": 90,
+    "provenance": "Astute Tactician Captain & 3,714 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mark Boucher",
+    "powerPoints": 92,
+    "provenance": "World Record 998 International Dismissals Wicketkeeper",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Lance Klusener",
+    "powerPoints": 93,
+    "provenance": "Zulu / 1999 World Cup Player of Tournament",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Daryll Cullinan",
+    "powerPoints": 88,
+    "provenance": "Centuries vs England & Aus / 4,454 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Boeta Dippenaar",
+    "powerPoints": 84,
+    "provenance": "Solid Top-Order Batsman",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Neil McKenzie",
+    "powerPoints": 87,
+    "provenance": "415 Opening Stand with Graeme Smith",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ashwell Prince",
+    "powerPoints": 86,
+    "provenance": "Grit Middle-Order Fighter / 3,665 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Paul Harris",
+    "powerPoints": 84,
+    "provenance": "Left-Arm Orthodox Test Workhorse",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Morne Morkel",
+    "powerPoints": 91,
+    "provenance": "Haymakers Bounce / 309 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Vernon Philander",
+    "powerPoints": 93,
+    "provenance": "The Surgeon / 224 Test Wickets at 22.32",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Chris Morris",
+    "powerPoints": 86,
+    "provenance": "Death Overs All-Rounder / Million Dollar Man",
+    "basePrice": 0
+  },
+  {
+    "displayName": "David Miller",
+    "powerPoints": 91,
+    "provenance": "Killer Miller / Fastest T20I Century (35 balls)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Heinrich Klaasen",
+    "powerPoints": 92,
+    "provenance": "Spin Destroyer / 174 vs Aus & Brutal T20 Hitter",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Aiden Markram",
+    "powerPoints": 90,
+    "provenance": "T20 World Cup Finalist Captain & Sunrisers Icon",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Temba Bavuma",
+    "powerPoints": 87,
+    "provenance": "First Black African Test Centurion & ODI Captain",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Tristan Stubbs",
+    "powerPoints": 88,
+    "provenance": "360-Degree Powerhitter & Test Century in Asia",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Gerald Coetzee",
+    "powerPoints": 88,
+    "provenance": "Fiery 2023 World Cup Sensation (20 Wickets)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Tabraiz Shamsi",
+    "powerPoints": 88,
+    "provenance": "Shoe-Phone Celebration / Former ICC No.1 T20 Bowler",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Richard Hadlee",
+    "powerPoints": 98,
+    "provenance": "First to 400 Test Wickets / 431 Wickets & 3,124 Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kane Williamson",
+    "powerPoints": 96,
+    "provenance": "WTC Winning Captain / 32 Test Centuries & 8,700+ Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Brendon McCullum",
+    "powerPoints": 94,
+    "provenance": "Baz / Fastest Test Century (54 balls) & 302 Triple",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Martin Crowe",
+    "powerPoints": 94,
+    "provenance": "1992 World Cup Visionary & 5,444 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Stephen Fleming",
+    "powerPoints": 93,
+    "provenance": "Longest Serving Captain & Tactician / 7,172 Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ross Taylor",
+    "powerPoints": 93,
+    "provenance": "290 vs Australia at WACA / 18,000+ International Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Daniel Vettori",
+    "powerPoints": 94,
+    "provenance": "362 Test Wickets & 4,531 Runs / Legendary Left-Arm Spin",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Tim Southee",
+    "powerPoints": 92,
+    "provenance": "380+ Test Wickets & 77 Sixes in Test Cricket",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Trent Boult",
+    "powerPoints": 94,
+    "provenance": "Elite Opening Swing / 317 Test Wickets & World Cup Hero",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shane Bond",
+    "powerPoints": 94,
+    "provenance": "155 km/h Deadly Strike Rate / 87 Wickets in 18 Tests",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Chris Cairns",
+    "powerPoints": 91,
+    "provenance": "Devastating All-Rounder / 3,320 Runs & 218 Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Craig McMillan",
+    "powerPoints": 86,
+    "provenance": "Gladiator Middle-Order Hitter",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Nathan Astle",
+    "powerPoints": 90,
+    "provenance": "Fastest Double Century in Test History (153 balls)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Chris Harris",
+    "powerPoints": 87,
+    "provenance": "Slower-Ball King / 203 ODI Wickets & Master Fielder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jacob Oram",
+    "powerPoints": 87,
+    "provenance": "Towering 6ft 6in All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Scott Styris",
+    "powerPoints": 87,
+    "provenance": "Piggy / 2007 World Cup Dominator & All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kyle Mills",
+    "powerPoints": 87,
+    "provenance": "240 ODI Wickets / Former ICC No.1 ODI Bowler",
+    "basePrice": 0
+  },
+  {
+    "displayName": "BJ Watling",
+    "powerPoints": 89,
+    "provenance": "Toughest Wicketkeeper-Batter / 8 Test Centuries",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Tom Latham",
+    "powerPoints": 89,
+    "provenance": "Opening Pillar / 5,500+ Test Runs & 13 Centuries",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Devon Conway",
+    "powerPoints": 89,
+    "provenance": "Double Century on Test Debut at Lord's (200)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Daryl Mitchell",
+    "powerPoints": 90,
+    "provenance": "Clutch Middle-Order & ICC Player of Year Nominee",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Rachin Ravindra",
+    "powerPoints": 90,
+    "provenance": "2023 World Cup Breakout (3 Centuries at 23 Years)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Glenn Phillips",
+    "powerPoints": 88,
+    "provenance": "Superman Fielder / Off-Spin Match Winner & Six-Hitter",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Matt Henry",
+    "powerPoints": 89,
+    "provenance": "2019 World Cup Semi-Final Hero / Elite Outswing",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Neil Wagner",
+    "powerPoints": 90,
+    "provenance": "Short-Ball Bouncer Heart / 260 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Colin de Grandhomme",
+    "powerPoints": 86,
+    "provenance": "Heavy Military Medium & Smashed 100 in 71 Balls",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mitchell Santner",
+    "powerPoints": 88,
+    "provenance": "Left-Arm Squeeze / Economy Under 4 in T20s",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Lockie Ferguson",
+    "powerPoints": 89,
+    "provenance": "150+ km/h Raw Speed / 2019 World Cup Finalist",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ish Sodhi",
+    "powerPoints": 86,
+    "provenance": "Tall Leg-Spinner / 100+ T20I Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Adam Milne",
+    "powerPoints": 85,
+    "provenance": "150 km/h Express Weapon",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Martin Guptill",
+    "powerPoints": 91,
+    "provenance": "237* Highest World Cup Score in History",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jesse Ryder",
+    "powerPoints": 87,
+    "provenance": "Brutal Left-Hander / 201 vs India",
+    "basePrice": 0
+  },
+  {
+    "displayName": "John Wright",
+    "powerPoints": 88,
+    "provenance": "5,334 Test Runs / Iconic Opener & India Coach",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Glenn Turner",
+    "powerPoints": 90,
+    "provenance": "Dual 150+ in Same Test / 2,991 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Bert Sutcliffe",
+    "powerPoints": 88,
+    "provenance": "Early New Zealand Hero / 2,727 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Muttiah Muralitharan",
+    "powerPoints": 99,
+    "provenance": "World Record 800 Test & 534 ODI Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kumar Sangakkara",
+    "powerPoints": 98,
+    "provenance": "12,400 Test Runs at 57.40 / 4 Consecutive World Cup 100s",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mahela Jayawardene",
+    "powerPoints": 97,
+    "provenance": "374 Test Score / 11,814 Test Runs & Master Captain",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sanath Jayasuriya",
+    "powerPoints": 97,
+    "provenance": "Matara Hurricane / 1996 World Cup MVP & 13,430 Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Aravinda de Silva",
+    "powerPoints": 96,
+    "provenance": "1996 World Cup Final Century & 3 Wickets / Genius",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Arjuna Ranatunga",
+    "powerPoints": 94,
+    "provenance": "1996 World Cup Winning Captain / Master Strategist",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Chaminda Vaas",
+    "powerPoints": 94,
+    "provenance": "400 ODI & 355 Test Wickets / 8/19 World Record Spell",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Lasith Malinga",
+    "powerPoints": 94,
+    "provenance": "Slinga Malinga / 4 Wickets in 4 Balls x2 & Yorker King",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Tillakaratne Dilshan",
+    "powerPoints": 92,
+    "provenance": "Dilscoop Inventor / 10,000 ODI Runs & All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Marvan Atapattu",
+    "powerPoints": 90,
+    "provenance": "6 Double Centuries / 5,502 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Hashan Tillakaratne",
+    "powerPoints": 88,
+    "provenance": "1996 World Cup Wall / 4,545 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Roshan Mahanama",
+    "powerPoints": 89,
+    "provenance": "World Record 576 Partnership with Jayasuriya",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Romesh Kaluwitharana",
+    "powerPoints": 88,
+    "provenance": "Pinch-Hitter Opener World Cup 1996 Revolution",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Rangana Herath",
+    "powerPoints": 94,
+    "provenance": "433 Test Wickets / Greatest Left-Arm Spinner",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Nuwan Kulasekara",
+    "powerPoints": 88,
+    "provenance": "Former ICC No.1 ODI Bowler / Swing Specialist",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Farveez Maharoof",
+    "powerPoints": 85,
+    "provenance": "Hat-trick in Asia Cup / All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Angelo Mathews",
+    "powerPoints": 90,
+    "provenance": "Clutch Test Match Finisher / 7,500+ Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Dinesh Chandimal",
+    "powerPoints": 88,
+    "provenance": "16 Test Centuries & 5,500+ Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Dimuth Karunaratne",
+    "powerPoints": 89,
+    "provenance": "World No.1 Test Opener / 6,500+ Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kusal Perera",
+    "powerPoints": 89,
+    "provenance": "153* at Durban / Greatest Test 4th Innings Chase",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kusal Mendis",
+    "powerPoints": 88,
+    "provenance": "176 vs Australia / Classical Stroke Maker",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Wanindu Hasaranga",
+    "powerPoints": 91,
+    "provenance": "Hat-Trick Sensation / 3 Consecutive 5-Wicket Hauls ODI",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Maheesh Theekshana",
+    "powerPoints": 88,
+    "provenance": "Carrom Ball Mystery Spinner",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Matheesha Pathirana",
+    "powerPoints": 89,
+    "provenance": "Baby Malinga / 150 km/h Slinging Yorker",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Dilhara Fernando",
+    "powerPoints": 86,
+    "provenance": "150 km/h Pacer / Split-Finger Slower Ball",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Suranga Lakmal",
+    "powerPoints": 87,
+    "provenance": "Leader of Test Pace Attack / 171 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Dushmantha Chameera",
+    "powerPoints": 87,
+    "provenance": "Express Pace Spearhead",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Pathum Nissanka",
+    "powerPoints": 89,
+    "provenance": "Sri Lanka First ODI Double Centurion (210*)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Charith Asalanka",
+    "powerPoints": 87,
+    "provenance": "Sri Lanka T20 & ODI Captain / Clutch Left-Hander",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kamindu Mendis",
+    "powerPoints": 89,
+    "provenance": "Ambidextrous Spinner & Fastest to 1,000 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Rashid Khan",
+    "powerPoints": 94,
+    "provenance": "ICC T20 Player of Decade / Fastest to 100 T20I Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mohammad Nabi",
+    "powerPoints": 88,
+    "provenance": "The President / Afghanistan Cricket Founding Father",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mujeeb Ur Rahman",
+    "powerPoints": 87,
+    "provenance": "Carrom Ball & Googly Mystery Spinner",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Fazalhaq Farooqi",
+    "powerPoints": 88,
+    "provenance": "2024 T20 World Cup Leading Wicket Taker",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Rahmanullah Gurbaz",
+    "powerPoints": 88,
+    "provenance": "2024 T20 World Cup Leading Run Scorer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ibrahim Zadran",
+    "powerPoints": 87,
+    "provenance": "World Cup Century vs Australia / Classical Opener",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Naveen-ul-Haq",
+    "powerPoints": 86,
+    "provenance": "T20 World Cup Semi-Final Hero / Slower Variations",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Gulbadin Naib",
+    "powerPoints": 86,
+    "provenance": "4/20 vs Australia 2024 T20 Historic Victory",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Noor Ahmad",
+    "powerPoints": 86,
+    "provenance": "Left-Arm Wrist Spin Sensation",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Azmatullah Omarzai",
+    "powerPoints": 87,
+    "provenance": "Generational Fast-Bowling All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Asghar Afghan",
+    "powerPoints": 85,
+    "provenance": "Most Successful T20I Captain by Win Percentage",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shakib Al Hasan",
+    "powerPoints": 94,
+    "provenance": "Greatest Bangladesh Player / 7,000 Runs & 300 Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Tamim Iqbal",
+    "powerPoints": 90,
+    "provenance": "Bangladesh Greatest Opener / 15,000+ Int Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mushfiqur Rahim",
+    "powerPoints": 89,
+    "provenance": "Bogey Wicketkeeper / 3x Double Test Centuries",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mahmudullah",
+    "powerPoints": 87,
+    "provenance": "World Cup Century Hero / Silent Killer Finisher",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mashrafe Mortaza",
+    "powerPoints": 88,
+    "provenance": "Legend Captain / 270 ODI Wickets & National Hero",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mustafizur Rahman",
+    "powerPoints": 90,
+    "provenance": "The Fizz / Cutters & Slower Balls Master",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Taskin Ahmed",
+    "powerPoints": 87,
+    "provenance": "145 km/h Pace Leader of Bangladesh",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shoriful Islam",
+    "powerPoints": 85,
+    "provenance": "Left-Arm Seam Spearhead",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mehidy Hasan Miraz",
+    "powerPoints": 88,
+    "provenance": "12 Wickets vs England in Test / Spin All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Litton Das",
+    "powerPoints": 87,
+    "provenance": "176 ODI Highest Score for Bangladesh",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Najmul Hossain Shanto",
+    "powerPoints": 86,
+    "provenance": "Current All-Format Captain",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Habibul Bashar",
+    "powerPoints": 85,
+    "provenance": "Captain of Historic Wins vs Aus & India",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mohammad Ashraful",
+    "powerPoints": 85,
+    "provenance": "Youngest Test Centurion at 17 Years Old",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Andy Flower",
+    "powerPoints": 94,
+    "provenance": "World No.1 Test Batter / 4,794 Runs at 51.54",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Grant Flower",
+    "powerPoints": 87,
+    "provenance": "Flower Brother / 3,457 Test Runs & Left-Arm Spin",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Heath Streak",
+    "powerPoints": 90,
+    "provenance": "Zimbabwe Greatest Bowler / 216 Test & 239 ODI Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Dave Houghton",
+    "powerPoints": 86,
+    "provenance": "266 in Zimbabwe's Inaugural Test Match",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Neil Johnson",
+    "powerPoints": 87,
+    "provenance": "1999 World Cup Sensation / 3 Man of the Match",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Murray Goodwin",
+    "powerPoints": 87,
+    "provenance": "Technically Sublime / 1,414 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Henry Olonga",
+    "powerPoints": 85,
+    "provenance": "Express Pacer / 3 Wickets in Over vs India 1999",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Paul Strang",
+    "powerPoints": 85,
+    "provenance": "World Cup Leg-Spinner & Useful Lower-Order Batter",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Brendan Taylor",
+    "powerPoints": 89,
+    "provenance": "Modern Zimbabwe Great / 17 International Centuries",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sikandar Raza",
+    "powerPoints": 89,
+    "provenance": "ICC T20 Player of Year Nominee & 5-Wicket Hauls",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sean Williams",
+    "powerPoints": 87,
+    "provenance": "Reverse Sweep Master / 15 International Centuries",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Blessing Muzarabani",
+    "powerPoints": 87,
+    "provenance": "6ft 8in Steep Bouncing Pacer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Richard Ngarava",
+    "powerPoints": 86,
+    "provenance": "Tall Left-Arm Speedster",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Paul Stirling",
+    "powerPoints": 88,
+    "provenance": "Irish Powerhouse Opener / 5,000+ ODI Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kevin O'Brien",
+    "powerPoints": 90,
+    "provenance": "Fastest 50-Ball Century in World Cup History vs England 2011",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Niall O'Brien",
+    "powerPoints": 86,
+    "provenance": "72 in Historic 2007 World Cup Win vs Pakistan",
+    "basePrice": 0
+  },
+  {
+    "displayName": "William Porterfield",
+    "powerPoints": 86,
+    "provenance": "Longest Serving Irish Captain & Opener",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ed Joyce",
+    "powerPoints": 87,
+    "provenance": "Double International for Ireland & England",
+    "basePrice": 0
+  },
+  {
+    "displayName": "George Dockrell",
+    "powerPoints": 85,
+    "provenance": "Left-Arm Spinner Turned Explosive Finisher",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Josh Little",
+    "powerPoints": 87,
+    "provenance": "World Cup Hat-trick vs New Zealand / 140+ km/h",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mark Adair",
+    "powerPoints": 86,
+    "provenance": "T20 Death Bowler & 100+ T20I Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Harry Tector",
+    "powerPoints": 88,
+    "provenance": "ICC Top 10 ODI Batter / 4 ODI Centuries",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Curtis Campher",
+    "powerPoints": 87,
+    "provenance": "4 Wickets in 4 Balls vs Netherlands World Cup 2021",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ryan ten Doeschate",
+    "powerPoints": 90,
+    "provenance": "Greatest Associate Batter / 67.00 ODI Average",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Bas de Leede",
+    "powerPoints": 87,
+    "provenance": "4 Wickets & Century in Same World Cup Qualifier Match",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Scott Edwards",
+    "powerPoints": 86,
+    "provenance": "Netherlands Captain & Sweep Shot Virtuoso",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Logan van Beek",
+    "powerPoints": 87,
+    "provenance": "Super Over 30 Runs vs West Indies Historic Win",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Paul van Meekeren",
+    "powerPoints": 85,
+    "provenance": "145 km/h Dutch Pacer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Roelof van der Merwe",
+    "powerPoints": 86,
+    "provenance": "Bulldog All-Rounder for SA & Netherlands",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ali Khan",
+    "powerPoints": 85,
+    "provenance": "USA Express Yorker Specialist",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Saurabh Netravalkar",
+    "powerPoints": 88,
+    "provenance": "Oracle Engineer Super Over Hero vs Pakistan 2024",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Aaron Jones",
+    "powerPoints": 87,
+    "provenance": "USA Vice Captain / 10 Sixes vs Canada T20 World Cup",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Monank Patel",
+    "powerPoints": 86,
+    "provenance": "USA Captain / Historic Half-Century vs Pakistan",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Bilal Khan",
+    "powerPoints": 85,
+    "provenance": "Oman Left-Arm Yorker Specialist",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Gerhard Erasmus",
+    "powerPoints": 87,
+    "provenance": "Namibia Captain & All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "David Wiese",
+    "powerPoints": 87,
+    "provenance": "Namibia Power-Hitter & Former Proteas All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ruben Trumpelmann",
+    "powerPoints": 86,
+    "provenance": "3 Wickets in First Over vs Scotland T20 World Cup",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Freddie Klokker",
+    "powerPoints": 80,
+    "provenance": "Danish Wicketkeeper Batsman",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Tanwir Afzal",
+    "powerPoints": 80,
+    "provenance": "Hong Kong Power-Hitting Captain",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Nizakat Khan",
+    "powerPoints": 82,
+    "provenance": "Hong Kong Opening Batsman",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Babar Hayat",
+    "powerPoints": 83,
+    "provenance": "T20I Centurion for Hong Kong",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Paras Khadka",
+    "powerPoints": 86,
+    "provenance": "Nepal Legendary Captain & All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sandeep Lamichhane",
+    "powerPoints": 88,
+    "provenance": "Nepal Leg-Spin Sensation / Global T20 League Star",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Dipendra Singh Airee",
+    "powerPoints": 88,
+    "provenance": "Fastest 50 in T20I History (9 balls) & 6 Sixes in an Over",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kushal Bhurtel",
+    "powerPoints": 84,
+    "provenance": "Nepal Explosive Opening Batter",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Aasif Sheikh",
+    "powerPoints": 85,
+    "provenance": "ICC Spirit of Cricket Award Winner & Opener",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Rohit Paudel",
+    "powerPoints": 85,
+    "provenance": "Youngest Men's International Captain / Nepal Leader",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sompal Kami",
+    "powerPoints": 84,
+    "provenance": "Nepal Fast Bowler & Big Hitter",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Karan KC",
+    "powerPoints": 85,
+    "provenance": "Miracle Innings vs Canada World Cricket League 2018",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Gulam Shabber",
+    "powerPoints": 80,
+    "provenance": "UAE Wicketkeeper",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Rohan Mustafa",
+    "powerPoints": 85,
+    "provenance": "UAE Captain & Off-Spin All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Muhammad Waseem",
+    "powerPoints": 87,
+    "provenance": "UAE Captain & T20 Six-Hitting Sensation",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Vriitya Aravind",
+    "powerPoints": 85,
+    "provenance": "UAE Top-Order Prodigy Wicketkeeper",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Junaid Siddique",
+    "powerPoints": 85,
+    "provenance": "UAE Tall Express Fast Bowler",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Zahoor Khan",
+    "powerPoints": 84,
+    "provenance": "UAE Malinga-Action Yorker Bowler",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Aayan Afzal Khan",
+    "powerPoints": 86,
+    "provenance": "Youngest Player in T20 World Cup / Spin Sensation",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Chundangapoyil Rizwan",
+    "powerPoints": 83,
+    "provenance": "UAE Middle-Order Batsman",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Basil Hameed",
+    "powerPoints": 83,
+    "provenance": "UAE All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sultan Ahmed",
+    "powerPoints": 82,
+    "provenance": "UAE Left-Arm Spinner",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shaiman Anwar",
+    "powerPoints": 85,
+    "provenance": "World Cup 2015 Centurion vs Ireland",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Khurram Khan",
+    "powerPoints": 86,
+    "provenance": "UAE Legend / Century at 43 Years Old",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Swapnil Patil",
+    "powerPoints": 81,
+    "provenance": "UAE Wicketkeeper Batsman",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Amjad Javed",
+    "powerPoints": 83,
+    "provenance": "UAE Medium-Pace All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mohammad Naveed",
+    "powerPoints": 84,
+    "provenance": "UAE Fast Bowler & Big Hitter",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Asad Vala",
+    "powerPoints": 85,
+    "provenance": "PNG Captain / Left-Handed Elegant Batsman",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Charles Amini",
+    "powerPoints": 84,
+    "provenance": "PNG Vice-Captain / Leg-Spinner & Fielder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Norman Vanua",
+    "powerPoints": 84,
+    "provenance": "PNG Fast Bowler Hat-Trick Specialist",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Tony Ura",
+    "powerPoints": 84,
+    "provenance": "PNG Opening Power Hitter",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kabua Morea",
+    "powerPoints": 83,
+    "provenance": "PNG Left-Arm Fast Bowler",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Lega Siaka",
+    "powerPoints": 82,
+    "provenance": "PNG Top-Order Batsman",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Chad Soper",
+    "powerPoints": 83,
+    "provenance": "PNG Medium-Pacer / Accurate Line & Length",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Assadollah Vala",
+    "powerPoints": 83,
+    "provenance": "PNG Cricket Stalwart",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Nosaina Pokana",
+    "powerPoints": 81,
+    "provenance": "PNG Left-Arm Fast Bowler",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kiplin Doriga",
+    "powerPoints": 81,
+    "provenance": "PNG Wicketkeeper Batsman",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Steve Tikolo",
+    "powerPoints": 90,
+    "provenance": "Kenya Greatest Cricketer / 3,428 ODI Runs & 2003 Semi-Finalist",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Maurice Odumbe",
+    "powerPoints": 88,
+    "provenance": "1996 World Cup MoM vs West Indies (3/15)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Thomas Odoyo",
+    "powerPoints": 87,
+    "provenance": "Black Diamond / 141 ODI Wickets & 2,366 Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Collins Obuya",
+    "powerPoints": 87,
+    "provenance": "5/24 vs Sri Lanka 2003 World Cup / 20-Year Career",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kennedy Otieno",
+    "powerPoints": 85,
+    "provenance": "1996 & 2003 World Cup Wicketkeeper Opener",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ravindu Shah",
+    "powerPoints": 85,
+    "provenance": "Silky Opener with Century vs Kenya",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Martin Suji",
+    "powerPoints": 84,
+    "provenance": "Opening Bowler with Phenomenal Economy",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Peter Ongondo",
+    "powerPoints": 83,
+    "provenance": "Opening Bowler 2003 World Cup",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Hitesh Modi",
+    "powerPoints": 82,
+    "provenance": "Left-Handed Middle-Order Anchor",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Aasif Karim",
+    "powerPoints": 87,
+    "provenance": "8.2-6-7-3 vs Australia 2003 World Cup at Age 39",
+    "basePrice": 0
+  },
+  {
+    "displayName": "David Obuya",
+    "powerPoints": 81,
+    "provenance": "Wicketkeeper Batsman",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Alex Obanda",
+    "powerPoints": 83,
+    "provenance": "Power-Hitting Kenyan Opener",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Tanmay Mishra",
+    "powerPoints": 82,
+    "provenance": "Kenyan Middle-Order Batsman",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shem Ngoche",
+    "powerPoints": 83,
+    "provenance": "Left-Arm Spinner Kenyan Captain",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Nehemiah Odhiambo",
+    "powerPoints": 82,
+    "provenance": "Kenyan Fast Bowler",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Elijah Otieno",
+    "powerPoints": 81,
+    "provenance": "Kenyan Seamer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Rakep Patel",
+    "powerPoints": 84,
+    "provenance": "Aggressive Middle-Order Century Maker",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Irfan Karim",
+    "powerPoints": 83,
+    "provenance": "Left-Handed Wicketkeeper Batsman",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Emmanuel Bundi",
+    "powerPoints": 80,
+    "provenance": "Kenyan Medium Pacer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Lucas Oluoch",
+    "powerPoints": 81,
+    "provenance": "Kenyan Left-Arm Fast Bowler",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Nelson Odhiambo",
+    "powerPoints": 80,
+    "provenance": "Kenyan All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "John Bandhari",
+    "powerPoints": 80,
+    "provenance": "East African Pioneer Cricketer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Frans Spoon",
+    "powerPoints": 80,
+    "provenance": "Early Associate Pioneer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Bart King",
+    "powerPoints": 92,
+    "provenance": "American Cricket Legend / Inventor of the Inswinger",
+    "basePrice": 0
+  },
+  {
+    "displayName": "John Barton King",
+    "powerPoints": 91,
+    "provenance": "Philadelphia Hall of Fame / 415 First-Class Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "George Headley",
+    "powerPoints": 96,
+    "provenance": "The Black Bradman / 2,190 Test Runs at 60.83",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Learie Constantine",
+    "powerPoints": 93,
+    "provenance": "West Indian Pioneer / Fast Bowling & Electrifying Fielding",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Manny Martindale",
+    "powerPoints": 90,
+    "provenance": "Original West Indian Fast Bowling Duo",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Herman Griffith",
+    "powerPoints": 89,
+    "provenance": "Historic West Indian Pacer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sonny Ramadhin",
+    "powerPoints": 93,
+    "provenance": "1950 Lord's Victory Hero / 158 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Alf Valentine",
+    "powerPoints": 92,
+    "provenance": "Those Two Little Friends of Mine / 139 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Conrad Hunte",
+    "powerPoints": 90,
+    "provenance": "Solid Test Opener / 3,245 Runs at 45.06",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Roy Fredericks",
+    "powerPoints": 92,
+    "provenance": "Hooked Lillee & Thomson at Perth (169 off 145 balls)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Lawrence Rowe",
+    "powerPoints": 92,
+    "provenance": "Double Century & Century on Test Debut (214 & 100*)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Collis King",
+    "powerPoints": 89,
+    "provenance": "86 off 66 balls in 1979 World Cup Final",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Larry Gomes",
+    "powerPoints": 89,
+    "provenance": "Mr. Dependable / 9 Test Centuries Against Top Attacks",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Gus Logie",
+    "powerPoints": 87,
+    "provenance": "Electrifying Fielder & 1980s Spark Plug",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Patrick Patterson",
+    "powerPoints": 90,
+    "provenance": "Terrifying Pure Pace / 93 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Winston Benjamin",
+    "powerPoints": 86,
+    "provenance": "All-Rounder & Fast Bowler / 61 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sylvester Clarke",
+    "powerPoints": 92,
+    "provenance": "Most Feared Fast Bowler in County Cricket",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Wayne Daniel",
+    "powerPoints": 89,
+    "provenance": "Diamond / 150 km/h Bouncer Specialist",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Colin Bland",
+    "powerPoints": 88,
+    "provenance": "South African Fielding Pioneer of the 1960s",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Eddie Barlow",
+    "powerPoints": 90,
+    "provenance": "Bunter / Aggressive Opener & 2,516 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Graeme Pollock",
+    "powerPoints": 97,
+    "provenance": "Bradman Rated Him Equivalent / 2,256 Runs at 60.97",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Peter Pollock",
+    "powerPoints": 92,
+    "provenance": "116 Test Wickets / Father of Shaun Pollock",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Denis Lindsay",
+    "powerPoints": 90,
+    "provenance": "606 Runs in 7 Tests vs Aus as Wicketkeeper",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Trevor Goddard",
+    "powerPoints": 89,
+    "provenance": "All-Rounder & Captain / 2,516 Runs & 123 Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Hugh Tayfield",
+    "powerPoints": 93,
+    "provenance": "Greatest South African Off-Spinner / 170 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Dudley Nourse",
+    "powerPoints": 91,
+    "provenance": "208 with Broken Thumb at Trent Bridge 1951",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Bruce Mitchell",
+    "powerPoints": 91,
+    "provenance": "3,471 Test Runs Over Two Decades",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Herbie Taylor",
+    "powerPoints": 92,
+    "provenance": "Scored 508 Runs in Series vs Barnes at 70+",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sydney Barnes",
+    "powerPoints": 99,
+    "provenance": "Greatest Bowler in Test History / 189 Wickets at 16.43",
+    "basePrice": 0
+  },
+  {
+    "displayName": "George Lohmann",
+    "powerPoints": 96,
+    "provenance": "Fastest to 100 Test Wickets (16 Tests) / Avg 10.75",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Bobby Peel",
+    "powerPoints": 90,
+    "provenance": "Yorkshire Slow Left-Arm Match Winner",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Wilfred Rhodes",
+    "powerPoints": 96,
+    "provenance": "4,204 First-Class Wickets & 39,969 Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Hedley Verity",
+    "powerPoints": 95,
+    "provenance": "Took 10/10 vs Notts & 15 Wickets in Day vs Aus",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Frank Woolley",
+    "powerPoints": 94,
+    "provenance": "58,959 Runs & 2,066 Wickets / Complete All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "CB Fry",
+    "powerPoints": 94,
+    "provenance": "6 Consecutive First-Class Double Centuries",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Gilbert Jessop",
+    "powerPoints": 93,
+    "provenance": "The Croucher / 100 in 75 mins at The Oval 1902",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Harold Larwood",
+    "powerPoints": 95,
+    "provenance": "Bodyline Express Pacer / 90+ mph Accuracy",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Bill Voce",
+    "powerPoints": 91,
+    "provenance": "Bodyline Left-Arm Enforcer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Maurice Tate",
+    "powerPoints": 92,
+    "provenance": "Inventor of Natural Seam / 155 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Gubby Allen",
+    "powerPoints": 89,
+    "provenance": "Fast Bowler Who Refused to Bowl Bodyline & Captain",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Douglas Jardine",
+    "powerPoints": 93,
+    "provenance": "Mastermind Captain of the 1932-33 Bodyline Series",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Denis Compton",
+    "powerPoints": 94,
+    "provenance": "Post-War Hero / 3,816 Runs in 1947 Season with 18 100s",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Bill Edrich",
+    "powerPoints": 90,
+    "provenance": "Fearless Batter vs Fast Bowling & Middlesex Partner",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Tom Graveney",
+    "powerPoints": 92,
+    "provenance": "Classical Stylist / 4,882 Test Runs & 11 100s",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Peter May",
+    "powerPoints": 93,
+    "provenance": "Finest Post-War English Batter / 4,107 Runs at 46.77",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ken Mackay",
+    "powerPoints": 87,
+    "provenance": "Slasher / 13 Test Half-Centuries with Pure Grit",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Bill Lawry",
+    "powerPoints": 92,
+    "provenance": "Phantom / Uncompromising Opener & 5,234 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Bob Cowper",
+    "powerPoints": 89,
+    "provenance": "Triple Century 305 at MCG vs England",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ian Redpath",
+    "powerPoints": 89,
+    "provenance": "Grit Opener / 4,737 Test Runs & 8 Centuries",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Paul Reiffel",
+    "powerPoints": 87,
+    "provenance": "World Cup 1999 Winner & Test Umpire / 104 Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Michael Bevan",
+    "powerPoints": 94,
+    "provenance": "Original Master Finisher / Career ODI Average 53.58",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Darren Lehmann",
+    "powerPoints": 89,
+    "provenance": "2x World Cup Winner / 25,000+ First-Class Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Tom Moody",
+    "powerPoints": 88,
+    "provenance": "2x World Cup Winning All-Rounder & Master Coach",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Greg Blewett",
+    "powerPoints": 86,
+    "provenance": "Centuries in First Two Tests vs England",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Matthew Elliott",
+    "powerPoints": 86,
+    "provenance": "1997 Ashes Hero / 199 at Headingley",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Colin Miller",
+    "powerPoints": 86,
+    "provenance": "Funky / Blue Hair Test Player of the Year",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Andy Bichel",
+    "powerPoints": 89,
+    "provenance": "7/20 & 34* vs England at 2003 World Cup",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mick Lewis",
+    "powerPoints": 82,
+    "provenance": "Victorian Pacer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shaun Tait",
+    "powerPoints": 91,
+    "provenance": "The Wild Thing / 161.1 km/h Bullet Speed",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Dirk Nannes",
+    "powerPoints": 86,
+    "provenance": "Winter Olympian Turned 150 km/h T20 Sensation",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ben Hilfenhaus",
+    "powerPoints": 87,
+    "provenance": "Classic Outswing Pacer / 99 Test Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Peter George",
+    "powerPoints": 82,
+    "provenance": "Tall South Australian Test Pacer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Chadd Sayers",
+    "powerPoints": 83,
+    "provenance": "Sheffield Shield Swing Specialist",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jackson Bird",
+    "powerPoints": 85,
+    "provenance": "Line-and-Length Test Bowler",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Joe Mennie",
+    "powerPoints": 82,
+    "provenance": "South Australian Seamer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Michael Neser",
+    "powerPoints": 86,
+    "provenance": "King of Duke Ball Swing / Domestic Giant",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Lance Morris",
+    "powerPoints": 86,
+    "provenance": "The Wild Thing 2.0 / 153 km/h Pacer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Todd Murphy",
+    "powerPoints": 86,
+    "provenance": "7/124 on Debut vs India in Nagpur",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Matthew Kuhnemann",
+    "powerPoints": 85,
+    "provenance": "5/16 in Indore Test Win vs India",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Bryce McGain",
+    "powerPoints": 80,
+    "provenance": "Victorian Leg-Spinner",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Beau Casson",
+    "powerPoints": 82,
+    "provenance": "Left-Arm Wrist Spinner",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Cameron Boyce",
+    "powerPoints": 84,
+    "provenance": "Double Hat-Trick in BBL",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ben Dwarshuis",
+    "powerPoints": 84,
+    "provenance": "Sydney Sixers Left-Arm Death Bowler",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Daniel Sams",
+    "powerPoints": 85,
+    "provenance": "BBL Golden Arm & Power-Hitter",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Riley Meredith",
+    "powerPoints": 85,
+    "provenance": "152 km/h Express T20 Speedster",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Spencer Johnson",
+    "powerPoints": 87,
+    "provenance": "Left-Arm 150 km/h Thunderbolts & 5/26 vs Pak",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Nathan McSweeney",
+    "powerPoints": 85,
+    "provenance": "Australia New Test Opener & Captain",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Josh Inglis",
+    "powerPoints": 88,
+    "provenance": "T20I Century vs England & Australia T20 Captain",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Matthew Short",
+    "powerPoints": 86,
+    "provenance": "BBL Back-to-Back MVP & Power-Hitting All-Rounder",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Aaron Hardie",
+    "powerPoints": 86,
+    "provenance": "Perth Scorchers All-Round Champion",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Cooper Connolly",
+    "powerPoints": 85,
+    "provenance": "Big-Match Clutch Finisher at 19 Years Old",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jake Fraser-McGurk",
+    "powerPoints": 88,
+    "provenance": "World Record 29-Ball List A Century & IPL Sensation",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Xavier Bartlett",
+    "powerPoints": 86,
+    "provenance": "BBL Leading Wicket-Taker & Hat-Trick Debutant",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Tanveer Sangha",
+    "powerPoints": 85,
+    "provenance": "Leg-Spin Prodigy",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Chris Tremain",
+    "powerPoints": 84,
+    "provenance": "Prolific Shield Wicket Taker",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mark Steketee",
+    "powerPoints": 84,
+    "provenance": "Queensland Pace Spearhead",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Gurinder Sandhu",
+    "powerPoints": 84,
+    "provenance": "Two Hat-Tricks in Domestic Cricket",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Kurtis Patterson",
+    "powerPoints": 84,
+    "provenance": "Century on Test Debut (114*) vs Sri Lanka",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Nic Maddinson",
+    "powerPoints": 84,
+    "provenance": "Explosive Left-Handed Strokeplayer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Peter Handscomb",
+    "powerPoints": 87,
+    "provenance": "Spin Playing Master / Test Centuries vs Pak",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Will Pucovski",
+    "powerPoints": 86,
+    "provenance": "Double Century Prodigy Opener",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Marcus Harris",
+    "powerPoints": 85,
+    "provenance": "Consistent Shield Opener / 1,000+ Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Joe Burns",
+    "powerPoints": 86,
+    "provenance": "4 Test Centuries / Opening Partner to Warner",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Cameron Bancroft",
+    "powerPoints": 86,
+    "provenance": "Iron-Grit Opener & Prolific Shield Run-Scorer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Rob Quiney",
+    "powerPoints": 82,
+    "provenance": "Victorian Stalwart",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ed Cowan",
+    "powerPoints": 85,
+    "provenance": "Boxing Day Test Debutant Opener",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Phil Hughes",
+    "powerPoints": 92,
+    "provenance": "Twin Centuries in Durban at 20 Years Old (Forever 408)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Michael Klinger",
+    "powerPoints": 86,
+    "provenance": "T20 Master & Domestic Run-Machine",
+    "basePrice": 0
+  },
+  {
+    "displayName": "David Hussey",
+    "powerPoints": 88,
+    "provenance": "T20 Pioneer / 6,000+ Runs & 100+ Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Luke Ronchi",
+    "powerPoints": 86,
+    "provenance": "Wicketkeeper Who Played for Australia & New Zealand",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Brad Hodge",
+    "powerPoints": 88,
+    "provenance": "Test Double Century 203* vs South Africa",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Martin Love",
+    "powerPoints": 85,
+    "provenance": "100* on Test Debut vs Bangladesh",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Stuart Law",
+    "powerPoints": 86,
+    "provenance": "54* in Only Test / Domestic Legend (27,000 Runs)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jamie Siddons",
+    "powerPoints": 84,
+    "provenance": "Shield Run-Scorer Pioneer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Darren Berry",
+    "powerPoints": 87,
+    "provenance": "Greatest Gloveman to Never Play a Test",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Wade Seccombe",
+    "powerPoints": 84,
+    "provenance": "Queensland Wicketkeeping Wall",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Tim Zoehrer",
+    "powerPoints": 84,
+    "provenance": "Western Australian Wicketkeeper",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Wayne Phillips",
+    "powerPoints": 85,
+    "provenance": "Century on Debut as Opener vs Pakistan",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Rod Marsh",
+    "powerPoints": 94,
+    "provenance": "Baugh Caught Marsh Bowled Lillee 95 Times / 355 Dismissals",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ian Healy",
+    "powerPoints": 95,
+    "provenance": "World Record 395 Test Dismissals / Ultimate Gloveman",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Brian Booth",
+    "powerPoints": 88,
+    "provenance": "Dual Olympian (Hockey & Cricket) & Australian Captain",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Norm O'Neill",
+    "powerPoints": 89,
+    "provenance": "New Bradman / 2,779 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Alan Davidson",
+    "powerPoints": 94,
+    "provenance": "First to 100 Runs & 10 Wickets in a Test / 186 Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Lindsay Hassett",
+    "powerPoints": 92,
+    "provenance": "Invincibles Vice-Captain & Elegant Leader",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jack Fingleton",
+    "powerPoints": 88,
+    "provenance": "Bodyline Opener & Respected Chronicler",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Stan McCabe",
+    "powerPoints": 95,
+    "provenance": "232 at Trent Bridge / Bradman Called It Best He Ever Saw",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Bill Woodfull",
+    "powerPoints": 92,
+    "provenance": "Captain of Courage During Bodyline",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Bert Oldfield",
+    "powerPoints": 92,
+    "provenance": "Master Gloveman of 1920s / 130 Dismissals",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jack Gregory",
+    "powerPoints": 93,
+    "provenance": "Terrifying All-Rounder / 1920 Ashes Dominator",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ted McDonald",
+    "powerPoints": 91,
+    "provenance": "Fast Bowling Partner to Gregory",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Warwick Armstrong",
+    "powerPoints": 93,
+    "provenance": "Big Ship / Unbeaten Captain in 10 Tests",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Monty Noble",
+    "powerPoints": 93,
+    "provenance": "Greatest Early Australian All-Rounder / 121 Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Hugh Trumble",
+    "powerPoints": 93,
+    "provenance": "Two Test Hat-Tricks at the MCG / 141 Wickets",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Joe Darling",
+    "powerPoints": 90,
+    "provenance": "First to Hit a Six Out of the Ground / 3x Ashes Winning Captain",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Clem Hill",
+    "powerPoints": 94,
+    "provenance": "Greatest Early Left-Hander / 3,412 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Ernie Jones",
+    "powerPoints": 91,
+    "provenance": "Jonah / First to Bowl 90mph at W.G. Grace",
+    "basePrice": 0
+  },
+  {
+    "displayName": "George Giffen",
+    "powerPoints": 93,
+    "provenance": "First to 1,000 Runs & 100 Wickets in Test History",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sammy Jones",
+    "powerPoints": 84,
+    "provenance": "Ashes 1882 Oval Participant",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Fred Spofforth",
+    "powerPoints": 96,
+    "provenance": "The Demon Bowler / First Test Hat-Trick in 1879",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Tom Horan",
+    "powerPoints": 87,
+    "provenance": "Played in First Ever Test 1877 & Scored 124",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Charles Bannerman",
+    "powerPoints": 95,
+    "provenance": "Scored Very First Run & First Century in Test History (165*)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Billy Murdoch",
+    "powerPoints": 90,
+    "provenance": "First Test Double Century (211 vs England 1884)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Percy McDonnell",
+    "powerPoints": 88,
+    "provenance": "Captain Who Smashed 147 in 1888",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Frank Iredale",
+    "powerPoints": 86,
+    "provenance": "Century on Test Debut at MCG 1894",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Albert Trott",
+    "powerPoints": 91,
+    "provenance": "Only Man to Hit Ball Over the Lord's Pavilion",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jack Blackham",
+    "powerPoints": 93,
+    "provenance": "Prince of Wicketkeepers / Stood Up to Spofforth",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Affan Yousuf",
+    "powerPoints": 80,
+    "provenance": "Modern Domestic Player",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Akash Deep",
+    "powerPoints": 86,
+    "provenance": "9 Wickets vs Bangladesh & Ranchi Debut Impact",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sarfaraz Khan",
+    "powerPoints": 87,
+    "provenance": "Ranji Average 70+ & 150 vs New Zealand",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Dhruv Jurel",
+    "powerPoints": 87,
+    "provenance": "Ranchi MoM / Match-Winning 90 & Ice Composure",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Devdutt Padikkal",
+    "powerPoints": 86,
+    "provenance": "Dharamsala 65 on Debut / Elegant Tall Left-Hander",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sai Sudharsan",
+    "powerPoints": 86,
+    "provenance": "IPL Final 96 & Twin ODI 50s in South Africa",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Abhishek Sharma",
+    "powerPoints": 88,
+    "provenance": "Fastest T20I Century for India (47 balls) vs Zim",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Nitish Kumar Reddy",
+    "powerPoints": 87,
+    "provenance": "Sunrisers Sensation / Border-Gavaskar Debutant",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Harshit Rana",
+    "powerPoints": 86,
+    "provenance": "IPL Champion Fast Bowler with Searing Bouncer",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mayank Yadav",
+    "powerPoints": 88,
+    "provenance": "156.7 km/h Fastest Ball in IPL / Consecutive MoM",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Prithvi Shaw",
+    "powerPoints": 87,
+    "provenance": "Century on Test Debut at 18 Years / U-19 World Cup Captain",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Mayank Agarwal",
+    "powerPoints": 88,
+    "provenance": "Two Test Double Centuries / 1,488 Test Runs",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Hanuma Vihari",
+    "powerPoints": 87,
+    "provenance": "Sydney Heroic 161-Ball Hamstring Blockathon",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Karun Nair",
+    "powerPoints": 89,
+    "provenance": "India's Second Test Triple Centurion (303* vs England)",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jayant Yadav",
+    "powerPoints": 85,
+    "provenance": "First Indian No.9 to Score a Test Century",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shahbaz Ahmed",
+    "powerPoints": 84,
+    "provenance": "All-Round Left-Arm Spinner",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Rahul Chahar",
+    "powerPoints": 85,
+    "provenance": "Leg-Spinner / 2021 T20 World Cup",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Chetan Sakariya",
+    "powerPoints": 84,
+    "provenance": "Left-Arm Swing / Debut 3 Wickets vs SL",
+    "basePrice": 0
+  },
+  {
+    "displayName": "T Natarajan",
+    "powerPoints": 87,
+    "provenance": "Yorker King / 3-Format Debut in 10 Days in Aus",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Navdeep Saini",
+    "powerPoints": 85,
+    "provenance": "150 km/h Fast Bowler Gabba Winner",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sandeep Sharma",
+    "powerPoints": 86,
+    "provenance": "King of Powerplay Swing & Death Slower Balls",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Karn Sharma",
+    "powerPoints": 84,
+    "provenance": "Hat-trick of IPL Trophies with 3 Franchises",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Shahbaz Nadeem",
+    "powerPoints": 84,
+    "provenance": "Ranji Trophy Record 50+ Wickets in Back-to-Back Years",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Jaydev Unadkat",
+    "powerPoints": 86,
+    "provenance": "Ranji Trophy Winning Captain & Saurashtra Legend",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Sheldon Jackson",
+    "powerPoints": 84,
+    "provenance": "Saurashtra Run-Machine Wicketkeeper",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Abhimanyu Easwaran",
+    "powerPoints": 85,
+    "provenance": "Bengal Captain & India A Marathon Opener",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Priyank Panchal",
+    "powerPoints": 84,
+    "provenance": "Gujarat Triple Centurion & Captain",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Baba Indrajith",
+    "powerPoints": 84,
+    "provenance": "Tamil Nadu First-Class Average 53+",
+    "basePrice": 0
+  },
+  {
+    "displayName": "Baba Aparajith",
+    "powerPoints": 83,
+    "provenance": "U-19 World Cup Champion & Solid All-Rounder",
+    "basePrice": 0
+  }
+]
