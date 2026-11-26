@@ -34,19 +34,56 @@ class ItemNameWithFlag extends StatelessWidget {
     this.isSports = false,
   });
 
-  static final RegExp _flagRegex = RegExp(
-    r'([\uD83C\uDDE6-\uD83C\uDDFF]{2}|\uD83C\uDFF4[\uDB40\uDC61-\uDB40\uDC7A]+\uDB40\uDC7F|[\uD83C-\uDBFF\uDC00-\uDFFF]|[\u2600-\u27BF])\s*$',
-  );
-
-  /// Helper to parse name and flag from an item name
+  /// Helper to safely parse character name and flag without any regex surrogate crashes
   static ItemNameParts parse(String raw) {
     final trimmed = raw.trim();
-    final match = _flagRegex.firstMatch(trimmed);
-    if (match != null) {
-      final flag = match.group(0)!.trim();
-      final baseName = trimmed.substring(0, match.start).trim();
-      return ItemNameParts(baseName: baseName.isNotEmpty ? baseName : trimmed, flag: flag);
+    if (trimmed.isEmpty) return const ItemNameParts(baseName: '', flag: null);
+
+    final runesList = trimmed.runes.toList();
+    int flagStartIndex = -1;
+
+    int i = runesList.length - 1;
+    while (i >= 0 && runesList[i] == 0x20) {
+      i--;
     }
+
+    // Subdivision flag (e.g. England 🏴󠁧󠁢󠁥󠁮󠁧󠁿: 0x1F3F4 followed by 0xE0061-0xE007A tags and 0xE007F)
+    if (i >= 0 && runesList[i] == 0xE007F) {
+      int j = i - 1;
+      while (j >= 0 && runesList[j] >= 0xE0061 && runesList[j] <= 0xE007A) {
+        j--;
+      }
+      if (j >= 0 && (runesList[j] == 0x1F3F4 || runesList[j] == 0x1F3F3)) {
+        flagStartIndex = j;
+      }
+    }
+
+    // 2 Regional Indicator Symbols for country flags (e.g. 🇮🇳, 🇦🇺, 🇿🇦: 0x1F1E6 to 0x1F1FF)
+    if (flagStartIndex == -1 && i >= 1) {
+      final r1 = runesList[i - 1];
+      final r2 = runesList[i];
+      if (r1 >= 0x1F1E6 && r1 <= 0x1F1FF && r2 >= 0x1F1E6 && r2 <= 0x1F1FF) {
+        flagStartIndex = i - 1;
+      }
+    }
+
+    // Single emoji flag / symbol
+    if (flagStartIndex == -1 && i >= 0) {
+      final r = runesList[i];
+      if (r >= 0x1F3F3 && r <= 0x1F3F4) {
+        flagStartIndex = i;
+      }
+    }
+
+    if (flagStartIndex != -1) {
+      final flagString = String.fromCharCodes(runesList.sublist(flagStartIndex)).trim();
+      final nameString = String.fromCharCodes(runesList.sublist(0, flagStartIndex)).trim();
+      return ItemNameParts(
+        baseName: nameString.isNotEmpty ? nameString : trimmed,
+        flag: flagString.isNotEmpty ? flagString : null,
+      );
+    }
+
     return ItemNameParts(baseName: trimmed, flag: null);
   }
 
