@@ -46,11 +46,11 @@ class _AvatarSelectionSheetState extends State<AvatarSelectionSheet> {
                 borderRadius: BorderRadius.circular(16),
                 side: const BorderSide(color: AppTheme.champagneGold, width: 1.2),
               ),
-              content: const Row(
+              content: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.check_circle_rounded, color: AppTheme.champagneGold, size: 18),
-                  SizedBox(width: 8),
+                  const Icon(Icons.check_circle_rounded, color: AppTheme.champagneGold, size: 18),
+                  const SizedBox(width: 8),
                   Text(
                     'Profile photo updated!',
                     style: TextStyle(color: AppTheme.warmIvory, fontWeight: FontWeight.bold),
@@ -77,7 +77,7 @@ class _AvatarSelectionSheetState extends State<AvatarSelectionSheet> {
             content: Text(
               'Could not access photo: $e',
               textAlign: TextAlign.center,
-              style: const TextStyle(color: AppTheme.warmIvory),
+              style: TextStyle(color: AppTheme.warmIvory),
             ),
           ),
         );
@@ -250,7 +250,7 @@ class _AvatarSelectionSheetState extends State<AvatarSelectionSheet> {
                             shape: BoxShape.circle,
                             border: Border.all(color: AppTheme.surfaceBorder),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.photo_camera_rounded,
                             color: AppTheme.warmIvory,
                             size: 20,

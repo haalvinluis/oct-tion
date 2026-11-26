@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import '../services/settings_service.dart';
 import '../models/category_model.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/section_header.dart';
@@ -16,16 +17,16 @@ class ModeSelectionScreen extends StatefulWidget {
 }
 
 class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
+  final SettingsService _settings = SettingsService();
   late String _selectedCategory;
   late String _selectedTopic;
   String _selectedGameMode = 'AUCTION_TEAM_CHALLENGE';
   final int _selectedItemCount = 10;
 
-  final List<int> _itemCountOptions = [5, 8, 10];
-
   @override
   void initState() {
     super.initState();
+    _settings.addListener(_onThemeChanged);
     final init = widget.initialCategory;
     if (init != null && init.isNotEmpty) {
       final norm = CategoryModel.normalizeId(init);
@@ -43,6 +44,16 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
       _selectedCategory = 'anime';
       _selectedTopic = 'naruto';
     }
+  }
+
+  void _onThemeChanged() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _settings.removeListener(_onThemeChanged);
+    super.dispose();
   }
 
   @override
@@ -451,60 +462,6 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
         ],
       ),
     );
-  }
-
-  String _getCatalogueName(String categoryId) {
-    switch (categoryId.toLowerCase()) {
-      case 'anime':
-        return 'Anime Characters Catalogue';
-      case 'sports':
-        return 'Sports Characters Catalogue';
-      case 'cartoons':
-        return 'Cartoon Characters Catalogue';
-      case 'superheroes':
-        return 'Superhero Characters Catalogue';
-      case 'marvel':
-        return 'Marvel Characters Catalogue';
-      case 'other':
-      default:
-        return 'Special Characters Catalogue';
-    }
-  }
-
-  int _getCatalogueCount(String categoryId) {
-    switch (categoryId.toLowerCase()) {
-      case 'anime':
-        return 155;
-      case 'sports':
-        return 90;
-      case 'cartoons':
-        return 80;
-      case 'superheroes':
-        return 75;
-      case 'marvel':
-        return 30;
-      case 'other':
-      default:
-        return 15;
-    }
-  }
-
-  String _getCatalogueDescription(String categoryId) {
-    switch (categoryId.toLowerCase()) {
-      case 'anime':
-        return 'Legendary heroes and villains spanning Naruto, One Piece, Dragon Ball, Demon Slayer, Jujutsu Kaisen, Bleach, Attack on Titan, and My Hero Academia.';
-      case 'sports':
-        return 'World-class champions and icons across Cricket, Football, Basketball, Tennis, and WWE.';
-      case 'cartoons':
-        return 'Beloved timeless cartoon heroes and icons across Ben 10, Tom and Jerry, Doraemon, Shinchan, and Pokémon.';
-      case 'superheroes':
-        return 'Iconic heroes from DC, Batman, Superman, Spider-Man, and Avengers.';
-      case 'marvel':
-        return 'Authentic individual Marvel champions including Iron Man, Captain America, Thor, Hulk, Spider-Man, Wolverine, and Deadpool.';
-      case 'other':
-      default:
-        return 'Curated selection of classic anime and animated legends.';
-    }
   }
 
   Widget _buildGameModeCard({

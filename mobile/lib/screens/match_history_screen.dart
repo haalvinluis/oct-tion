@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../services/socket_service.dart';
+import '../services/settings_service.dart';
 import '../widgets/powerbid_bottom_nav_bar.dart';
 import 'match_details_screen.dart';
 
@@ -17,6 +18,7 @@ class MatchHistoryScreen extends StatefulWidget {
 }
 
 class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
+  final SettingsService _settings = SettingsService();
   List<Map<String, dynamic>> _matchesList = [];
   bool _isLoading = true;
   String? _errorMessage;
@@ -24,7 +26,18 @@ class _MatchHistoryScreenState extends State<MatchHistoryScreen> {
   @override
   void initState() {
     super.initState();
+    _settings.addListener(_onThemeChanged);
     _fetchMatchHistory();
+  }
+
+  void _onThemeChanged() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _settings.removeListener(_onThemeChanged);
+    super.dispose();
   }
 
   Future<void> _fetchMatchHistory() async {

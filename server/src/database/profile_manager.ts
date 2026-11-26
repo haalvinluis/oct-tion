@@ -53,11 +53,11 @@ export const ACHIEVEMENTS_CATALOG: AchievementDef[] = [
     threshold: 1,
   },
   {
-    id: 'veteran',
-    title: 'Veteran Player',
-    description: 'Complete 10 online auction matches.',
-    iconText: '🎖️',
-    threshold: 10,
+    id: 'three_matches',
+    title: 'Rising Contender',
+    description: 'Complete 3 online auction matches.',
+    iconText: '🎯',
+    threshold: 3,
   },
   {
     id: 'five_victories',
@@ -67,18 +67,88 @@ export const ACHIEVEMENTS_CATALOG: AchievementDef[] = [
     threshold: 5,
   },
   {
+    id: 'veteran',
+    title: 'Veteran Player',
+    description: 'Complete 10 online auction matches.',
+    iconText: '🎖️',
+    threshold: 10,
+  },
+  {
+    id: 'ten_victories',
+    title: 'Grand Champion',
+    description: 'Win 10 online auction matches.',
+    iconText: '🥇',
+    threshold: 10,
+  },
+  {
+    id: 'twenty_five_matches',
+    title: 'Auction Legend',
+    description: 'Complete 25 auction matches.',
+    iconText: '⚔️',
+    threshold: 25,
+  },
+  {
+    id: 'fifty_matches',
+    title: 'Hall of Famer',
+    description: 'Complete 50 auction matches.',
+    iconText: '🏛️',
+    threshold: 50,
+  },
+  {
+    id: 'win_streak_2',
+    title: 'Back to Back',
+    description: 'Win 2 consecutive auction matches.',
+    iconText: '🔥',
+    threshold: 2,
+  },
+  {
+    id: 'win_streak_3',
+    title: 'On Fire',
+    description: 'Achieve a 3-match winning streak.',
+    iconText: '⚡',
+    threshold: 3,
+  },
+  {
+    id: 'win_streak_5',
+    title: 'Unstoppable',
+    description: 'Achieve a 5-match winning streak.',
+    iconText: '💥',
+    threshold: 5,
+  },
+  {
     id: 'collector',
-    title: 'Collector',
+    title: 'Character Collector',
     description: 'Purchase 10 characters total across completed matches.',
     iconText: '📦',
     threshold: 10,
   },
   {
+    id: 'collector_pro',
+    title: 'Master Collector',
+    description: 'Purchase 25 characters total across completed matches.',
+    iconText: '💎',
+    threshold: 25,
+  },
+  {
+    id: 'collector_elite',
+    title: 'Vault Master',
+    description: 'Purchase 50 characters total across completed matches.',
+    iconText: '🗄️',
+    threshold: 50,
+  },
+  {
     id: 'high_scorer',
     title: 'High Scorer',
     description: 'Accumulate 250 total team power points.',
-    iconText: '⚡',
+    iconText: '🌟',
     threshold: 250,
+  },
+  {
+    id: 'power_titan',
+    title: 'Power Titan',
+    description: 'Accumulate 500 total team power points.',
+    iconText: '🌌',
+    threshold: 500,
   },
   {
     id: 'explorer',
@@ -86,6 +156,13 @@ export const ACHIEVEMENTS_CATALOG: AchievementDef[] = [
     description: 'Complete matches across 3 different categories.',
     iconText: '🧭',
     threshold: 3,
+  },
+  {
+    id: 'multiverse_master',
+    title: 'Multiverse Master',
+    description: 'Complete matches across 5 different categories.',
+    iconText: '🌐',
+    threshold: 5,
   },
 ];
 
@@ -680,20 +757,53 @@ export class ProfileManager {
         case 'first_victory':
           isUnlocked = profile.matchesWon >= 1;
           break;
-        case 'veteran':
-          isUnlocked = profile.matchesPlayed >= 10;
+        case 'three_matches':
+          isUnlocked = profile.matchesPlayed >= 3;
           break;
         case 'five_victories':
           isUnlocked = profile.matchesWon >= 5;
           break;
+        case 'veteran':
+          isUnlocked = profile.matchesPlayed >= 10;
+          break;
+        case 'ten_victories':
+          isUnlocked = profile.matchesWon >= 10;
+          break;
+        case 'twenty_five_matches':
+          isUnlocked = profile.matchesPlayed >= 25;
+          break;
+        case 'fifty_matches':
+          isUnlocked = profile.matchesPlayed >= 50;
+          break;
+        case 'win_streak_2':
+          isUnlocked = Math.max(profile.winStreak || 0, profile.bestWinStreak || 0) >= 2;
+          break;
+        case 'win_streak_3':
+          isUnlocked = Math.max(profile.winStreak || 0, profile.bestWinStreak || 0) >= 3;
+          break;
+        case 'win_streak_5':
+          isUnlocked = Math.max(profile.winStreak || 0, profile.bestWinStreak || 0) >= 5;
+          break;
         case 'collector':
           isUnlocked = profile.totalCharactersPurchased >= 10;
+          break;
+        case 'collector_pro':
+          isUnlocked = profile.totalCharactersPurchased >= 25;
+          break;
+        case 'collector_elite':
+          isUnlocked = profile.totalCharactersPurchased >= 50;
           break;
         case 'high_scorer':
           isUnlocked = profile.totalTeamPoints >= 250;
           break;
+        case 'power_titan':
+          isUnlocked = profile.totalTeamPoints >= 500;
+          break;
         case 'explorer':
           isUnlocked = profile.categoriesPlayed.size >= 3;
+          break;
+        case 'multiverse_master':
+          isUnlocked = profile.categoriesPlayed.size >= 5;
           break;
       }
 
@@ -722,20 +832,33 @@ export class ProfileManager {
       let progress = 0;
       switch (def.id) {
         case 'first_match':
+        case 'three_matches':
         case 'veteran':
+        case 'twenty_five_matches':
+        case 'fifty_matches':
           progress = Math.min(profile.matchesPlayed, def.threshold);
           break;
         case 'first_victory':
         case 'five_victories':
+        case 'ten_victories':
           progress = Math.min(profile.matchesWon, def.threshold);
           break;
+        case 'win_streak_2':
+        case 'win_streak_3':
+        case 'win_streak_5':
+          progress = Math.min(Math.max(profile.winStreak || 0, profile.bestWinStreak || 0), def.threshold);
+          break;
         case 'collector':
+        case 'collector_pro':
+        case 'collector_elite':
           progress = Math.min(profile.totalCharactersPurchased, def.threshold);
           break;
         case 'high_scorer':
+        case 'power_titan':
           progress = Math.min(profile.totalTeamPoints, def.threshold);
           break;
         case 'explorer':
+        case 'multiverse_master':
           progress = Math.min(profile.categoriesPlayed.size, def.threshold);
           break;
       }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../services/audio_service.dart';
+import '../services/settings_service.dart';
 import '../widgets/home_header.dart';
 import '../widgets/powerbid_bottom_nav_bar.dart';
 import 'friends_screen.dart';
@@ -18,9 +19,21 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final SettingsService _settings = SettingsService();
+
+  @override
+  void initState() {
+    super.initState();
+    _settings.addListener(_onThemeChanged);
+  }
+
+  void _onThemeChanged() {
+    if (mounted) setState(() {});
+  }
 
   @override
   void dispose() {
+    _settings.removeListener(_onThemeChanged);
     _searchController.dispose();
     super.dispose();
   }
@@ -195,122 +208,73 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Left Content: Title, subtitle & internal CTA button
-              Expanded(
-                flex: 7,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Badge
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppTheme.secondarySurface,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: AppTheme.softMustardYellow, width: 1),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.flash_on_rounded, color: Color(0xFFB45309), size: 12),
-                          SizedBox(width: 4),
-                          Text(
-                            'ONLINE ARENA',
-                            style: TextStyle(
-                              fontFamily: AppTheme.fontFamily,
-                              color: Color(0xFFB45309),
-                              fontSize: 9.5,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 0.8,
-                            ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Left Content: Title & subtitle
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Badge
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: AppTheme.secondarySurface,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: AppTheme.softMustardYellow, width: 1),
                           ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-
-                    Text(
-                      'OCT-TION Arena',
-                      style: TextStyle(
-                        fontFamily: AppTheme.fontFamily,
-                        color: AppTheme.textPrimary,
-                        fontSize: 21,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -0.3,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Bid, win authentic cards, up to 8 players.',
-                      style: TextStyle(
-                        fontFamily: AppTheme.fontFamily,
-                        color: AppTheme.textSecondary,
-                        fontSize: 12,
-                        height: 1.3,
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-
-                    // Compact 3D Red CTA Button inside card on the left
-                    GestureDetector(
-                      onTap: () {
-                        AudioService().playButtonClick();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const ModeSelectionScreen()),
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9.5),
-                        decoration: BoxDecoration(
-                          gradient: AppTheme.redButtonGradient,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: const Color(0x40FFFFFF), width: 1.2),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: AppTheme.arcadeRedDark,
-                              blurRadius: 0,
-                              offset: Offset(0, 3),
-                            ),
-                            BoxShadow(
-                              color: AppTheme.arcadeRedShadow,
-                              blurRadius: 8,
-                              offset: Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'PLAY ONLINE',
-                              style: TextStyle(
-                                fontFamily: AppTheme.fontFamily,
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 0.6,
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.flash_on_rounded, color: Color(0xFFB45309), size: 12),
+                              SizedBox(width: 4),
+                              Text(
+                                'ONLINE ARENA',
+                                style: TextStyle(
+                                  fontFamily: AppTheme.fontFamily,
+                                  color: Color(0xFFB45309),
+                                  fontSize: 9.5,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 0.8,
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 6),
-                            Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 14),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                        const SizedBox(height: 10),
 
-              // Right Icon Emblem
-              Expanded(
-                flex: 4,
-                child: Center(
-                  child: Container(
+                        Text(
+                          'OCT-TION Arena',
+                          style: TextStyle(
+                            fontFamily: AppTheme.fontFamily,
+                            color: AppTheme.textPrimary,
+                            fontSize: 21,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -0.3,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Bid, win authentic cards, up to 8 players.',
+                          style: TextStyle(
+                            fontFamily: AppTheme.fontFamily,
+                            color: AppTheme.textSecondary,
+                            fontSize: 12,
+                            height: 1.3,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+
+                  // Right Icon Emblem
+                  Container(
                     width: 72,
                     height: 72,
                     decoration: BoxDecoration(
@@ -329,6 +293,50 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: AppTheme.arcadeRed,
                       size: 38,
                     ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Balanced 3D Red CTA Button with smooth elevation
+              GestureDetector(
+                onTap: () {
+                  AudioService().playButtonClick();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ModeSelectionScreen()),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10.5),
+                  decoration: BoxDecoration(
+                    gradient: AppTheme.redButtonGradient,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: const Color(0x40FFFFFF), width: 1.2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.arcadeRed.withValues(alpha: 0.35),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'PLAY ONLINE',
+                        style: TextStyle(
+                          fontFamily: AppTheme.fontFamily,
+                          color: Colors.white,
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 0.6,
+                        ),
+                      ),
+                      SizedBox(width: 6),
+                      Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 15),
+                    ],
                   ),
                 ),
               ),

@@ -4,6 +4,7 @@ import '../theme/app_theme.dart';
 import '../services/socket_service.dart';
 import '../services/auth_service.dart';
 import '../services/provider_auth_service.dart';
+import '../services/settings_service.dart';
 import '../config/auth_config.dart';
 import '../widgets/stat_badge.dart';
 import '../widgets/avatar_widget.dart';
@@ -34,6 +35,172 @@ class _ProfileScreenState extends State<ProfileScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final TextEditingController _usernameController = TextEditingController();
+  final SettingsService _settings = SettingsService();
+
+  static final List<Map<String, dynamic>> defaultAchievements = [
+    {
+      'id': 'first_match',
+      'title': 'First Match',
+      'description': 'Complete your first online multiplayer auction match.',
+      'iconText': '🎮',
+      'threshold': 1,
+      'isUnlocked': false,
+      'progress': 0,
+    },
+    {
+      'id': 'first_victory',
+      'title': 'First Victory',
+      'description': 'Win your first online auction match.',
+      'iconText': '🏆',
+      'threshold': 1,
+      'isUnlocked': false,
+      'progress': 0,
+    },
+    {
+      'id': 'three_matches',
+      'title': 'Rising Contender',
+      'description': 'Complete 3 online auction matches.',
+      'iconText': '🎯',
+      'threshold': 3,
+      'isUnlocked': false,
+      'progress': 0,
+    },
+    {
+      'id': 'five_victories',
+      'title': 'Five Victories',
+      'description': 'Win 5 online auction matches.',
+      'iconText': '👑',
+      'threshold': 5,
+      'isUnlocked': false,
+      'progress': 0,
+    },
+    {
+      'id': 'veteran',
+      'title': 'Veteran Player',
+      'description': 'Complete 10 online auction matches.',
+      'iconText': '🎖️',
+      'threshold': 10,
+      'isUnlocked': false,
+      'progress': 0,
+    },
+    {
+      'id': 'ten_victories',
+      'title': 'Grand Champion',
+      'description': 'Win 10 online auction matches.',
+      'iconText': '🥇',
+      'threshold': 10,
+      'isUnlocked': false,
+      'progress': 0,
+    },
+    {
+      'id': 'twenty_five_matches',
+      'title': 'Auction Legend',
+      'description': 'Complete 25 auction matches.',
+      'iconText': '⚔️',
+      'threshold': 25,
+      'isUnlocked': false,
+      'progress': 0,
+    },
+    {
+      'id': 'fifty_matches',
+      'title': 'Hall of Famer',
+      'description': 'Complete 50 auction matches.',
+      'iconText': '🏛️',
+      'threshold': 50,
+      'isUnlocked': false,
+      'progress': 0,
+    },
+    {
+      'id': 'win_streak_2',
+      'title': 'Back to Back',
+      'description': 'Win 2 consecutive auction matches.',
+      'iconText': '🔥',
+      'threshold': 2,
+      'isUnlocked': false,
+      'progress': 0,
+    },
+    {
+      'id': 'win_streak_3',
+      'title': 'On Fire',
+      'description': 'Achieve a 3-match winning streak.',
+      'iconText': '⚡',
+      'threshold': 3,
+      'isUnlocked': false,
+      'progress': 0,
+    },
+    {
+      'id': 'win_streak_5',
+      'title': 'Unstoppable',
+      'description': 'Achieve a 5-match winning streak.',
+      'iconText': '💥',
+      'threshold': 5,
+      'isUnlocked': false,
+      'progress': 0,
+    },
+    {
+      'id': 'collector',
+      'title': 'Character Collector',
+      'description': 'Purchase 10 characters total across completed matches.',
+      'iconText': '📦',
+      'threshold': 10,
+      'isUnlocked': false,
+      'progress': 0,
+    },
+    {
+      'id': 'collector_pro',
+      'title': 'Master Collector',
+      'description': 'Purchase 25 characters total across completed matches.',
+      'iconText': '💎',
+      'threshold': 25,
+      'isUnlocked': false,
+      'progress': 0,
+    },
+    {
+      'id': 'collector_elite',
+      'title': 'Vault Master',
+      'description': 'Purchase 50 characters total across completed matches.',
+      'iconText': '🗄️',
+      'threshold': 50,
+      'isUnlocked': false,
+      'progress': 0,
+    },
+    {
+      'id': 'high_scorer',
+      'title': 'High Scorer',
+      'description': 'Accumulate 250 total team power points.',
+      'iconText': '🌟',
+      'threshold': 250,
+      'isUnlocked': false,
+      'progress': 0,
+    },
+    {
+      'id': 'power_titan',
+      'title': 'Power Titan',
+      'description': 'Accumulate 500 total team power points.',
+      'iconText': '🌌',
+      'threshold': 500,
+      'isUnlocked': false,
+      'progress': 0,
+    },
+    {
+      'id': 'explorer',
+      'title': 'Category Explorer',
+      'description': 'Complete matches across 3 different categories.',
+      'iconText': '🧭',
+      'threshold': 3,
+      'isUnlocked': false,
+      'progress': 0,
+    },
+    {
+      'id': 'multiverse_master',
+      'title': 'Multiverse Master',
+      'description': 'Complete matches across 5 different categories.',
+      'iconText': '🌐',
+      'threshold': 5,
+      'isUnlocked': false,
+      'progress': 0,
+    },
+  ];
 
   Map<String, dynamic>? _profileData;
   List<Map<String, dynamic>> _achievementsList = [];
@@ -44,11 +211,13 @@ class _ProfileScreenState extends State<ProfileScreen>
   @override
   void initState() {
     super.initState();
+    _settings.addListener(_onThemeChanged);
     _tabController = TabController(
       length: 2,
       vsync: this,
       initialIndex: widget.initialTab,
     );
+    _achievementsList = List<Map<String, dynamic>>.from(defaultAchievements);
     if (widget.initialProfileData != null) {
       _profileData = widget.initialProfileData;
       _isLoading = false;
@@ -61,8 +230,13 @@ class _ProfileScreenState extends State<ProfileScreen>
     }
   }
 
+  void _onThemeChanged() {
+    if (mounted) setState(() {});
+  }
+
   @override
   void dispose() {
+    _settings.removeListener(_onThemeChanged);
     _tabController.dispose();
     _usernameController.dispose();
     super.dispose();
@@ -117,7 +291,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
         setState(() {
           _profileData = prof;
-          _achievementsList = ach;
+          _achievementsList = ach.isNotEmpty ? ach : List<Map<String, dynamic>>.from(defaultAchievements);
           _historyList = hist;
           _isLoading = false;
         });
@@ -276,7 +450,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     final winRate = _profileData?['winRate'] ?? 0;
     final totalPurchased = _profileData?['totalCharactersPurchased'] ?? 0;
     final unlockedCount = _profileData?['achievementsUnlockedCount'] ?? 0;
-    final totalAchCount = _profileData?['totalAchievementsCount'] ?? 7;
+    final totalAchCount = _profileData?['totalAchievementsCount'] ?? defaultAchievements.length;
     final winStreak = _profileData?['winStreak'] ?? 0;
     final bestWinStreak = _profileData?['bestWinStreak'] ?? 0;
 

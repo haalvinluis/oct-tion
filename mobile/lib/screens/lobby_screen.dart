@@ -905,7 +905,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                                                       content: Text(
                                                         res['message'] as String,
                                                         textAlign: TextAlign.center,
-                                                        style: const TextStyle(color: AppTheme.warmIvory, fontSize: 12),
+                                                        style: TextStyle(color: AppTheme.warmIvory, fontSize: 12),
                                                       ),
                                                       duration: const Duration(milliseconds: 1400),
                                                     ),

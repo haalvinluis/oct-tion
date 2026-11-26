@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../theme/app_theme.dart';
 import '../services/socket_service.dart';
+import '../services/settings_service.dart';
 import '../models/friend_model.dart';
 
 class FriendsScreen extends StatefulWidget {
@@ -20,6 +21,7 @@ class _FriendsScreenState extends State<FriendsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
+  final SettingsService _settings = SettingsService();
 
   List<FriendModel> _friends = [];
   List<FriendRequestModel> _incomingRequests = [];
@@ -33,6 +35,7 @@ class _FriendsScreenState extends State<FriendsScreen>
   @override
   void initState() {
     super.initState();
+    _settings.addListener(_onThemeChanged);
     _tabController = TabController(
       length: 3,
       vsync: this,
@@ -41,8 +44,13 @@ class _FriendsScreenState extends State<FriendsScreen>
     _loadData();
   }
 
+  void _onThemeChanged() {
+    if (mounted) setState(() {});
+  }
+
   @override
   void dispose() {
+    _settings.removeListener(_onThemeChanged);
     _tabController.dispose();
     _searchController.dispose();
     super.dispose();

@@ -624,7 +624,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                         content: Text(
                           res['message'] as String,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(color: AppTheme.warmIvory, fontSize: 12),
+                          style: TextStyle(color: AppTheme.warmIvory, fontSize: 12),
                         ),
                         duration: const Duration(milliseconds: 1400),
                       ),
@@ -954,10 +954,10 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                               backgroundColor: AppTheme.trueChampagneGold,
                               child: Text(
                                 player.name.isNotEmpty ? player.name[0].toUpperCase() : '?',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  color: AppTheme.deepBlackBurgundy,
+                                  color: Color(0xFF0F172A),
                                 ),
                               ),
                             ),
@@ -971,7 +971,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                                       Flexible(
                                         child: Text(
                                           player.name,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
                                             color: AppTheme.warmIvory,
@@ -1060,7 +1060,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                     // Characters Won Section
                     Text(
                       'Characters Won (${player.acquiredItems.length})',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
                         color: AppTheme.warmIvory,

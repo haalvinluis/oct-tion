@@ -57,10 +57,10 @@ class AppTheme {
   static Color get mutedText => textSecondary;
   static Color get secondaryText => textSecondary;
 
-  static const Color warmIvory = Color(0xFFFFFFFF);
-  static const Color darkMaroonText = Color(0xFFFFFFFF);
-  static Color get deepBlackBurgundy => isDark ? const Color(0xFF0B0F19) : const Color(0xFF0F172A);
-  static Color get darkCharcoalBurgundy => isDark ? const Color(0xFF1E293B) : const Color(0xFF1E293B);
+  static Color get warmIvory => isDark ? const Color(0xFFFFFFFF) : const Color(0xFF0F172A);
+  static Color get darkMaroonText => isDark ? const Color(0xFFFFFFFF) : const Color(0xFF0F172A);
+  static Color get deepBlackBurgundy => isDark ? const Color(0xFF0B0F19) : const Color(0xFFF8F9FA);
+  static Color get darkCharcoalBurgundy => isDark ? const Color(0xFF1E293B) : const Color(0xFFFFFFFF);
 
   // Backwards compatibility aliases
   static const Color blueAccent = arcadeRed;

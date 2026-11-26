@@ -288,7 +288,7 @@ class _AgeVerificationDialogState extends State<AgeVerificationDialog> {
                       Navigator.pop(context, true);
                     },
               child: _isSaving
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
