@@ -16,6 +16,8 @@ class RoomModel {
   final int currentItemIndex;
   final int currentBid;
   final String? leadingBidderId;
+  final int startingBudget;
+  final int charactersPerPlayer;
 
   const RoomModel({
     required this.roomCode,
@@ -31,6 +33,8 @@ class RoomModel {
     this.currentItemIndex = 0,
     this.currentBid = 0,
     this.leadingBidderId,
+    this.startingBudget = 1000,
+    this.charactersPerPlayer = 4,
   });
 
   ItemModel? get currentItem =>
@@ -65,6 +69,8 @@ class RoomModel {
       currentItemIndex: json['currentItemIndex'] ?? 0,
       currentBid: json['currentBid'] ?? 0,
       leadingBidderId: json['leadingBidderId'],
+      startingBudget: (json['startingBudget'] as num?)?.toInt() ?? 1000,
+      charactersPerPlayer: (json['charactersPerPlayer'] as num?)?.toInt() ?? 4,
     );
   }
 }

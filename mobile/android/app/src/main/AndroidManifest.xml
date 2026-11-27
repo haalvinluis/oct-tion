@@ -38,23 +38,23 @@
             </intent-filter>
 
             <!-- Deep linking & Android App Links for Room Invitations -->
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data
-                    android:scheme="https"
-                    android:host="powerbid.app"
-                    android:pathPrefix="/invite" />
-            </intent-filter>
-            <!-- Custom scheme fallback: powerbid://invite/* -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data
-                    android:scheme="powerbid"
-                    android:host="invite" />
+                <data android:scheme="https" android:host="oct-tion.onrender.com" android:pathPrefix="/join" />
+                <data android:scheme="https" android:host="oct-tion.onrender.com" android:pathPrefix="/invite" />
+                <data android:scheme="https" android:host="powerbid.app" android:pathPrefix="/invite" />
+                <data android:scheme="http" android:host="oct-tion.onrender.com" android:pathPrefix="/join" />
+            </intent-filter>
+
+            <!-- Custom scheme deep link: octtion://room/CODE and octtion://join/CODE -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="octtion" android:host="room" />
+                <data android:scheme="octtion" android:host="join" />
             </intent-filter>
         </activity>
 

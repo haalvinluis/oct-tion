@@ -100,7 +100,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                             ),
                           ),
                           Text(
-                            '${winner.totalTeamPoints} Total Team Points • ${winner.itemsWon} Items • \$${winner.remainingBudget} Budget Left',
+                            '${winner.totalTeamPoints} Total Team Points • ${winner.itemsWon} Items • ₹${winner.remainingBudget} Budget Left',
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -255,7 +255,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
-                                    '\$${p.remainingBudget}',
+                                    '₹${p.remainingBudget}',
                                     style: const TextStyle(
                                       color: AppTheme.success,
                                       fontWeight: FontWeight.bold,
@@ -284,6 +284,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                                 : p.itemsList.map((item) {
                                     final itemName = item['itemName'] ?? item['displayName'] ?? 'Item';
                                     final price = item['price'] ?? 0;
+                                    final powerPoints = item['powerPoints'];
 
                                     return Container(
                                       padding: const EdgeInsets.symmetric(
@@ -318,13 +319,32 @@ class _ResultsScreenState extends State<ResultsScreen> {
                                               ),
                                             ],
                                             Text(
-                                              ' • \$$price',
+                                              ' • ₹$price',
                                               style: TextStyle(
                                                 color: AppTheme.textPrimary,
                                                 fontSize: 11,
                                                 fontWeight: FontWeight.w600,
                                               ),
                                             ),
+                                            if (powerPoints != null) ...[
+                                              const SizedBox(width: 5),
+                                              Container(
+                                                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                                                decoration: BoxDecoration(
+                                                  color: AppTheme.goldHighlight.withValues(alpha: 0.2),
+                                                  borderRadius: BorderRadius.circular(4),
+                                                  border: Border.all(color: AppTheme.goldHighlight, width: 0.8),
+                                                ),
+                                                child: Text(
+                                                  '⚡ $powerPoints pts',
+                                                  style: const TextStyle(
+                                                    color: AppTheme.goldHighlight,
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ],
                                         );
                                       }),

@@ -430,7 +430,7 @@ class _CharacterPacksScreenState extends State<CharacterPacksScreen>
                                   border: Border.all(color: AppTheme.surfaceBorder),
                                 ),
                                 child: Text(
-                                  'Base \$${item['basePrice'] ?? 50}',
+                                  'Base ₹${item['basePrice'] ?? 50}',
                                   style: const TextStyle(
                                     fontFamily: AppTheme.fontFamily,
                                     color: AppTheme.goldHighlight,

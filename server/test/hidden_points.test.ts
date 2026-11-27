@@ -170,11 +170,11 @@ describe('PowerBid: Hidden Points System Tests', function () {
     expect(standing.rank).to.equal(1);
     // Total team points is revealed accurately on final leaderboard post-match
     expect(standing.totalTeamPoints).to.be.a('number').that.is.above(0);
-    // Individual items list must NOT contain powerPoints
+    // Individual items list reveals powerPoints at match end on results screen
     expect(standing.itemsList).to.be.an('array').with.lengthOf(1);
     expect(standing.itemsList[0].itemName).to.be.a('string');
     expect(standing.itemsList[0].price).to.equal(300);
-    expect(standing.itemsList[0].powerPoints).to.be.undefined;
+    expect(standing.itemsList[0].powerPoints).to.be.a('number');
   });
 
   it('6. ProfileManager match history & match details sanitize purchasedItems and omit totalTeamPoints', async () => {

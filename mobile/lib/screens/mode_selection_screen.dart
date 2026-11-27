@@ -109,30 +109,15 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen> {
 
               // Game Mode Selection Header
               const SectionHeader(
-                title: '3. Select Game Mode',
-                subtitle: 'Choose how match winner is determined',
+                title: '3. Game Mode',
+                subtitle: 'Official OCT-TION competitive auction mode',
               ),
               const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildGameModeCard(
-                      modeId: 'AUCTION_TEAM_CHALLENGE',
-                      title: 'Team Challenge',
-                      subtitle: 'Bid & build roster; highest total points wins',
-                      icon: Icons.groups_rounded,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _buildGameModeCard(
-                      modeId: 'POWER_COMPARISON',
-                      title: '1v1 Compare',
-                      subtitle: 'Direct power comparison per round',
-                      icon: Icons.compare_arrows_rounded,
-                    ),
-                  ),
-                ],
+              _buildGameModeCard(
+                modeId: 'AUCTION_TEAM_CHALLENGE',
+                title: 'Auction Team Challenge',
+                subtitle: 'Bid & build your roster; highest total character power points wins the match',
+                icon: Icons.groups_rounded,
               ),
               const SizedBox(height: 24),
 

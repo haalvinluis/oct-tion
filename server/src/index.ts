@@ -7,6 +7,7 @@ import { registerSocketHandlers } from './socket_handler';
 import { DatabasePool } from './database/pg_pool';
 import { ProfileManager } from './database/profile_manager';
 import { AuthManager } from './database/auth_manager';
+import { FriendsManager } from './friends_manager';
 import path from 'path';
 
 // Load environment variables from local server .env or workspace root .env
@@ -75,6 +76,54 @@ app.get('/api/status', (_req: Request, res: Response) => {
     googleClientIdConfigured: !!process.env.GOOGLE_CLIENT_ID,
     timestamp: new Date().toISOString(),
   });
+});
+
+// Deep Link / Web Invitation Landing Pages for OCT-TION App
+app.get('/join/:roomCode', (req: Request, res: Response) => {
+  const roomCode = (req.params.roomCode || '').toUpperCase().trim();
+  res.send(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OCT-TION - Room Invitation ${roomCode}</title>
+  <meta http-equiv="refresh" content="0;url=octtion://room/${roomCode}">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0B0A10; color: #FFF; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; text-align: center; }
+    .card { background: #161424; border: 1.5px solid #D97706; border-radius: 20px; padding: 32px 24px; max-width: 400px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+    .logo { font-size: 32px; font-weight: 900; letter-spacing: 1px; margin-bottom: 8px; }
+    .logo span { color: #F59E0B; }
+    .tagline { font-size: 13px; color: #9CA3AF; margin-bottom: 24px; }
+    .code-box { background: #0B0A10; border: 1.5px dashed #F59E0B; border-radius: 12px; padding: 16px; font-size: 26px; font-weight: 900; letter-spacing: 4px; color: #FBBF24; margin-bottom: 24px; }
+    .btn { display: block; background: linear-gradient(135deg, #F59E0B, #D97706); color: #000; text-decoration: none; font-weight: 800; font-size: 16px; padding: 14px 20px; border-radius: 12px; margin-bottom: 12px; }
+    .subtext { font-size: 12px; color: #9CA3AF; line-height: 1.5; }
+  </style>
+  <script>
+    setTimeout(function() {
+      window.location.href = "octtion://room/${roomCode}";
+    }, 150);
+  </script>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">OCT-<span>TION</span></div>
+    <div class="tagline">Real-Time Competitive Character Auction</div>
+    <div style="font-size: 14px; margin-bottom: 8px; color: #D1D5DB;">Auction Room Invitation Code</div>
+    <div class="code-box">${roomCode}</div>
+    <a href="octtion://room/${roomCode}" class="btn">🚀 Open in OCT-TION App</a>
+    <p class="subtext">If the app doesn't open automatically, tap the button above or enter the code in your OCT-TION app.</p>
+  </div>
+</body>
+</html>`);
+});
+
+app.get('/invite/:token', (req: Request, res: Response) => {
+  const token = req.params.token || '';
+  const preview = FriendsManager.getInstance().previewInvite(token, roomManager);
+  if (preview.success && preview.preview?.roomCode) {
+    return res.redirect('/join/' + preview.preview.roomCode);
+  }
+  return res.redirect('/join/UNKNOWN');
 });
 
 // HTTP REST API: Google Login
@@ -148,7 +197,7 @@ app.post('/api/auth/google/link', async (req: Request, res: Response) => {
 registerSocketHandlers(io, roomManager);
 
 // Helper function to start server
-export async function startServer(port: number = Number(PORT)): Promise<http.Server> {
+async function startServer(port: number = Number(PORT)): Promise<http.Server> {
   const db = DatabasePool.getInstance();
   try {
     const isConnected = await db.checkConnection();
@@ -192,4 +241,4 @@ if (require.main === module) {
   startServer();
 }
 
-export { app, server, io, roomManager };
+export { app, server, io, roomManager, startServer };

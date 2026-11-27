@@ -49,6 +49,8 @@ export interface RoomState {
   hostId: string;
   players: Player[];
   auctionEngine?: AuctionEngine;
+  startingBudget: number;
+  charactersPerPlayer: number;
 }
 
 export function toRoomStateDTO(room: RoomState): RoomStateDTO {
@@ -61,6 +63,8 @@ export function toRoomStateDTO(room: RoomState): RoomStateDTO {
     timerDuration: room.timerDuration ?? 15,
     maxPlayers: room.maxPlayers,
     hostId: room.hostId,
+    startingBudget: room.startingBudget ?? 1000,
+    charactersPerPlayer: room.charactersPerPlayer ?? 4,
     players: room.players.map((p) => ({
       id: p.id,
       profileId: p.profileId,
@@ -103,7 +107,9 @@ export class RoomManager {
     timerDuration: number = DEFAULT_TIMER_DURATION,
     profileId?: string,
     topic?: string,
-    maxPlayers: number = DEFAULT_MAX_PLAYERS
+    maxPlayers: number = DEFAULT_MAX_PLAYERS,
+    startingBudget: number = 1000,
+    charactersPerPlayer: number = 4
   ): { roomState: RoomStateDTO; player: Player } {
     const resolvedItemCount =
       itemCount !== undefined && itemCount !== null
@@ -111,7 +117,7 @@ export class RoomManager {
         : DEFAULT_ITEM_COUNT;
 
     if (!isValidItemCount(resolvedItemCount)) {
-      throw new Error(`Match size must be an integer between 1 and 10 items.`);
+      throw new Error(`Match size must be an integer between 1 and 50 items.`);
     }
 
     const resolvedMaxPlayers =
@@ -122,6 +128,16 @@ export class RoomManager {
     if (!SUPPORTED_MAX_PLAYERS.includes(resolvedMaxPlayers as any)) {
       throw new Error(`Max players must be between 2 and 8.`);
     }
+
+    const resolvedStartingBudget =
+      startingBudget !== undefined && startingBudget !== null && Number(startingBudget) > 0
+        ? Number(startingBudget)
+        : 1000;
+
+    const resolvedCharactersPerPlayer =
+      charactersPerPlayer !== undefined && charactersPerPlayer !== null && Number(charactersPerPlayer) > 0
+        ? Number(charactersPerPlayer)
+        : 4;
 
     const effectiveTopic = (topic && topic.trim().length > 0) ? topic.trim() : category;
 
@@ -151,7 +167,7 @@ export class RoomManager {
       name: username.trim() || `Player_${fallbackSuffix}`,
       isHost: true,
       isReady: true,
-      budget: 1000,
+      budget: resolvedStartingBudget,
       acquiredItems: [],
       isConnected: true,
       winStreak: effectiveWinStreak,
@@ -167,6 +183,8 @@ export class RoomManager {
       maxPlayers: resolvedMaxPlayers,
       hostId: socketId,
       players: [hostPlayer],
+      startingBudget: resolvedStartingBudget,
+      charactersPerPlayer: resolvedCharactersPerPlayer,
     };
 
     this.rooms.set(roomCode, roomState);
@@ -200,7 +218,14 @@ export class RoomManager {
       existingPlayer.isConnected = true;
       existingPlayer.disconnectedAt = undefined;
       if (username && username.trim().length > 0) {
-        existingPlayer.name = username.trim();
+        const clean = username.trim();
+        const otherPlayerWithSameName = room.players.find(
+          (p, idx) => idx !== existingPlayerIndex && p.name.toLowerCase() === clean.toLowerCase()
+        );
+        if (otherPlayerWithSameName) {
+          throw new Error(`Username "${clean}" is already taken in this room. Please choose a different username.`);
+        }
+        existingPlayer.name = clean;
       }
       this.socketToRoom.set(socketId, normalizedCode);
       if (room.auctionEngine) {
@@ -213,19 +238,36 @@ export class RoomManager {
       throw new Error(`Room "${normalizedCode}" is full (Max ${room.maxPlayers} players).`);
     }
 
+    const rawName = username.trim();
+    if (rawName) {
+      const duplicatePlayer = room.players.find(
+        (p) => p.name.toLowerCase() === rawName.toLowerCase() && p.id !== socketId && p.profileId !== profileId
+      );
+      if (duplicatePlayer) {
+        throw new Error(`Username "${rawName}" is already taken in this room. Please choose a different username.`);
+      }
+    }
+
     this.leaveAllRooms(socketId);
 
     const sessionToken = crypto.randomUUID();
     const fallbackSuffix = (profileId || socketId).replace(/[^a-zA-Z0-9]/g, '').slice(-4) || 'User';
     const effectiveWinStreak = ProfileManager.getInstance().getProfileById(profileId || socketId)?.winStreak ?? 0;
+    let finalPlayerName = rawName || `Player_${fallbackSuffix}`;
+    let collisionCount = 1;
+    const baseCandidate = finalPlayerName;
+    while (room.players.some((p) => p.name.toLowerCase() === finalPlayerName.toLowerCase())) {
+      finalPlayerName = `${baseCandidate}_${collisionCount++}`;
+    }
+
     const newPlayer: Player = {
       id: socketId,
       profileId,
       sessionToken,
-      name: username.trim() || `Player_${fallbackSuffix}`,
+      name: finalPlayerName,
       isHost: false,
       isReady: true,
-      budget: 1000,
+      budget: room.startingBudget ?? 1000,
       acquiredItems: [],
       isConnected: true,
       winStreak: effectiveWinStreak,
@@ -391,7 +433,15 @@ export class RoomManager {
   public updateRoomSettings(
     socketId: string,
     roomCode: string,
-    settings: { category?: string; topic?: string; itemCount?: number; timerDuration?: number; maxPlayers?: number }
+    settings: {
+      category?: string;
+      topic?: string;
+      itemCount?: number;
+      timerDuration?: number;
+      maxPlayers?: number;
+      startingBudget?: number;
+      charactersPerPlayer?: number;
+    }
   ): RoomStateDTO {
     const normalizedCode = roomCode.trim().toUpperCase();
     const room = this.rooms.get(normalizedCode);
@@ -415,7 +465,7 @@ export class RoomManager {
     if (settings.itemCount !== undefined && settings.itemCount !== null) {
       const resolvedItemCount = Number(settings.itemCount);
       if (!isValidItemCount(resolvedItemCount)) {
-        throw new Error(`Match size must be an integer between 1 and 10 items.`);
+        throw new Error(`Match size must be an integer between 1 and 50 items.`);
       }
       newItemCount = resolvedItemCount;
     }
@@ -437,6 +487,23 @@ export class RoomManager {
           throw new Error(`Cannot reduce room capacity to ${resolvedMax} because ${room.players.length} players are already in the room.`);
         }
         newMaxPlayers = resolvedMax;
+      }
+    }
+
+    if (settings.startingBudget !== undefined && settings.startingBudget !== null) {
+      const resolvedBudget = Number(settings.startingBudget);
+      if (resolvedBudget > 0) {
+        room.startingBudget = resolvedBudget;
+        room.players.forEach((p) => {
+          if (p.acquiredItems.length === 0) p.budget = resolvedBudget;
+        });
+      }
+    }
+
+    if (settings.charactersPerPlayer !== undefined && settings.charactersPerPlayer !== null) {
+      const resolvedChars = Number(settings.charactersPerPlayer);
+      if (resolvedChars > 0 && resolvedChars <= 10) {
+        room.charactersPerPlayer = resolvedChars;
       }
     }
 
@@ -476,7 +543,10 @@ export class RoomManager {
         room.gameMode,
         room.itemCount,
         room.players,
-        room.timerDuration
+        room.timerDuration,
+        undefined,
+        room.charactersPerPlayer ?? 4,
+        room.startingBudget ?? 1000
       );
     }
 

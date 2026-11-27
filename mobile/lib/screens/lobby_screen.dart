@@ -656,10 +656,12 @@ class _LobbyScreenState extends State<LobbyScreen> {
                               icon: const Icon(Icons.chat_rounded, size: 18),
                               label: const Text('WhatsApp', style: TextStyle(fontWeight: FontWeight.bold)),
                               onPressed: () {
-                                if (inviteUrl != null) {
-                                  final msg = 'Join my OCT-TION auction! Open this invitation to view the room and join: $inviteUrl';
-                                  Share.share(msg, subject: 'OCT-TION Auction Invitation');
-                                }
+                                final targetUrl = inviteUrl ?? 'https://oct-tion.onrender.com/join/${widget.roomCode}';
+                                final msg = '🔥 Join my OCT-TION auction room!\n\n'
+                                    'Room Code: ${widget.roomCode}\n\n'
+                                    '👉 Tap to open in app: $targetUrl\n'
+                                    '(Or open OCT-TION and enter code: ${widget.roomCode})';
+                                Share.share(msg, subject: 'OCT-TION Auction Room ${widget.roomCode}');
                               },
                             ),
                           ),
@@ -673,10 +675,12 @@ class _LobbyScreenState extends State<LobbyScreen> {
                               icon: const Icon(Icons.share_rounded, size: 18),
                               label: const Text('Share Link', style: TextStyle(fontWeight: FontWeight.bold)),
                               onPressed: () {
-                                if (inviteUrl != null) {
-                                  final msg = 'Join my OCT-TION auction! Open this invitation to view the room and join: $inviteUrl';
-                                  Share.share(msg, subject: 'OCT-TION Auction Invitation');
-                                }
+                                final targetUrl = inviteUrl ?? 'https://oct-tion.onrender.com/join/${widget.roomCode}';
+                                final msg = '🔥 Join my OCT-TION auction room!\n\n'
+                                    'Room Code: ${widget.roomCode}\n\n'
+                                    '👉 Tap to open in app: $targetUrl\n'
+                                    '(Or open OCT-TION and enter code: ${widget.roomCode})';
+                                Share.share(msg, subject: 'OCT-TION Auction Room ${widget.roomCode}');
                               },
                             ),
                           ),

@@ -112,24 +112,40 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
           return;
         }
 
-        const targetId = getEffectivePlayerId(data?.playerId);
-        const incomingUsername = (data?.username && typeof data.username === 'string')
-          ? data.username.trim()
-          : (socket as any).handshakeUsername;
+        let profile: any;
+        if (data?.playerId) {
+          const targetId = getEffectivePlayerId(data.playerId);
+          profile = ProfileManager.getInstance().getProfileDTO(targetId);
+        } else if (data?.username) {
+          const lookupUser = SecurityMiddleware.sanitizeString(data.username, 25);
+          profile = ProfileManager.getInstance().getProfileByUsername(lookupUser);
+        } else if (data?.publicPlayerId) {
+          const raw = ProfileManager.getInstance().getProfileByPublicId(data.publicPlayerId);
+          if (raw) profile = ProfileManager.getInstance().getProfileDTO(raw.id);
+        } else {
+          const targetId = getEffectivePlayerId();
+          const incomingUsername = (data?.username && typeof data.username === 'string')
+            ? data.username.trim()
+            : (socket as any).handshakeUsername;
 
-        if (incomingUsername && incomingUsername.length >= 3) {
-          const sanitized = SecurityMiddleware.sanitizeString(incomingUsername, 20);
-          const isGeneric = sanitized.startsWith('Guest_') || sanitized.startsWith('Player_') || sanitized === 'GuestPlayer';
-          if (!isGeneric) {
-            const existing = ProfileManager.getInstance().getProfileById(targetId);
-            if (!existing || !existing.username || existing.username.startsWith('Guest_') || existing.username.startsWith('Player_') || existing.username === 'GuestPlayer') {
-              ProfileManager.getInstance().updateUsername(targetId, sanitized);
+          if (incomingUsername && incomingUsername.length >= 3) {
+            const sanitized = SecurityMiddleware.sanitizeString(incomingUsername, 20);
+            const isGeneric = sanitized.startsWith('Guest_') || sanitized.startsWith('Player_') || sanitized === 'GuestPlayer';
+            if (!isGeneric) {
+              const existing = ProfileManager.getInstance().getProfileById(targetId);
+              if (!existing || !existing.username || existing.username.startsWith('Guest_') || existing.username.startsWith('Player_') || existing.username === 'GuestPlayer') {
+                ProfileManager.getInstance().updateUsername(targetId, sanitized);
+              }
             }
           }
+          profile = ProfileManager.getInstance().getProfileDTO(targetId);
         }
 
-        const profile = ProfileManager.getInstance().getProfileDTO(targetId);
-        if (typeof ack === 'function') ack({ success: true, profile });
+        if (profile) {
+          if (typeof ack === 'function') ack({ success: true, profile });
+        } else {
+          if (typeof ack === 'function') ack({ success: false, error: 'Player profile not found.' });
+        }
       } catch (err: any) {
         if (typeof ack === 'function') ack({ success: false, error: err.message });
       }
@@ -253,7 +269,7 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
           return;
         }
 
-        const { username, category, topic, gameMode, itemCount, timerDuration, maxPlayers } = data || {};
+        const { username, category, topic, gameMode, itemCount, timerDuration, maxPlayers, startingBudget, charactersPerPlayer } = data || {};
         if (!username || !category || !itemCount) {
           const errResponse = { success: false, error: 'Missing required create parameters.' };
           if (typeof ack === 'function') ack(errResponse);
@@ -322,7 +338,9 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
           parsedTimer,
           effectivePlayerId,
           topic,
-          parsedMaxPlayers
+          parsedMaxPlayers,
+          startingBudget,
+          charactersPerPlayer
         );
 
         await socket.join(roomState.roomCode);
@@ -350,7 +368,7 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
     // Step 7: Update Room Settings (Host only, LOBBY phase only)
     socket.on('update_room_settings', (data, ack) => {
       try {
-        const { roomCode, category, topic, itemCount, timerDuration, maxPlayers } = data || {};
+        const { roomCode, category, topic, itemCount, timerDuration, maxPlayers, startingBudget, charactersPerPlayer } = data || {};
         if (!roomCode || !SecurityMiddleware.isValidRoomCode(roomCode)) {
           if (typeof ack === 'function') ack({ success: false, error: 'Invalid room code format.' });
           return;
@@ -401,6 +419,8 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
           itemCount,
           timerDuration,
           maxPlayers,
+          startingBudget,
+          charactersPerPlayer,
         });
 
         if (typeof ack === 'function') ack({ success: true, roomState });

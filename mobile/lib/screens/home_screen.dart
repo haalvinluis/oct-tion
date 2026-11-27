@@ -18,7 +18,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final TextEditingController _searchController = TextEditingController();
   final SettingsService _settings = SettingsService();
 
   @override
@@ -34,7 +33,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _settings.removeListener(_onThemeChanged);
-    _searchController.dispose();
     super.dispose();
   }
 
@@ -57,11 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const HomeHeader(),
               const SizedBox(height: 18),
 
-              // 2. Pill-shaped Search Bar
-              _buildSearchBar(context),
-              const SizedBox(height: 20),
-
-              // 3. Hero Feature Card with 3D Red CTA Button inside on the left
+              // 2. Hero Feature Card with 3D Red CTA Button inside on the left
               _buildHeroBanner(context),
               const SizedBox(height: 24),
 
@@ -94,78 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// 2. Pill-shaped Search Bar
-  Widget _buildSearchBar(BuildContext context) {
-    return Container(
-      height: 48,
-      padding: const EdgeInsets.symmetric(horizontal: 18),
-      decoration: BoxDecoration(
-        color: AppTheme.pureWhite,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppTheme.surfaceBorder, width: 1.2),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search auctions, anime, heroes...',
-                hintStyle: TextStyle(
-                  fontFamily: AppTheme.fontFamily,
-                  color: AppTheme.mutedText,
-                  fontSize: 13,
-                ),
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                contentPadding: EdgeInsets.zero,
-                isDense: true,
-                filled: false,
-              ),
-              style: TextStyle(
-                fontFamily: AppTheme.fontFamily,
-                color: AppTheme.textPrimary,
-                fontSize: 13.5,
-              ),
-              onSubmitted: (query) {
-                if (query.trim().isNotEmpty) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ModeSelectionScreen(initialCategory: query.trim().toLowerCase()),
-                    ),
-                  );
-                }
-              },
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const ModeSelectionScreen()),
-              );
-            },
-            child: Icon(
-              Icons.search_rounded,
-              color: AppTheme.mutedText,
-              size: 22,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// 3. Hero Feature Card with Button Inside on the Left
+  /// 2. Hero Feature Card with Button Inside on the Left
   Widget _buildHeroBanner(BuildContext context) {
     return Container(
       width: double.infinity,

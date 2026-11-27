@@ -1,8 +1,10 @@
 package com.auctiongame.mobile
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
+import android.media.AudioAttributes
 import android.media.AudioFormat
 import android.media.AudioManager
 import android.media.AudioRecord
@@ -18,16 +20,19 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.LinkedBlockingQueue
 
 class MainActivity : FlutterActivity() {
     private val ORIENTATION_CHANNEL = "com.auctiongame.mobile/orientation"
     private val PERMISSION_CHANNEL = "com.auctiongame.mobile/mic_permission"
     private val SOUND_CHANNEL = "com.auctiongame.mobile/sound"
     private val VOICE_CHANNEL = "com.auctiongame.mobile/voice"
+    private val DEEPLINK_CHANNEL = "com.auctiongame.mobile/deeplink"
     private val MIC_PERMISSION_REQUEST_CODE = 2001
 
     private var pendingPermissionResult: MethodChannel.Result? = null
     private var voiceChannel: MethodChannel? = null
+    private var deeplinkChannel: MethodChannel? = null
 
     @Volatile
     private var isAppForeground: Boolean = true
@@ -136,6 +141,27 @@ class MainActivity : FlutterActivity() {
                 else -> result.notImplemented()
             }
         }
+
+        // 5. Deep Linking Channel (Auto-join auction rooms via shared links)
+        val dlChan = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, DEEPLINK_CHANNEL)
+        deeplinkChannel = dlChan
+        dlChan.setMethodCallHandler { call, result ->
+            when (call.method) {
+                "getInitialLink" -> {
+                    val link = intent?.dataString
+                    result.success(link)
+                }
+                else -> result.notImplemented()
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: android.content.Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        intent.dataString?.let { link ->
+            deeplinkChannel?.invokeMethod("onLink", link)
+        }
     }
 
     override fun onResume() {
@@ -179,21 +205,6 @@ class MainActivity : FlutterActivity() {
                 } catch (_: Exception) {}
                 iterator.remove()
             }
-        } catch (_: Exception) {}
-    }
-
-    private fun stopAllVoice() {
-        stopVoiceRecording()
-        try {
-            voicePlaybackTrack?.let {
-                try {
-                    it.pause()
-                    it.flush()
-                    it.stop()
-                    it.release()
-                } catch (_: Exception) {}
-            }
-            voicePlaybackTrack = null
         } catch (_: Exception) {}
     }
 
@@ -313,6 +324,64 @@ class MainActivity : FlutterActivity() {
     // ==================== Real-Time Voice Chat Engine ====================
     private val VOICE_SAMPLE_RATE = 16000
     private val VOICE_FRAME_SIZE = 640 // 40ms frame at 16kHz mono 16-bit
+    private val voicePlaybackQueue = LinkedBlockingQueue<ByteArray>(50)
+    private var playbackThread: Thread? = null
+    @Volatile
+    private var isPlaybackRunning: Boolean = false
+
+    private fun ensurePlaybackThreadRunning() {
+        if (isPlaybackRunning && playbackThread?.isAlive == true) return
+        isPlaybackRunning = true
+        playbackThread = Thread {
+            try {
+                val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+                audioManager.isSpeakerphoneOn = true
+
+                val minBuf = AudioTrack.getMinBufferSize(
+                    VOICE_SAMPLE_RATE,
+                    AudioFormat.CHANNEL_OUT_MONO,
+                    AudioFormat.ENCODING_PCM_16BIT
+                )
+                val bufSize = Math.max(minBuf, VOICE_FRAME_SIZE * 8 * 2)
+
+                val attributes = AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                    .build()
+
+                val format = AudioFormat.Builder()
+                    .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                    .setSampleRate(VOICE_SAMPLE_RATE)
+                    .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
+                    .build()
+
+                val track = AudioTrack.Builder()
+                    .setAudioAttributes(attributes)
+                    .setAudioFormat(format)
+                    .setBufferSizeInBytes(bufSize)
+                    .setTransferMode(AudioTrack.MODE_STREAM)
+                    .build()
+
+                voicePlaybackTrack = track
+                track.play()
+
+                while (isPlaybackRunning && isAppForeground) {
+                    val pcmBytes = voicePlaybackQueue.poll(200, java.util.concurrent.TimeUnit.MILLISECONDS)
+                    if (pcmBytes != null && track.state == AudioTrack.STATE_INITIALIZED) {
+                        track.write(pcmBytes, 0, pcmBytes.size)
+                    }
+                }
+                track.stop()
+                track.release()
+            } catch (_: Exception) {}
+            voicePlaybackTrack = null
+            isPlaybackRunning = false
+        }.apply {
+            isDaemon = true
+            start()
+        }
+    }
 
     private fun startVoiceRecording(): Boolean {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -321,6 +390,10 @@ class MainActivity : FlutterActivity() {
         if (isCapturingVoice) return true
 
         try {
+            val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+            audioManager.isSpeakerphoneOn = true
+
             val minBuf = AudioRecord.getMinBufferSize(
                 VOICE_SAMPLE_RATE,
                 AudioFormat.CHANNEL_IN_MONO,
@@ -328,7 +401,6 @@ class MainActivity : FlutterActivity() {
             )
             val bufferSize = Math.max(minBuf, VOICE_FRAME_SIZE * 4)
 
-            // MediaRecorder.AudioSource.VOICE_COMMUNICATION enables hardware Acoustic Echo Cancellation (AEC) and Noise Suppression (NS)
             val record = AudioRecord(
                 MediaRecorder.AudioSource.VOICE_COMMUNICATION,
                 VOICE_SAMPLE_RATE,
@@ -360,8 +432,7 @@ class MainActivity : FlutterActivity() {
                             byteBuffer[i * 2 + 1] = ((sample shr 8) and 0xFF).toByte()
                         }
                         val rms = Math.sqrt(sum / read)
-                        // Send audio chunk if there is audible speech energy (lowered threshold so natural voice is never cut)
-                        if (rms > 80) {
+                        if (rms > 70) {
                             val base64Chunk = Base64.encodeToString(byteBuffer, 0, read * 2, Base64.NO_WRAP)
                             mainHandler.post {
                                 if (isCapturingVoice && isAppForeground) {
@@ -399,26 +470,25 @@ class MainActivity : FlutterActivity() {
         if (!isAppForeground) return
         try {
             val pcmBytes = Base64.decode(chunkBase64, Base64.NO_WRAP)
-            var track = voicePlaybackTrack
-            if (track == null || track.state != AudioTrack.STATE_INITIALIZED) {
-                val minBuf = AudioTrack.getMinBufferSize(
-                    VOICE_SAMPLE_RATE,
-                    AudioFormat.CHANNEL_OUT_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT
-                )
-                val bufSize = Math.max(minBuf, VOICE_FRAME_SIZE * 6 * 2)
-                track = AudioTrack(
-                    AudioManager.STREAM_MUSIC,
-                    VOICE_SAMPLE_RATE,
-                    AudioFormat.CHANNEL_OUT_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT,
-                    bufSize,
-                    AudioTrack.MODE_STREAM
-                )
-                voicePlaybackTrack = track
-                track.play()
+            ensurePlaybackThreadRunning()
+            voicePlaybackQueue.offer(pcmBytes)
+        } catch (_: Exception) {}
+    }
+
+    private fun stopAllVoice() {
+        stopVoiceRecording()
+        isPlaybackRunning = false
+        voicePlaybackQueue.clear()
+        try {
+            voicePlaybackTrack?.let {
+                it.stop()
+                it.release()
             }
-            track.write(pcmBytes, 0, pcmBytes.size)
+            voicePlaybackTrack = null
+        } catch (_: Exception) {}
+        try {
+            val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            audioManager.mode = AudioManager.MODE_NORMAL
         } catch (_: Exception) {}
     }
 

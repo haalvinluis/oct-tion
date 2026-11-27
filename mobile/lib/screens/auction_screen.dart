@@ -181,7 +181,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
           backgroundColor: AppTheme.cardBackground,
           title: Text('Confirm High Bid', style: TextStyle(color: AppTheme.warmCream)),
           content: Text(
-            'Place bid of \$$nextBidAmount? Over 50% of your remaining budget (\$${myPlayer.budget}).',
+            'Place bid of ₹$nextBidAmount? Over 50% of your remaining budget (₹${myPlayer.budget}).',
             style: TextStyle(color: AppTheme.mutedText),
           ),
           actions: [
@@ -452,6 +452,9 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                                 canAffordBid: canAffordBid,
                                 myRemainingBudget: myRemainingBudget,
                                 effectiveNextBid: effectiveNextBid,
+                                isTeamFull: (myPlayer?.acquiredItems.length ?? 0) >= (state?.charactersPerPlayer ?? 4),
+                                myAcquiredCount: myPlayer?.acquiredItems.length ?? 0,
+                                charactersPerPlayer: state?.charactersPerPlayer ?? 4,
                               ),
                             ),
                           ),
@@ -737,11 +740,22 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                               : (isMe ? AppTheme.mainBackground : AppTheme.secondaryBackground),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: isLeadingThisPlayer
-                                ? AppTheme.champagneGold
-                                : (isMe ? AppTheme.goldBorder : AppTheme.surfaceBorder),
-                            width: isLeadingThisPlayer ? 1.5 : 0.8,
+                            color: isSpeaking
+                                ? const Color(0xFFEF4444)
+                                : (isLeadingThisPlayer
+                                    ? AppTheme.champagneGold
+                                    : (isMe ? AppTheme.goldBorder : AppTheme.surfaceBorder)),
+                            width: isSpeaking ? 2.2 : (isLeadingThisPlayer ? 1.5 : 0.8),
                           ),
+                          boxShadow: isSpeaking
+                              ? [
+                                  BoxShadow(
+                                    color: const Color(0xFFEF4444).withValues(alpha: 0.35),
+                                    blurRadius: 6,
+                                    spreadRadius: 1,
+                                  ),
+                                ]
+                              : null,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -749,16 +763,25 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                           children: [
                             Row(
                               children: [
-                                // Small Player Medallion
-                                CircleAvatar(
-                                  radius: 12,
-                                  backgroundColor: isLeadingThisPlayer ? AppTheme.champagneGold : AppTheme.secondaryBackground,
-                                  child: Text(
-                                    p.name.isNotEmpty ? p.name[0].toUpperCase() : '?',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
-                                      color: isLeadingThisPlayer ? AppTheme.mainBackground : AppTheme.warmCream,
+                                // Small Player Medallion with Speaking Red Ring
+                                Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: isSpeaking ? const Color(0xFFEF4444) : Colors.transparent,
+                                      width: isSpeaking ? 2.0 : 0.0,
+                                    ),
+                                  ),
+                                  child: CircleAvatar(
+                                    radius: 12,
+                                    backgroundColor: isLeadingThisPlayer ? AppTheme.champagneGold : AppTheme.secondaryBackground,
+                                    child: Text(
+                                      p.name.isNotEmpty ? p.name[0].toUpperCase() : '?',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: isLeadingThisPlayer ? AppTheme.mainBackground : AppTheme.warmCream,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -825,7 +848,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                                       ),
                                       const SizedBox(height: 2),
                                       Text(
-                                        '\$${p.budget} • ${p.acquiredItems.length} Won',
+                                        '₹${p.budget} • ${p.acquiredItems.length} Won',
                                         style: TextStyle(
                                           fontSize: 9,
                                           fontWeight: FontWeight.w600,
@@ -1058,7 +1081,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                             style: TextStyle(color: AppTheme.mutedText, fontSize: 13),
                           ),
                           Text(
-                            '\$${player.budget}',
+                            '₹${player.budget}',
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
@@ -1112,7 +1135,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                                         ),
                                       ),
                                       Text(
-                                        '— \$${item.price}',
+                                        '— ₹${item.price}',
                                         style: const TextStyle(
                                           color: Color(0xFFB45309),
                                           fontWeight: FontWeight.bold,
@@ -1307,7 +1330,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'Starting Bid: \$0 • Players Start Bidding',
+                  'Starting Bid: ₹0 • Players Start Bidding',
                   maxLines: 1,
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
@@ -1344,7 +1367,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                         style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppTheme.mutedText),
                       ),
                       Text(
-                        '\$$currentBid',
+                        '₹$currentBid',
                         style: TextStyle(
                           fontFamily: AppTheme.fontFamily,
                           fontSize: 22,
@@ -1405,6 +1428,9 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
     required bool canAffordBid,
     required int myRemainingBudget,
     required int effectiveNextBid,
+    required bool isTeamFull,
+    required int myAcquiredCount,
+    required int charactersPerPlayer,
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
@@ -1416,7 +1442,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Remaining Budget Header
+          // Remaining Budget & Squad Quota Header
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
             decoration: BoxDecoration(
@@ -1428,16 +1454,30 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Flexible(
-                  child: Text(
-                    'Your Budget',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: AppTheme.mutedText, fontSize: 11),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Your Budget',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: AppTheme.mutedText, fontSize: 10),
+                      ),
+                      Text(
+                        'Team: $myAcquiredCount/$charactersPerPlayer',
+                        maxLines: 1,
+                        style: TextStyle(
+                          color: isTeamFull ? Colors.greenAccent : AppTheme.trueChampagneGold,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Flexible(
                   child: Text(
-                    '\$$myRemainingBudget',
+                    '₹$myRemainingBudget',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -1453,7 +1493,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
           ),
           const SizedBox(height: 8),
 
-          // Quick Increment Selectors (+$25, +$50, +$100)
+          // Quick Increment Selectors (+₹25, +₹50, +₹100)
           Row(
             children: [25, 50, 100].map((inc) {
               final isSelected = _selectedBidIncrement == inc;
@@ -1477,7 +1517,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                     ),
                     child: Center(
                       child: Text(
-                        '+$inc',
+                        '+₹$inc',
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
@@ -1494,27 +1534,27 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
 
           // Place Bid Button (Gold Gradient)
           GestureDetector(
-            onTap: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid || _isActionBusy)
+            onTap: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid || isTeamFull || _isActionBusy)
                 ? null
                 : () => _placeBid(effectiveNextBid),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 150),
               height: 48,
               decoration: BoxDecoration(
-                gradient: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid)
+                gradient: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid || isTeamFull)
                     ? null
                     : AppTheme.goldButtonGradient,
-                color: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid)
+                color: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid || isTeamFull)
                     ? AppTheme.secondaryBackground
                     : null,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid)
+                  color: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid || isTeamFull)
                       ? AppTheme.surfaceBorder
                       : const Color(0x40FFFFFF),
                   width: 1.2,
                 ),
-                boxShadow: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid)
+                boxShadow: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid || isTeamFull)
                     ? null
                     : const [
                         BoxShadow(
@@ -1537,18 +1577,20 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                         child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                       )
                     : Text(
-                        isLeading
-                            ? 'HIGHEST BIDDER'
-                            : (hasPassed ? 'PASSED' : 'BID \$$effectiveNextBid'),
+                        isTeamFull
+                            ? 'TEAM FULL ($myAcquiredCount/$charactersPerPlayer)'
+                            : (isLeading
+                                ? 'HIGHEST BIDDER'
+                                : (hasPassed ? 'PASSED' : 'BID ₹$effectiveNextBid')),
                         style: TextStyle(
                           fontFamily: AppTheme.fontFamily,
-                          fontSize: 13,
+                          fontSize: isTeamFull ? 10.5 : 13,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 0.5,
-                          color: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid)
+                          color: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid || isTeamFull)
                               ? AppTheme.mutedText
                               : Colors.white,
-                          shadows: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid)
+                          shadows: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid || isTeamFull)
                               ? null
                               : const [
                                   Shadow(

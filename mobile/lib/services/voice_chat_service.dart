@@ -57,10 +57,41 @@ class VoiceChatService {
 
   // Local muted players set (players whose voice is muted by this user)
   final Set<String> _locallyMutedPlayerIds = {};
+  final Map<String, Timer> _speakingTimers = {};
   static const MethodChannel _voiceChannel = MethodChannel('com.auctiongame.mobile/voice');
   bool _isNativeVoiceBound = false;
 
   bool isPlayerLocallyMuted(String playerId) => _locallyMutedPlayerIds.contains(playerId);
+
+  void _markSpeaking(String playerId) {
+    if (playerId.isEmpty) return;
+    _speakingTimers[playerId]?.cancel();
+    final current = Map<String, PlayerVoiceState>.from(playerStatesNotifier.value);
+    final existing = current[playerId];
+    current[playerId] = PlayerVoiceState(
+      playerId: playerId,
+      socketId: existing?.socketId ?? playerId,
+      isMuted: existing?.isMuted ?? false,
+      isSpeaking: true,
+      updatedAt: DateTime.now(),
+    );
+    playerStatesNotifier.value = current;
+
+    _speakingTimers[playerId] = Timer(const Duration(milliseconds: 650), () {
+      final updated = Map<String, PlayerVoiceState>.from(playerStatesNotifier.value);
+      final s = updated[playerId];
+      if (s != null && s.isSpeaking) {
+        updated[playerId] = PlayerVoiceState(
+          playerId: playerId,
+          socketId: s.socketId,
+          isMuted: s.isMuted,
+          isSpeaking: false,
+          updatedAt: DateTime.now(),
+        );
+        playerStatesNotifier.value = updated;
+      }
+    });
+  }
 
   /// Initializes voice chat for the given room code
   void init(String? roomCode) {
@@ -81,6 +112,8 @@ class VoiceChatService {
         if (call.method == 'onVoiceChunk') {
           final chunk = call.arguments as String?;
           if (chunk != null && !isMicMutedNotifier.value && !isHostMutedNotifier.value && _activeRoomCode != null) {
+            final myId = SocketService.instance.socketId;
+            if (myId != null) _markSpeaking(myId);
             SocketService.instance.socket?.emit('voice_audio_chunk', {
               'roomCode': _activeRoomCode,
               'chunk': chunk,
@@ -165,6 +198,10 @@ class VoiceChatService {
       if (fromPlayerId == SocketService.instance.socketId) return;
       // Do not play if user locally muted this participant
       if (isPlayerLocallyMuted(fromPlayerId)) return;
+
+      if (fromPlayerId.isNotEmpty) {
+        _markSpeaking(fromPlayerId);
+      }
 
       try {
         _voiceChannel.invokeMethod('playVoiceChunk', {'chunk': chunk});

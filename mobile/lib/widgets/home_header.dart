@@ -199,61 +199,84 @@ class HomeHeader extends StatelessWidget {
           ),
           const SizedBox(width: 8),
 
-          // 4. Notification Bell
+          // 4. Modern Revamped Notification Bell & Indicator
           ValueListenableBuilder<int>(
             valueListenable: SocketService.instance.unreadNotificationsCountNotifier,
             builder: (context, unreadCount, _) {
-              return Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    width: 38,
-                    height: 38,
-                    decoration: BoxDecoration(
-                      color: AppTheme.secondarySurface,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppTheme.goldBorderGlow, width: 1.1),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.35),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
+              final hasUnread = unreadCount > 0;
+              return GestureDetector(
+                onTap: () => NotificationsSheet.show(context),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        gradient: hasUnread
+                            ? const LinearGradient(
+                                colors: [Color(0xFF2A1C0A), Color(0xFF1A1208)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              )
+                            : null,
+                        color: hasUnread ? null : AppTheme.secondarySurface,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: hasUnread ? const Color(0xFFF59E0B) : AppTheme.goldBorderGlow,
+                          width: hasUnread ? 1.5 : 1.1,
                         ),
-                      ],
-                    ),
-                    child: IconButton(
-                      padding: EdgeInsets.zero,
-                      icon: const Icon(
-                        Icons.notifications_none_rounded,
-                        color: AppTheme.goldHighlight,
+                        boxShadow: [
+                          BoxShadow(
+                            color: hasUnread
+                                ? const Color(0xFFF59E0B).withValues(alpha: 0.3)
+                                : Colors.black.withValues(alpha: 0.3),
+                            blurRadius: hasUnread ? 8 : 5,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      alignment: Alignment.center,
+                      child: Icon(
+                        hasUnread ? Icons.notifications_active_rounded : Icons.notifications_none_rounded,
+                        color: hasUnread ? const Color(0xFFFBBF24) : AppTheme.goldHighlight,
                         size: 20,
                       ),
-                      onPressed: () => NotificationsSheet.show(context),
-                      tooltip: 'Notifications',
                     ),
-                  ),
-                  if (unreadCount > 0)
-                    Positioned(
-                      right: 0,
-                      top: 0,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
-                          color: Colors.redAccent,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Text(
-                          '$unreadCount',
-                          style: const TextStyle(
-                            fontFamily: AppTheme.fontFamily,
-                            color: Colors.white,
-                            fontSize: 8.5,
-                            fontWeight: FontWeight.bold,
+                    if (hasUnread)
+                      Positioned(
+                        right: -3,
+                        top: -3,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFFEF4444), Color(0xFFB91C1C)],
+                            ),
+                            borderRadius: BorderRadius.circular(9),
+                            border: Border.all(color: Colors.white, width: 1.2),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFEF4444).withValues(alpha: 0.65),
+                                blurRadius: 6,
+                                spreadRadius: 1,
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            unreadCount > 9 ? '9+' : '$unreadCount',
+                            style: const TextStyle(
+                              fontFamily: AppTheme.fontFamily,
+                              color: Colors.white,
+                              fontSize: 8.5,
+                              fontWeight: FontWeight.w900,
+                              height: 1.0,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               );
             },
           ),

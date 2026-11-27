@@ -369,6 +369,30 @@ class SocketService {
     return completer.future.timeout(const Duration(seconds: 5), onTimeout: () => null);
   }
 
+  Future<Map<String, dynamic>?> getOtherPlayerProfile({String? playerId, String? username, String? publicPlayerId}) async {
+    connect();
+    if (!_socket!.connected) await _waitForConnection();
+
+    final completer = Completer<Map<String, dynamic>?>();
+    _socket!.emitWithAck(
+      'get_player_profile',
+      {
+        if (playerId != null && playerId.isNotEmpty) 'playerId': playerId,
+        if (username != null && username.isNotEmpty) 'username': username,
+        if (publicPlayerId != null && publicPlayerId.isNotEmpty) 'publicPlayerId': publicPlayerId,
+      },
+      ack: (response) {
+        if (response != null && response['success'] == true && response['profile'] != null) {
+          completer.complete(Map<String, dynamic>.from(response['profile'] as Map));
+        } else {
+          completer.complete(null);
+        }
+      },
+    );
+
+    return completer.future.timeout(const Duration(seconds: 5), onTimeout: () => null);
+  }
+
   Future<Map<String, dynamic>> updateUsername(String newUsername, {String? avatarText}) async {
     connect();
     if (!_socket!.connected) await _waitForConnection();
@@ -500,6 +524,8 @@ class SocketService {
     required int itemCount,
     int timerDuration = 15,
     int maxPlayers = 8,
+    int startingBudget = 1000,
+    int charactersPerPlayer = 4,
   }) async {
     connect();
 
@@ -519,6 +545,8 @@ class SocketService {
         'itemCount': itemCount,
         'timerDuration': timerDuration,
         'maxPlayers': maxPlayers,
+        'startingBudget': startingBudget,
+        'charactersPerPlayer': charactersPerPlayer,
       },
       ack: (response) {
         if (response != null && response['success'] == true) {
@@ -686,6 +714,9 @@ class SocketService {
     String? topic,
     int? itemCount,
     int? timerDuration,
+    int? maxPlayers,
+    int? startingBudget,
+    int? charactersPerPlayer,
   }) {
     final completer = Completer<RoomModel>();
 
@@ -702,6 +733,9 @@ class SocketService {
         'topic': ?topic,
         'itemCount': ?itemCount,
         'timerDuration': ?timerDuration,
+        'maxPlayers': ?maxPlayers,
+        'startingBudget': ?startingBudget,
+        'charactersPerPlayer': ?charactersPerPlayer,
       },
       ack: (data) {
         if (data != null && data is Map<String, dynamic>) {

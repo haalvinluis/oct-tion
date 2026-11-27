@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../theme/app_theme.dart';
 import '../widgets/item_name_flag.dart';
 import '../services/socket_service.dart';
@@ -202,50 +203,59 @@ class _MatchDetailsScreenState extends State<MatchDetailsScreen> {
                                     .toList() ??
                                 [];
 
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 12),
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: AppTheme.surface,
-                                borderRadius: BorderRadius.circular(14),
-                                border: Border.all(
-                                  color: rank == 1 ? AppTheme.warning : AppTheme.surfaceLight,
-                                  width: rank == 1 ? 1.5 : 1.0,
+                            return InkWell(
+                              onTap: () => _showPlayerProfileSheet(context, p),
+                              borderRadius: BorderRadius.circular(14),
+                              child: Container(
+                                margin: const EdgeInsets.only(bottom: 12),
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.surface,
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(
+                                    color: rank == 1 ? AppTheme.warning : AppTheme.surfaceLight,
+                                    width: rank == 1 ? 1.5 : 1.0,
+                                  ),
                                 ),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          CircleAvatar(
-                                            radius: 14,
-                                            backgroundColor: rank == 1
-                                                ? AppTheme.warning
-                                                : AppTheme.surfaceLight,
-                                            child: Text(
-                                              '#$rank',
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            CircleAvatar(
+                                              radius: 14,
+                                              backgroundColor: rank == 1
+                                                  ? AppTheme.warning
+                                                  : AppTheme.surfaceLight,
+                                              child: Text(
+                                                '#$rank',
+                                                style: TextStyle(
+                                                  color: rank == 1 ? Colors.black : Colors.white,
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 10),
+                                            Text(
+                                              username,
                                               style: TextStyle(
-                                                color: rank == 1 ? Colors.black : Colors.white,
-                                                fontSize: 11,
+                                                color: AppTheme.textPrimary,
+                                                fontSize: 15,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Text(
-                                            username,
-                                            style: TextStyle(
-                                              color: AppTheme.textPrimary,
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
+                                            const SizedBox(width: 6),
+                                            Icon(
+                                              Icons.open_in_new_rounded,
+                                              size: 14,
+                                              color: AppTheme.accent.withValues(alpha: 0.8),
                                             ),
-                                          ),
-                                        ],
-                                      ),
+                                          ],
+                                        ),
                                       Row(
                                         children: [
                                           Chip(
@@ -259,7 +269,7 @@ class _MatchDetailsScreenState extends State<MatchDetailsScreen> {
                                           ),
                                           const SizedBox(width: 6),
                                           Text(
-                                            '\$$remainingBudget',
+                                            '₹$remainingBudget',
                                             style: const TextStyle(
                                               color: AppTheme.success,
                                               fontWeight: FontWeight.bold,
@@ -329,12 +339,31 @@ class _MatchDetailsScreenState extends State<MatchDetailsScreen> {
                                                       ),
                                                     ],
                                                     Text(
-                                                      ' • \$$price',
+                                                      ' • ₹$price',
                                                       style: TextStyle(
                                                         color: AppTheme.textPrimary,
                                                         fontSize: 11,
                                                       ),
                                                     ),
+                                                    if (item['powerPoints'] != null) ...[
+                                                      const SizedBox(width: 4),
+                                                      Container(
+                                                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                                                        decoration: BoxDecoration(
+                                                          color: AppTheme.accent.withValues(alpha: 0.15),
+                                                          borderRadius: BorderRadius.circular(4),
+                                                          border: Border.all(color: AppTheme.accent.withValues(alpha: 0.6), width: 0.8),
+                                                        ),
+                                                        child: Text(
+                                                          '⚡ ${item['powerPoints']} pts',
+                                                          style: const TextStyle(
+                                                            color: AppTheme.accent,
+                                                            fontSize: 10,
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ],
                                                 );
                                               }),
@@ -343,12 +372,228 @@ class _MatchDetailsScreenState extends State<MatchDetailsScreen> {
                                         ),
                                 ],
                               ),
-                            );
-                          },
-                        ),
-                      ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+    ),
+  );
+}
+
+  void _showPlayerProfileSheet(BuildContext context, Map<String, dynamic> participant) {
+    final username = participant['username']?.toString() ?? 'Player';
+    final playerId = participant['playerId']?.toString();
+    final rank = participant['rank'] ?? 1;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (ctx) {
+        return FutureBuilder<Map<String, dynamic>?>(
+          future: SocketService.instance.getOtherPlayerProfile(
+            playerId: playerId,
+            username: username,
+          ),
+          builder: (context, snapshot) {
+            final profile = snapshot.data;
+            final isLoading = snapshot.connectionState == ConnectionState.waiting;
+            final publicPlayerId = profile?['publicPlayerId'] ?? profile?['playerId'] ?? 'OCT-PLAYER';
+            final avatarText = profile?['avatarText'] ?? (username.isNotEmpty ? username[0].toUpperCase() : '⚡');
+            final matchesPlayed = profile?['matchesPlayed'] ?? 0;
+            final matchesWon = profile?['matchesWon'] ?? 0;
+            final winStreak = profile?['winStreak'] ?? 0;
+            final winRate = matchesPlayed > 0 ? ((matchesWon / matchesPlayed) * 100).toStringAsFixed(1) : '0.0';
+
+            return Container(
+              padding: const EdgeInsets.fromLTRB(22, 16, 22, 28),
+              decoration: BoxDecoration(
+                color: AppTheme.cardBackground,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                border: Border.all(color: AppTheme.goldBorder, width: 1.2),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 20),
+                    decoration: BoxDecoration(
+                      color: AppTheme.surfaceLight,
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
+                  Row(
+                    children: [
+                      Container(
+                        width: 52,
+                        height: 52,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
+                          ),
+                          border: Border.all(color: AppTheme.champagneGold, width: 1.5),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          avatarText,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              username,
+                              style: TextStyle(
+                                fontFamily: AppTheme.fontFamily,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w800,
+                                color: AppTheme.warmCream,
+                              ),
+                            ),
+                            const SizedBox(height: 3),
+                            Row(
+                              children: [
+                                Text(
+                                  publicPlayerId,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: AppTheme.champagneGold,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                GestureDetector(
+                                  onTap: () {
+                                    Clipboard.setData(ClipboardData(text: publicPlayerId));
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Player ID copied to clipboard!'),
+                                        backgroundColor: AppTheme.accent,
+                                        duration: Duration(seconds: 1),
+                                      ),
+                                    );
+                                  },
+                                  child: const Icon(Icons.copy_rounded, size: 14, color: AppTheme.champagneGold),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: rank == 1 ? AppTheme.warning.withValues(alpha: 0.2) : AppTheme.secondaryBackground,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: rank == 1 ? AppTheme.warning : AppTheme.surfaceBorder),
+                        ),
+                        child: Text(
+                          'Rank #$rank',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: rank == 1 ? AppTheme.warning : AppTheme.warmCream,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  if (isLoading)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 24),
+                      child: CircularProgressIndicator(color: AppTheme.champagneGold),
+                    )
+                  else ...[
+                    Row(
+                      children: [
+                        Expanded(child: _buildStatBox('Matches', '$matchesPlayed', Icons.sports_esports_rounded)),
+                        const SizedBox(width: 8),
+                        Expanded(child: _buildStatBox('Wins', '$matchesWon', Icons.emoji_events_rounded)),
+                        const SizedBox(width: 8),
+                        Expanded(child: _buildStatBox('Win Rate', '$winRate%', Icons.trending_up_rounded)),
+                        const SizedBox(width: 8),
+                        Expanded(child: _buildStatBox('Streak', '🔥 $winStreak', Icons.local_fire_department_rounded)),
+                      ],
+                    ),
+                    const SizedBox(height: 18),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFD97706),
+                          foregroundColor: Colors.black,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        icon: const Icon(Icons.person_add_rounded, size: 18),
+                        label: const Text('Add Friend', style: TextStyle(fontWeight: FontWeight.w800)),
+                        onPressed: () async {
+                          Navigator.pop(ctx);
+                          final res = await SocketService.instance.sendFriendRequest(publicPlayerId);
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(res['message'] ?? 'Friend request sent!'),
+                                backgroundColor: res['success'] == true ? Colors.green : Colors.redAccent,
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildStatBox(String label, String value, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
+      decoration: BoxDecoration(
+        color: AppTheme.secondaryBackground,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppTheme.surfaceBorder),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, size: 16, color: AppTheme.champagneGold),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.warmCream,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 9,
+              color: AppTheme.mutedText,
+            ),
+          ),
+        ],
       ),
     );
   }

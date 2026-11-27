@@ -129,7 +129,7 @@ export interface PlayerDTO {
   isReady: boolean;
   budget: number;
   acquiredItems: string[];
-  purchasedItems?: { itemName: string; price: number }[];
+  purchasedItems?: { itemName: string; price: number; powerPoints?: number }[];
   isConnected?: boolean;
   profileId?: string;
   winStreak?: number;
@@ -145,6 +145,8 @@ export interface RoomStateDTO {
   maxPlayers: number;
   hostId: string;
   players: PlayerDTO[];
+  startingBudget?: number;
+  charactersPerPlayer?: number;
 }
 
 export type AuctionPhase =
@@ -180,6 +182,8 @@ export interface AuctionStateDTO {
   passedPlayerIds: string[];
   players: PlayerDTO[];
   auctionQueue?: CharacterItemDTO[];
+  charactersPerPlayer?: number;
+  startingBudget?: number;
 }
 
 export interface StandingsRecordDTO {
@@ -187,7 +191,7 @@ export interface StandingsRecordDTO {
   playerId: string;
   playerName: string;
   itemsWon: number;
-  itemsList: { itemName: string; price: number }[];
+  itemsList: { itemName: string; price: number; powerPoints?: number }[];
   totalTeamPoints?: number;
   remainingBudget: number;
 }

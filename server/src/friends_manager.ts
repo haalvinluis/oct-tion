@@ -541,7 +541,7 @@ export class FriendsManager {
     }
     roomInvites.add(invitationId);
 
-    const baseUrl = process.env.INVITE_BASE_URL || 'https://powerbid.app/invite';
+    const baseUrl = process.env.INVITE_BASE_URL || 'https://oct-tion.onrender.com/invite';
     const inviteUrl = `${baseUrl}/${rawToken}`;
 
     return {

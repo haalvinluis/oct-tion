@@ -44,22 +44,69 @@ class PlayerTile extends StatelessWidget {
         color: isEmpty ? AppTheme.surface.withValues(alpha: 0.5) : AppTheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isEmpty
-              ? AppTheme.surfaceLight.withValues(alpha: 0.5)
-              : (effectiveHost ? AppTheme.primary : AppTheme.surfaceLight),
-          width: effectiveHost ? 1.5 : 1.0,
+          color: speaking
+              ? const Color(0xFFEF4444)
+              : (isEmpty
+                  ? AppTheme.surfaceLight.withValues(alpha: 0.5)
+                  : (effectiveHost ? AppTheme.primary : AppTheme.surfaceLight)),
+          width: speaking ? 2.2 : (effectiveHost ? 1.5 : 1.0),
         ),
+        boxShadow: speaking
+            ? [
+                BoxShadow(
+                  color: const Color(0xFFEF4444).withValues(alpha: 0.35),
+                  blurRadius: 8,
+                  spreadRadius: 1,
+                ),
+              ]
+            : null,
       ),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 18,
-            backgroundColor: isEmpty ? AppTheme.surfaceLight : AppTheme.primary.withValues(alpha: 0.2),
-            child: Icon(
-              isEmpty ? Icons.person_outline : Icons.person,
-              color: isEmpty ? AppTheme.textSecondary : AppTheme.primary,
-              size: 20,
-            ),
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: speaking ? const Color(0xFFEF4444) : Colors.transparent,
+                    width: speaking ? 2.5 : 0.0,
+                  ),
+                  boxShadow: speaking
+                      ? [
+                          BoxShadow(
+                            color: const Color(0xFFEF4444).withValues(alpha: 0.6),
+                            blurRadius: 10,
+                            spreadRadius: 2,
+                          ),
+                        ]
+                      : null,
+                ),
+                child: CircleAvatar(
+                  radius: 18,
+                  backgroundColor: isEmpty ? AppTheme.surfaceLight : AppTheme.primary.withValues(alpha: 0.2),
+                  child: Icon(
+                    isEmpty ? Icons.person_outline : Icons.person,
+                    color: isEmpty ? AppTheme.textSecondary : AppTheme.primary,
+                    size: 20,
+                  ),
+                ),
+              ),
+              if (speaking)
+                Positioned(
+                  right: -2,
+                  bottom: -2,
+                  child: Container(
+                    padding: const EdgeInsets.all(2.5),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFEF4444),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.mic_rounded, size: 10, color: Colors.white),
+                  ),
+                ),
+            ],
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -67,23 +114,59 @@ class PlayerTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  isEmpty
-                      ? 'Slot #${slotIndex + 1} (Waiting for player...)'
-                      : '$effectiveName${effectiveMe ? ' (You)' : ''}',
-                  style: TextStyle(
-                    color: isEmpty ? AppTheme.textSecondary : AppTheme.textPrimary,
-                    fontWeight: isEmpty ? FontWeight.normal : FontWeight.w600,
-                    fontSize: 14,
-                  ),
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        isEmpty
+                            ? 'Slot #${slotIndex + 1} (Waiting for player...)'
+                            : '$effectiveName${effectiveMe ? ' (You)' : ''}',
+                        style: TextStyle(
+                          color: isEmpty ? AppTheme.textSecondary : AppTheme.textPrimary,
+                          fontWeight: isEmpty ? FontWeight.normal : FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    if (speaking) ...[
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEF4444).withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: const Color(0xFFEF4444), width: 1.2),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.graphic_eq_rounded, size: 11, color: Color(0xFFEF4444)),
+                            SizedBox(width: 3),
+                            Text(
+                              'SPEAKING',
+                              style: TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFFEF4444),
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
                 if (!isEmpty && speaking)
-                  const Text(
-                    'Speaking...',
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.greenAccent,
+                  const Padding(
+                    padding: EdgeInsets.only(top: 2.0),
+                    child: Text(
+                      'Voice Active 🎙️',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFFEF4444),
+                      ),
                     ),
                   ),
               ],

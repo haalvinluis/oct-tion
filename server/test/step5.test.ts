@@ -179,7 +179,7 @@ describe('Step 5: Categories, Character Database, Power Points & Winner System T
     expect(standings[0].rank).to.equal(1);
     expect(standings[0].itemsWon).to.equal(1);
     expect(standings[0].totalTeamPoints).to.equal(firstItem.powerPoints);
-    expect((standings[0].itemsList[0] as any).powerPoints).to.be.undefined;
+    expect((standings[0].itemsList[0] as any).powerPoints).to.equal(firstItem.powerPoints);
     expect(standings[0].remainingBudget).to.equal(1000 - bidAmount);
   });
 

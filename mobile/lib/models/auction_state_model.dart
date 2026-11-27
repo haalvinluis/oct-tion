@@ -101,6 +101,8 @@ class AuctionStateModel {
   final List<PlayerModel> players;
   final List<StandingsRecordModel> standings;
   final List<AuctionItemModel> auctionQueue;
+  final int charactersPerPlayer;
+  final int startingBudget;
 
   const AuctionStateModel({
     required this.roomCode,
@@ -119,6 +121,8 @@ class AuctionStateModel {
     required this.players,
     this.standings = const [],
     this.auctionQueue = const [],
+    this.charactersPerPlayer = 4,
+    this.startingBudget = 1000,
   });
 
   factory AuctionStateModel.fromJson(dynamic rawJson) {
@@ -182,6 +186,8 @@ class AuctionStateModel {
       players: playersList,
       standings: standingsList,
       auctionQueue: queueList,
+      charactersPerPlayer: (json['charactersPerPlayer'] as num?)?.toInt() ?? 4,
+      startingBudget: (json['startingBudget'] as num?)?.toInt() ?? 1000,
     );
   }
 }

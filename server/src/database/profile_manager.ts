@@ -520,6 +520,13 @@ export class ProfileManager {
     return Number(rate.toFixed(1));
   }
 
+  public getProfileByUsername(username: string): PlayerProfileDTO | undefined {
+    const clean = username.trim().toLowerCase();
+    const id = this.usernameToIdMap.get(clean);
+    if (!id) return undefined;
+    return this.getProfileDTO(id);
+  }
+
   public getProfileDTO(playerId: string): PlayerProfileDTO {
     const profile = this.getOrCreateProfile(playerId);
     const achievements = this.getAchievements(playerId);

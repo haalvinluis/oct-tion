@@ -46,6 +46,8 @@ export class AuctionEngine {
   public turnDeadline: number = 0;
   public passedPlayerIds: Set<string> = new Set();
   public players: Map<string, InternalPlayer> = new Map();
+  public charactersPerPlayer: number = 4;
+  public startingBudget: number = 1000;
 
   private io: Server;
   private timerHandle: NodeJS.Timeout | null = null;
@@ -60,7 +62,9 @@ export class AuctionEngine {
     totalItems: number,
     initialPlayers: PlayerDTO[],
     timerDuration: number = ITEM_TIMER_DURATION,
-    previousSequenceIds?: string[]
+    previousSequenceIds?: string[],
+    charactersPerPlayer: number = 4,
+    startingBudget: number = 1000
   ) {
     this.io = io;
     this.roomCode = roomCode;
@@ -70,6 +74,8 @@ export class AuctionEngine {
     this.timerDuration = timerDuration;
     this.timerSecondsRemaining = timerDuration;
     this.turnDeadline = Date.now() + timerDuration * 1000;
+    this.charactersPerPlayer = charactersPerPlayer;
+    this.startingBudget = startingBudget;
 
     // Guarantee at least N powerful characters based on active players in room (e.g. 2 players -> at least 2; 3 players -> at least 3)
     const minPowerfulCount = Math.max(initialPlayers.length, 2);
@@ -177,6 +183,13 @@ export class AuctionEngine {
     this.leadingBidderId = undefined;
     this.leadingBidderName = undefined;
 
+    // Automatically mark players whose team is already full as passed
+    for (const player of this.players.values()) {
+      if (player.acquiredItems.length >= this.charactersPerPlayer) {
+        this.passedPlayerIds.add(player.id);
+      }
+    }
+
     this.broadcastAuctionState();
 
     if (this.gameMode === 'POWER_COMPARISON') {
@@ -252,17 +265,21 @@ export class AuctionEngine {
       throw new Error('Participant not found in room.');
     }
 
+    if (player.acquiredItems.length >= this.charactersPerPlayer) {
+      throw new Error(`Your team is complete (${this.charactersPerPlayer}/${this.charactersPerPlayer} characters acquired).`);
+    }
+
     if (this.passedPlayerIds.has(socketId)) {
       throw new Error('You have passed on this item and cannot bid again.');
     }
 
     const requiredMin = this.minNextBid;
     if (amount < requiredMin) {
-      throw new Error(`Bid amount \$${amount} is below required minimum of \$${requiredMin}.`);
+      throw new Error(`Bid amount ₹${amount} is below required minimum of ₹${requiredMin}.`);
     }
 
     if (player.budget < amount) {
-      throw new Error(`Insufficient budget. You have \$${player.budget} remaining.`);
+      throw new Error(`Insufficient budget. You have ₹${player.budget} remaining.`);
     }
 
     this.currentBid = amount;
@@ -374,7 +391,7 @@ export class AuctionEngine {
       });
 
       console.log(
-        `[Item SOLD] ${item.displayName} to ${winner.name} for \$${this.currentBid}`
+        `[Item SOLD] ${item.displayName} to ${winner.name} for ₹${this.currentBid}`
       );
 
       this.io.to(this.roomCode).emit('item_sold', {
@@ -387,11 +404,19 @@ export class AuctionEngine {
       });
     } else {
       this.phase = 'UNSOLD';
-      console.log(`[Item UNSOLD] ${item.displayName} received no bids`);
+      console.log(`[Item UNSOLD] ${item.displayName} received no bids - rotating to back of auction queue`);
+
+      // Rotate unsold item to the end of the auction queue so it comes back around
+      this.items.push(item);
+      const clientItem = this.toClientItem(item);
+      if (clientItem) {
+        this.cachedAuctionQueue.push(clientItem);
+      }
+      this.totalItems = this.items.length;
 
       this.io.to(this.roomCode).emit('item_unsold', {
         roomCode: this.roomCode,
-        item: this.toClientItem(item),
+        item: clientItem,
         roomState: this.getAuctionStateDTO(),
       });
     }
@@ -404,12 +429,30 @@ export class AuctionEngine {
   private advanceToNextItem(): void {
     this.currentItemIndex++;
 
-    if (this.currentItemIndex < this.totalItems && this.currentItemIndex < this.items.length) {
+    // Check if all active players have acquired their required charactersPerPlayer quota
+    const activePlayers = Array.from(this.players.values()).filter((p) => p.isConnected);
+    const playersNeedingItems = activePlayers.filter(
+      (p) => p.acquiredItems.length < this.charactersPerPlayer
+    );
+    const allPlayersFull = activePlayers.length > 0 && playersNeedingItems.length === 0;
+
+    const hasNextItem = this.currentItemIndex < this.items.length;
+    const nextItem = hasNextItem ? this.items[this.currentItemIndex] : undefined;
+    const minRequired = nextItem?.basePrice || MIN_BID_INCREMENT;
+    const canAnyPlayerAfford = playersNeedingItems.some((p) => p.budget >= minRequired);
+
+    if (!allPlayersFull && hasNextItem && (canAnyPlayerAfford || this.gameMode === 'POWER_COMPARISON')) {
       this.phase = 'ITEM_ANNOUNCED';
       this.currentBid = 0;
       this.leadingBidderId = undefined;
       this.leadingBidderName = undefined;
       this.passedPlayerIds.clear();
+
+      for (const p of this.players.values()) {
+        if (p.acquiredItems.length >= this.charactersPerPlayer) {
+          this.passedPlayerIds.add(p.id);
+        }
+      }
 
       const stateDTO = this.getAuctionStateDTO();
       this.io.to(this.roomCode).emit('item_announced', {
@@ -467,6 +510,7 @@ export class AuctionEngine {
               itemId: item.itemName,
               itemName: item.itemName,
               price: item.price,
+              powerPoints: item.powerPoints,
             })),
           };
         }),
@@ -546,6 +590,7 @@ export class AuctionEngine {
       itemsList: item.player.purchasedItemsDetails.map((d) => ({
         itemName: d.itemName,
         price: d.price,
+        powerPoints: d.powerPoints,
       })),
       totalTeamPoints: item.totalTeamPoints,
       remainingBudget: item.player.budget,
@@ -605,6 +650,8 @@ export class AuctionEngine {
         winStreak: (p as any).winStreak ?? (p.profileId ? (ProfileManager.getInstance().getProfileById(p.profileId)?.winStreak ?? 0) : 0),
       })),
       auctionQueue: this.cachedAuctionQueue,
+      charactersPerPlayer: this.charactersPerPlayer,
+      startingBudget: this.startingBudget,
     };
   }
 

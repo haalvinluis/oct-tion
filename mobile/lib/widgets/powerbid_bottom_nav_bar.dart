@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import '../screens/home_screen.dart';
 import '../screens/mode_selection_screen.dart';
 import '../screens/match_history_screen.dart';
 import '../screens/profile_screen.dart';
@@ -13,6 +14,32 @@ class PowerBidBottomNavBar extends StatelessWidget {
     this.currentIndex = 0,
     this.onTap,
   });
+
+  void _navigateToTab(BuildContext context, Widget screen) {
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => screen,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+        transitionDuration: const Duration(milliseconds: 160),
+      ),
+    );
+  }
+
+  void _navigateToHome(BuildContext context) {
+    Navigator.of(context).pushAndRemoveUntil(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => const HomeScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+        transitionDuration: const Duration(milliseconds: 160),
+      ),
+      (route) => false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +76,7 @@ class PowerBidBottomNavBar extends StatelessWidget {
                     if (onTap != null) {
                       onTap!(0);
                     } else {
-                      Navigator.of(context).popUntil((route) => route.isFirst);
+                      _navigateToHome(context);
                     }
                   },
                 ),
@@ -68,10 +95,7 @@ class PowerBidBottomNavBar extends StatelessWidget {
                     if (onTap != null) {
                       onTap!(1);
                     } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const ModeSelectionScreen()),
-                      );
+                      _navigateToTab(context, const ModeSelectionScreen());
                     }
                   },
                 ),
@@ -84,10 +108,7 @@ class PowerBidBottomNavBar extends StatelessWidget {
                     context,
                     onPressed: () {
                       if (currentIndex == 1) return;
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const ModeSelectionScreen()),
-                      );
+                      _navigateToTab(context, const ModeSelectionScreen());
                     },
                   ),
                 ),
@@ -106,10 +127,7 @@ class PowerBidBottomNavBar extends StatelessWidget {
                     if (onTap != null) {
                       onTap!(3);
                     } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const MatchHistoryScreen()),
-                      );
+                      _navigateToTab(context, const MatchHistoryScreen());
                     }
                   },
                 ),
@@ -128,10 +146,7 @@ class PowerBidBottomNavBar extends StatelessWidget {
                     if (onTap != null) {
                       onTap!(4);
                     } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const ProfileScreen()),
-                      );
+                      _navigateToTab(context, const ProfileScreen());
                     }
                   },
                 ),

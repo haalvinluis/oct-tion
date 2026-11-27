@@ -15,6 +15,7 @@ class CreateJoinRoomScreen extends StatefulWidget {
   final String selectedTopic;
   final String gameMode;
   final int itemCount;
+  final String? initialRoomCode;
 
   const CreateJoinRoomScreen({
     super.key,
@@ -22,6 +23,7 @@ class CreateJoinRoomScreen extends StatefulWidget {
     this.selectedTopic = 'cricket',
     this.gameMode = 'AUCTION_TEAM_CHALLENGE',
     this.itemCount = 10,
+    this.initialRoomCode,
   });
 
   @override
@@ -40,9 +42,15 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
   static const List<int> supportedMaxPlayers = [2, 3, 4, 5, 6, 7, 8];
   int _selectedMaxPlayers = 4;
 
-  // 4 items minimum per player (8 players = 32 characters, 2 players = 8 characters)
+  // Starting Player Budget presets: ₹500, ₹1000, ₹2000, ₹3000, ₹5000, ₹10000
+  static const List<int> supportedBudgets = [500, 1000, 2000, 3000, 5000, 10000];
+  int _selectedStartingBudget = 1000;
+
+  // Characters quota per player: each player must buy 4 characters
   int _itemsPerPlayer = 4;
-  int get _selectedItemCount => _selectedMaxPlayers * _itemsPerPlayer;
+  // Large character pool of 50 characters rotating until all players get their squad
+  static const int totalPoolCharacters = 50;
+  int get _selectedItemCount => totalPoolCharacters;
 
   // Part 2: Exactly 6 selectable duration options: 10s, 15s, 20s, 30s, 45s, 60s
   static const List<int> supportedTimerDurations = [10, 15, 20, 30, 45, 60];
@@ -62,6 +70,11 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
       _usernameController.text = currentName;
     } else {
       _usernameController.text = AuthService.instance.defaultDisplayName;
+    }
+
+    if (widget.initialRoomCode != null && widget.initialRoomCode!.isNotEmpty) {
+      _roomCodeController.text = widget.initialRoomCode!;
+      _tabController.index = 1;
     }
 
     SocketService.instance.connect();
@@ -111,6 +124,8 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
         itemCount: _selectedItemCount,
         timerDuration: _selectedTimerDuration,
         maxPlayers: _selectedMaxPlayers,
+        startingBudget: _selectedStartingBudget,
+        charactersPerPlayer: _itemsPerPlayer,
       );
 
       if (!mounted) return;
@@ -550,15 +565,19 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
         ),
         const SizedBox(height: 20),
 
-        // 1. Max Players Selection (Part 2: 7 options)
+        // 1. Starting Budget Selection (New)
+        _buildBudgetSelector(),
+        const SizedBox(height: 20),
+
+        // 2. Max Players Selection (Part 2: 7 options)
         _buildMaxPlayersSelector(),
         const SizedBox(height: 20),
 
-        // 2. Number of Items Selection (Part 2: 10 options)
+        // 3. Characters Quota Selection (4 per player must buy)
         _buildItemCountSelector(),
         const SizedBox(height: 20),
 
-        // 3. Bidding Timer Selection (Part 2: 6 options)
+        // 4. Bidding Timer Selection (Part 2: 6 options)
         _buildBiddingTimerSelector(),
         const SizedBox(height: 24),
 
@@ -568,6 +587,91 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
           icon: Icons.add_circle_outline_rounded,
           isLoading: _isLoading,
           onPressed: _handleCreateRoom,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBudgetSelector() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.account_balance_wallet_rounded, color: AppTheme.trueChampagneGold, size: 18),
+                const SizedBox(width: 8),
+                Text(
+                  'Starting Budget / Player',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: AppTheme.warmIvory,
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+              decoration: BoxDecoration(
+                color: AppTheme.secondaryBackground,
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: AppTheme.trueChampagneGold, width: 1.0),
+              ),
+              child: Text(
+                '₹$_selectedStartingBudget',
+                style: const TextStyle(
+                  color: AppTheme.trueChampagneGold,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 11,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              for (final budget in supportedBudgets)
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedStartingBudget = budget;
+                    });
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+                    decoration: BoxDecoration(
+                      color: _selectedStartingBudget == budget
+                          ? const Color(0xFFF8D366)
+                          : AppTheme.secondaryBackground,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: _selectedStartingBudget == budget
+                            ? const Color(0xFFD97706)
+                            : AppTheme.surfaceBorder,
+                        width: _selectedStartingBudget == budget ? 2 : 1,
+                      ),
+                    ),
+                    child: Text(
+                      '₹$budget',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w900,
+                        color: _selectedStartingBudget == budget
+                            ? const Color(0xFF0F172A)
+                            : AppTheme.warmIvory,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ],
     );
@@ -634,6 +738,12 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
           ),
           const SizedBox(height: 8),
           _buildSummaryRow(
+            icon: Icons.account_balance_wallet_rounded,
+            label: 'Starting Budget',
+            value: '₹$_selectedStartingBudget / Player',
+          ),
+          const SizedBox(height: 8),
+          _buildSummaryRow(
             icon: Icons.groups_rounded,
             label: 'Max Players',
             value: '$_selectedMaxPlayers Players',
@@ -641,8 +751,8 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
           const SizedBox(height: 8),
           _buildSummaryRow(
             icon: Icons.format_list_numbered_rounded,
-            label: 'Auction Characters',
-            value: '$_selectedItemCount Characters ($_itemsPerPlayer / Player)',
+            label: 'Characters Pool & Quota',
+            value: '50 Pool (Must Buy $_itemsPerPlayer / Player)',
           ),
           const SizedBox(height: 8),
           _buildSummaryRow(
@@ -785,7 +895,7 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
                 const Icon(Icons.format_list_numbered_rounded, color: AppTheme.trueChampagneGold, size: 18),
                 const SizedBox(width: 8),
                 Text(
-                  'Auction Characters',
+                  'Characters Quota (Must Buy)',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
@@ -802,7 +912,7 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
                 border: Border.all(color: AppTheme.trueChampagneGold, width: 1.0),
               ),
               child: Text(
-                '$_selectedItemCount Characters ($_itemsPerPlayer / Player)',
+                '$_itemsPerPlayer Characters / Player (50 Pool)',
                 style: const TextStyle(
                   color: AppTheme.trueChampagneGold,
                   fontWeight: FontWeight.bold,
@@ -840,7 +950,9 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
                       ),
                     ),
                     child: Text(
-                      '$perPlayer Per Player (${_selectedMaxPlayers * perPlayer} Total)',
+                      perPlayer == 4
+                          ? 'Must Buy 4 Characters'
+                          : 'Must Buy $perPlayer Characters',
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w900,
