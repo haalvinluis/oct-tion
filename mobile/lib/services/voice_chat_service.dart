@@ -63,31 +63,64 @@ class VoiceChatService {
 
   bool isPlayerLocallyMuted(String playerId) => _locallyMutedPlayerIds.contains(playerId);
 
-  void _markSpeaking(String playerId) {
-    if (playerId.isEmpty) return;
-    _speakingTimers[playerId]?.cancel();
+  void _markSpeaking(String identifier) {
+    if (identifier.isEmpty) return;
+    _speakingTimers[identifier]?.cancel();
     final current = Map<String, PlayerVoiceState>.from(playerStatesNotifier.value);
-    final existing = current[playerId];
-    current[playerId] = PlayerVoiceState(
-      playerId: playerId,
-      socketId: existing?.socketId ?? playerId,
+    final existing = current[identifier];
+    current[identifier] = PlayerVoiceState(
+      playerId: identifier,
+      socketId: existing?.socketId ?? identifier,
       isMuted: existing?.isMuted ?? false,
       isSpeaking: true,
       updatedAt: DateTime.now(),
     );
+
+    // Keep current user's socket ID and profile ID states perfectly synchronized
+    final myProfileId = AuthService.instance.effectivePlayerId;
+    final mySocketId = SocketService.instance.socketId;
+    if (identifier == mySocketId && myProfileId.isNotEmpty) {
+      current[myProfileId] = PlayerVoiceState(
+        playerId: myProfileId,
+        socketId: mySocketId ?? '',
+        isMuted: existing?.isMuted ?? false,
+        isSpeaking: true,
+        updatedAt: DateTime.now(),
+      );
+    } else if (identifier == myProfileId && mySocketId != null && mySocketId.isNotEmpty) {
+      current[mySocketId] = PlayerVoiceState(
+        playerId: mySocketId,
+        socketId: mySocketId,
+        isMuted: existing?.isMuted ?? false,
+        isSpeaking: true,
+        updatedAt: DateTime.now(),
+      );
+    }
     playerStatesNotifier.value = current;
 
-    _speakingTimers[playerId] = Timer(const Duration(milliseconds: 650), () {
+    _speakingTimers[identifier] = Timer(const Duration(milliseconds: 550), () {
       final updated = Map<String, PlayerVoiceState>.from(playerStatesNotifier.value);
-      final s = updated[playerId];
+      final s = updated[identifier];
       if (s != null && s.isSpeaking) {
-        updated[playerId] = PlayerVoiceState(
-          playerId: playerId,
+        updated[identifier] = PlayerVoiceState(
+          playerId: identifier,
           socketId: s.socketId,
           isMuted: s.isMuted,
           isSpeaking: false,
           updatedAt: DateTime.now(),
         );
+        if (identifier == mySocketId && myProfileId.isNotEmpty) {
+          final s2 = updated[myProfileId];
+          if (s2 != null) {
+            updated[myProfileId] = PlayerVoiceState(
+              playerId: myProfileId,
+              socketId: mySocketId ?? '',
+              isMuted: s2.isMuted,
+              isSpeaking: false,
+              updatedAt: DateTime.now(),
+            );
+          }
+        }
         playerStatesNotifier.value = updated;
       }
     });
@@ -284,7 +317,7 @@ class VoiceChatService {
       try {
         await _voiceChannel.invokeMethod('startVoiceCapture');
       } catch (_) {}
-      _broadcastMicState(isMuted: false, isSpeaking: true);
+      _broadcastMicState(isMuted: false, isSpeaking: false);
       return {'success': true, 'isMuted': false, 'message': 'Microphone Live 🎙️'};
     } else {
       isMicMutedNotifier.value = true;

@@ -723,9 +723,10 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                     final isMe = (sessionToken != null && p.sessionToken == sessionToken) || p.id == currentSocketId;
                     final isLeadingThisPlayer = state?.leadingBidderId == p.id;
                     final hasPassedThisPlayer = state?.passedPlayerIds.contains(p.id) == true;
-                    final voiceState = voiceStates[p.id];
-                    final isSpeaking = voiceState?.isSpeaking == true;
-                    final isMuted = voiceState?.isMuted ?? true;
+                    final isSelfMuted = VoiceChatService.instance.isMicMutedNotifier.value;
+                    final voiceState = voiceStates[p.id] ?? (isMe && currentSocketId != null ? voiceStates[currentSocketId] : null);
+                    final isMuted = isMe ? isSelfMuted : (voiceState?.isMuted ?? true);
+                    final isSpeaking = !isMuted && (voiceState?.isSpeaking == true);
 
                     return RepaintBoundary(
                       key: ValueKey(p.id),

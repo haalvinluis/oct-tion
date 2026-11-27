@@ -39,7 +39,7 @@ class PlayerTile extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: isEmpty ? AppTheme.surface.withValues(alpha: 0.5) : AppTheme.surface,
         borderRadius: BorderRadius.circular(12),
@@ -49,7 +49,7 @@ class PlayerTile extends StatelessWidget {
               : (isEmpty
                   ? AppTheme.surfaceLight.withValues(alpha: 0.5)
                   : (effectiveHost ? AppTheme.primary : AppTheme.surfaceLight)),
-          width: speaking ? 2.2 : (effectiveHost ? 1.5 : 1.0),
+          width: speaking ? 2.0 : (effectiveHost ? 1.5 : 1.0),
         ),
         boxShadow: speaking
             ? [
@@ -63,6 +63,7 @@ class PlayerTile extends StatelessWidget {
       ),
       child: Row(
         children: [
+          // Player Avatar with pulsing red glow when speaking
           Stack(
             clipBehavior: Clip.none,
             children: [
@@ -108,19 +109,26 @@ class PlayerTile extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
+
+          // Player Name & Badges Column (Spans available width, never vertically wraps characters)
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
+                // Line 1: User name + Speaking audio wave badge
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Flexible(
                       child: Text(
                         isEmpty
-                            ? 'Slot #${slotIndex + 1} (Waiting for player...)'
+                            ? 'Slot #${slotIndex + 1} (Waiting...)'
                             : '$effectiveName${effectiveMe ? ' (You)' : ''}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: false,
                         style: TextStyle(
                           color: isEmpty ? AppTheme.textSecondary : AppTheme.textPrimary,
                           fontWeight: isEmpty ? FontWeight.normal : FontWeight.w600,
@@ -148,7 +156,7 @@ class PlayerTile extends StatelessWidget {
                                 fontSize: 9,
                                 fontWeight: FontWeight.w800,
                                 color: Color(0xFFEF4444),
-                                letterSpacing: 0.5,
+                                letterSpacing: 0.4,
                               ),
                             ),
                           ],
@@ -157,77 +165,83 @@ class PlayerTile extends StatelessWidget {
                     ],
                   ],
                 ),
-                if (!isEmpty && speaking)
-                  const Padding(
-                    padding: EdgeInsets.only(top: 2.0),
-                    child: Text(
-                      'Voice Active 🎙️',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFFEF4444),
+                const SizedBox(height: 3),
+
+                // Line 2: HOST chip and Win Streak chip below the name (Keeps name horizontal)
+                if (!isEmpty)
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (effectiveHost) ...[
+                        Container(
+                          margin: const EdgeInsets.only(right: 6),
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+                          decoration: BoxDecoration(
+                            color: AppTheme.primary.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: AppTheme.primary, width: 1),
+                          ),
+                          child: const Text(
+                            'HOST',
+                            style: TextStyle(
+                              color: AppTheme.primary,
+                              fontSize: 9,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                        decoration: BoxDecoration(
+                          color: (winStreak ?? player?.winStreak ?? 0) > 0
+                              ? const Color(0xFFF97316).withValues(alpha: 0.25)
+                              : AppTheme.surfaceLight.withValues(alpha: 0.5),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(
+                            color: (winStreak ?? player?.winStreak ?? 0) > 0
+                                ? const Color(0xFFF97316)
+                                : AppTheme.surfaceLight,
+                            width: 0.8,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text('🔥', style: TextStyle(fontSize: 9)),
+                            const SizedBox(width: 2),
+                            Text(
+                              '${winStreak ?? player?.winStreak ?? 0}',
+                              style: TextStyle(
+                                color: (winStreak ?? player?.winStreak ?? 0) > 0
+                                    ? const Color(0xFFF97316)
+                                    : AppTheme.textSecondary,
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
+                      if (speaking) ...[
+                        const SizedBox(width: 6),
+                        const Text(
+                          '🎙️ Live Audio',
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFFEF4444),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
               ],
             ),
           ),
+          const SizedBox(width: 8),
+
           if (!isEmpty) ...[
-            // Host Badge
-            if (effectiveHost)
-              Container(
-                margin: const EdgeInsets.only(right: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: AppTheme.primary.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: AppTheme.primary, width: 1),
-                ),
-                child: const Text(
-                  'HOST',
-                  style: TextStyle(
-                    color: AppTheme.primary,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-
-            // Win Streak Badge
-            Container(
-              margin: const EdgeInsets.only(right: 8),
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-              decoration: BoxDecoration(
-                color: (winStreak ?? player?.winStreak ?? 0) > 0
-                    ? const Color(0xFFF97316).withValues(alpha: 0.25)
-                    : AppTheme.surfaceLight.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(
-                  color: (winStreak ?? player?.winStreak ?? 0) > 0
-                      ? const Color(0xFFF97316)
-                      : AppTheme.surfaceLight,
-                  width: 0.8,
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('🔥', style: TextStyle(fontSize: 10)),
-                  const SizedBox(width: 3),
-                  Text(
-                    '${winStreak ?? player?.winStreak ?? 0}',
-                    style: TextStyle(
-                      color: (winStreak ?? player?.winStreak ?? 0) > 0
-                          ? const Color(0xFFF97316)
-                          : AppTheme.textSecondary,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
             // Microphone Moderation (Host controls player one-by-one)
             if (canModerate && onMicToggle != null)
               IconButton(

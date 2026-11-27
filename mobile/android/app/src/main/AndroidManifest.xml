@@ -58,6 +58,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="octtion" android:host="room" />
                 <data android:scheme="octtion" android:host="join" />
+                <data android:scheme="octtion" />
             </intent-filter>
         </activity>
 

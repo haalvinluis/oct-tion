@@ -1405,23 +1405,6 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
       }
     });
 
-    // Voice Chat & Microphone Signaling (Phase 4)
-    socket.on('voice_mic_state', (data: any) => {
-      try {
-        const { roomCode, isMuted, isSpeaking } = data || {};
-        if (!roomCode) return;
-        const normalizedCode = SecurityMiddleware.sanitizeString(roomCode, 15).toUpperCase();
-        io.to(normalizedCode).emit('player_mic_state_changed', {
-          socketId: socket.id,
-          playerId: socket.id,
-          isMuted: Boolean(isMuted),
-          isSpeaking: Boolean(isSpeaking),
-        });
-      } catch (err) {
-        // Safe failover for voice signaling
-      }
-    });
-
     // Host Microphone Moderation: Mute/Unmute Individual Player (Phase 4)
     socket.on('host_moderate_mic', (data: any, ack?: Function) => {
       try {

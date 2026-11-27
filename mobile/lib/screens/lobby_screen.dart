@@ -901,7 +901,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                                       final isMe = player.id == currentSocketId;
                                       final voiceState = voiceStates[player.id];
                                       final isPlayerMuted = isMe ? isSelfMuted : (voiceState?.isMuted ?? true);
-                                      final isSpeaking = isMe ? !isSelfMuted : (voiceState?.isSpeaking ?? false);
+                                      final isSpeaking = !isPlayerMuted && (voiceState?.isSpeaking == true);
 
                                       return RepaintBoundary(
                                         key: ValueKey(player.id),
