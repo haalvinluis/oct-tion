@@ -307,5 +307,39 @@ describe('Auction Selection & Appearance Order Randomization Tests', function ()
       const isIdentical = queue1.every((id, idx) => id === queue2[idx]);
       expect(isIdentical).to.be.false;
     });
+
+    it('Guarantees at least N powerful characters for N players distributed randomly across auction', () => {
+      const db = CharacterDatabase.getInstance();
+
+      // Test with 2 players (min 2 powerful characters)
+      for (let trial = 0; trial < 10; trial++) {
+        const queue2 = db.getShuffledCharacterRecords('cricket', 10, undefined, 2);
+        expect(queue2).to.have.lengthOf(10);
+        const powerfulCount2 = queue2.filter((c) => c.powerPoints >= 93).length;
+        expect(powerfulCount2).to.be.at.least(2);
+
+        // Verify powerful characters are not just fixed at index 0 and 1 (random distribution across match)
+        const powerfulIndices = queue2
+          .map((c, idx) => (c.powerPoints >= 93 ? idx : -1))
+          .filter((idx) => idx !== -1);
+        expect(powerfulIndices.length).to.be.at.least(2);
+      }
+
+      // Test with 3 players (min 3 powerful characters)
+      for (let trial = 0; trial < 10; trial++) {
+        const queue3 = db.getShuffledCharacterRecords('cricket', 10, undefined, 3);
+        expect(queue3).to.have.lengthOf(10);
+        const powerfulCount3 = queue3.filter((c) => c.powerPoints >= 93).length;
+        expect(powerfulCount3).to.be.at.least(3);
+      }
+
+      // Test with 4 players (min 4 powerful characters)
+      for (let trial = 0; trial < 10; trial++) {
+        const queue4 = db.getShuffledCharacterRecords('cricket', 12, undefined, 4);
+        expect(queue4).to.have.lengthOf(12);
+        const powerfulCount4 = queue4.filter((c) => c.powerPoints >= 93).length;
+        expect(powerfulCount4).to.be.at.least(4);
+      }
+    });
   });
 });

@@ -518,7 +518,8 @@ export class CharacterDatabase {
   public getShuffledCharacterRecords(
     categoryId: string,
     count: number,
-    _previousSequenceIds?: string[]
+    _previousSequenceIds?: string[],
+    minPowerfulCount: number = 0
   ): CharacterRecord[] {
     const eligible = this.getEligibleRecordsForCategory(categoryId);
 
@@ -527,10 +528,49 @@ export class CharacterDatabase {
     }
 
     let selectedSubset: CharacterRecord[] = [];
-    if (eligible.length >= count) {
-      const poolShuffle = fisherYatesShuffle(eligible);
-      selectedSubset = poolShuffle.slice(0, count);
+
+    if (minPowerfulCount > 0 && count > 0) {
+      // 1. Identify powerful character tier (powerPoints >= 93 or top percentile of the category)
+      const sortedByPower = [...eligible].sort((a, b) => b.powerPoints - a.powerPoints);
+      const maxPower = sortedByPower[0]?.powerPoints ?? 100;
+      const powerThreshold = Math.max(93, maxPower - 5);
+
+      const powerfulPool = eligible.filter((r) => r.powerPoints >= powerThreshold);
+      const effectivePowerfulPool = powerfulPool.length >= minPowerfulCount
+        ? powerfulPool
+        : sortedByPower.slice(0, Math.max(minPowerfulCount, Math.ceil(eligible.length * 0.3)));
+
+      const targetPowerfulCount = Math.min(minPowerfulCount, count, effectivePowerfulPool.length);
+
+      // Randomly pick targetPowerfulCount distinct characters from the powerful pool
+      const shuffledPowerful = fisherYatesShuffle(effectivePowerfulPool);
+      const chosenPowerful = shuffledPowerful.slice(0, targetPowerfulCount);
+      const chosenIds = new Set(chosenPowerful.map((p) => p.id));
+
+      // Randomly pick remaining (count - targetPowerfulCount) from the rest of the pool
+      const remainingPool = eligible.filter((r) => !chosenIds.has(r.id));
+      const remainingNeeded = count - targetPowerfulCount;
+
+      let chosenRemaining: CharacterRecord[] = [];
+      if (remainingPool.length >= remainingNeeded) {
+        chosenRemaining = fisherYatesShuffle(remainingPool).slice(0, remainingNeeded);
+      } else {
+        const poolShuffle = fisherYatesShuffle(eligible.filter((r) => !chosenIds.has(r.id)));
+        chosenRemaining = poolShuffle.slice(0, remainingNeeded);
+      }
+
+      selectedSubset = [...chosenPowerful, ...chosenRemaining];
     } else {
+      if (eligible.length >= count) {
+        const poolShuffle = fisherYatesShuffle(eligible);
+        selectedSubset = poolShuffle.slice(0, count);
+      } else {
+        selectedSubset = fisherYatesShuffle(eligible);
+      }
+    }
+
+    // Fallback if cycling needed
+    if (selectedSubset.length < count) {
       let cycle = 1;
       while (selectedSubset.length < count) {
         const round = fisherYatesShuffle(eligible).map((r, i) => ({
@@ -543,7 +583,7 @@ export class CharacterDatabase {
       selectedSubset = selectedSubset.slice(0, count);
     }
 
-    // Step 2: Randomize the bidding appearance order of the selected subset
+    // Step 2: Randomize the bidding appearance order so powerful characters appear completely randomly
     const randomizedQueue = fisherYatesShuffle(selectedSubset);
 
     // Track latest sequence for category telemetry

@@ -71,11 +71,15 @@ export class AuctionEngine {
     this.timerSecondsRemaining = timerDuration;
     this.turnDeadline = Date.now() + timerDuration * 1000;
 
+    // Guarantee at least N powerful characters based on active players in room (e.g. 2 players -> at least 2; 3 players -> at least 3)
+    const minPowerfulCount = Math.max(initialPlayers.length, 2);
+
     // Fetch unique records using server-authoritative Fisher-Yates shuffle
     const dbRecords = CharacterDatabase.getInstance().getShuffledCharacterRecords(
       category,
       totalItems,
-      previousSequenceIds
+      previousSequenceIds,
+      minPowerfulCount
     );
     this.items = dbRecords.map((r) => ({
       id: r.id,
