@@ -42,6 +42,9 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="powerbid-game-server.onrender.com" android:pathPrefix="/join" />
+                <data android:scheme="https" android:host="powerbid-game-server.onrender.com" android:pathPrefix="/invite" />
+                <data android:scheme="http" android:host="powerbid-game-server.onrender.com" android:pathPrefix="/join" />
                 <data android:scheme="https" android:host="oct-tion.onrender.com" android:pathPrefix="/join" />
                 <data android:scheme="https" android:host="oct-tion.onrender.com" android:pathPrefix="/invite" />
                 <data android:scheme="https" android:host="powerbid.app" android:pathPrefix="/invite" />

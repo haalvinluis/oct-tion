@@ -795,15 +795,41 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                                       Row(
                                         children: [
                                           Expanded(
-                                            child: Text(
-                                              isMe ? '${p.name} (You)' : p.name,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                fontSize: 11,
-                                                fontWeight: isMe || isLeadingThisPlayer ? FontWeight.bold : FontWeight.normal,
-                                                color: isLeadingThisPlayer ? AppTheme.champagneGold : AppTheme.warmCream,
-                                              ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Flexible(
+                                                  child: Text(
+                                                    isMe ? '${p.name} (You)' : p.name,
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      fontSize: 11,
+                                                      fontWeight: isMe || isLeadingThisPlayer ? FontWeight.bold : FontWeight.normal,
+                                                      color: isLeadingThisPlayer ? AppTheme.champagneGold : AppTheme.warmCream,
+                                                    ),
+                                                  ),
+                                                ),
+                                                if (!p.isConnected) ...[
+                                                  const SizedBox(width: 4),
+                                                  Container(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.redAccent.withValues(alpha: 0.25),
+                                                      borderRadius: BorderRadius.circular(3),
+                                                      border: Border.all(color: Colors.redAccent, width: 0.7),
+                                                    ),
+                                                    child: const Text(
+                                                      'LEFT',
+                                                      style: TextStyle(
+                                                        fontSize: 8,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.redAccent,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ],
                                             ),
                                           ),
                                           // Win Streak Badge

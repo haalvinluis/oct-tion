@@ -21,6 +21,7 @@ class LobbyScreen extends StatefulWidget {
   final int itemCount;
   final int maxPlayers;
   final String username;
+  final bool isHost;
 
   const LobbyScreen({
     super.key,
@@ -30,6 +31,7 @@ class LobbyScreen extends StatefulWidget {
     required this.itemCount,
     this.maxPlayers = 2,
     required this.username,
+    this.isHost = false,
   });
 
   @override
@@ -47,15 +49,32 @@ class _LobbyScreenState extends State<LobbyScreen> {
     PlatformHelper.forcePortrait();
     VoiceChatService.instance.init(widget.roomCode);
 
+    // Reset previous auction state so stale matches don't auto-navigate
+    SocketService.instance.auctionNotifier.value = null;
+
     SocketService.instance.connect();
 
     // Listen for auction start broadcast to navigate automatically
     SocketService.instance.auctionNotifier.addListener(_onAuctionStateChanged);
+
+    // Disband notification when host leaves in lobby
+    SocketService.instance.onRoomDisbanded = (reason) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(reason),
+          backgroundColor: Colors.redAccent,
+          duration: const Duration(seconds: 4),
+        ),
+      );
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    };
   }
 
   @override
   void dispose() {
     SocketService.instance.auctionNotifier.removeListener(_onAuctionStateChanged);
+    SocketService.instance.onRoomDisbanded = null;
     super.dispose();
   }
 
@@ -519,8 +538,8 @@ class _LobbyScreenState extends State<LobbyScreen> {
 
   Future<void> _showShareInviteLinkSheet(BuildContext context) async {
     AudioService().playSfx(SfxType.buttonClick);
-    String? inviteUrl;
-    bool loading = true;
+    String? inviteUrl = 'https://powerbid-game-server.onrender.com/join/${widget.roomCode}';
+    bool loading = false;
     String? error;
 
     showModalBottomSheet(
@@ -656,7 +675,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                               icon: const Icon(Icons.chat_rounded, size: 18),
                               label: const Text('WhatsApp', style: TextStyle(fontWeight: FontWeight.bold)),
                               onPressed: () {
-                                final targetUrl = inviteUrl ?? 'https://oct-tion.onrender.com/join/${widget.roomCode}';
+                                final targetUrl = 'https://powerbid-game-server.onrender.com/join/${widget.roomCode}';
                                 final msg = '🔥 Join my OCT-TION auction room!\n\n'
                                     'Room Code: ${widget.roomCode}\n\n'
                                     '👉 Tap to open in app: $targetUrl\n'
@@ -675,7 +694,7 @@ class _LobbyScreenState extends State<LobbyScreen> {
                               icon: const Icon(Icons.share_rounded, size: 18),
                               label: const Text('Share Link', style: TextStyle(fontWeight: FontWeight.bold)),
                               onPressed: () {
-                                final targetUrl = inviteUrl ?? 'https://oct-tion.onrender.com/join/${widget.roomCode}';
+                                final targetUrl = 'https://powerbid-game-server.onrender.com/join/${widget.roomCode}';
                                 final msg = '🔥 Join my OCT-TION auction room!\n\n'
                                     'Room Code: ${widget.roomCode}\n\n'
                                     '👉 Tap to open in app: $targetUrl\n'
@@ -705,11 +724,23 @@ class _LobbyScreenState extends State<LobbyScreen> {
         final currentPlayers = room?.players ?? [];
         final hostId = room?.hostId;
         final currentSocketId = SocketService.instance.socketId;
-        final isHost = (currentSocketId != null && hostId == currentSocketId) ||
-            (room == null) ||
-            (room.players.any((p) => p.isHost && (p.name == widget.username || (currentSocketId != null && p.id == currentSocketId))));
+        final isHost = widget.isHost ||
+            (currentSocketId != null && hostId == currentSocketId) ||
+            (room == null && widget.isHost) ||
+            (room != null &&
+                room.players.any((p) =>
+                    p.isHost &&
+                    (p.name == widget.username ||
+                        (currentSocketId != null && p.id == currentSocketId))));
 
-        return Scaffold(
+        return PopScope(
+          canPop: true,
+          onPopInvokedWithResult: (didPop, result) async {
+            if (didPop) {
+              await SocketService.instance.leaveRoom();
+            }
+          },
+          child: Scaffold(
           appBar: AppBar(
             title: const Text('Lobby Room'),
             actions: [
@@ -973,8 +1004,9 @@ class _LobbyScreenState extends State<LobbyScreen> {
               ),
             ),
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
 }

@@ -597,7 +597,8 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
           return;
         }
 
-        const engine = roomManager.startAuction(socket.id, roomCode, io);
+        const effectiveId = getEffectivePlayerId();
+        const engine = roomManager.startAuction(socket.id, roomCode, io, effectiveId);
         if (typeof ack === 'function') {
           ack({ success: true, roomState: engine.getAuctionStateDTO() });
         }
@@ -706,10 +707,16 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
         const { roomCode } = data || {};
         if (roomCode) {
           const normalizedCode = roomCode.trim().toUpperCase();
-          const { roomState, leftPlayerId, newHostId } = roomManager.leaveRoom(socket.id, normalizedCode);
+          const { roomState, leftPlayerId, newHostId, isDisbanded, disbandReason } = roomManager.leaveRoom(socket.id, normalizedCode);
           await socket.leave(normalizedCode);
 
-          if (roomState) {
+          if (isDisbanded) {
+            io.to(normalizedCode).emit('room_disbanded', {
+              roomCode: normalizedCode,
+              reason: disbandReason || 'Host left the room. The room has been closed.',
+            });
+            io.in(normalizedCode).socketsLeave(normalizedCode);
+          } else if (roomState) {
             io.to(roomState.roomCode).emit('player_left', { playerId: leftPlayerId, roomState });
             if (newHostId) {
               const newHost = roomState.players.find((p) => p.id === newHostId);

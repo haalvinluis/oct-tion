@@ -594,6 +594,7 @@ export class AuctionEngine {
       })),
       totalTeamPoints: item.totalTeamPoints,
       remainingBudget: item.player.budget,
+      isConnected: item.player.isConnected !== false,
     }));
   }
 
@@ -647,6 +648,7 @@ export class AuctionEngine {
         })),
         sessionToken: p.sessionToken,
         profileId: p.profileId,
+        isConnected: p.isConnected !== false,
         winStreak: (p as any).winStreak ?? (p.profileId ? (ProfileManager.getInstance().getProfileById(p.profileId)?.winStreak ?? 0) : 0),
       })),
       auctionQueue: this.cachedAuctionQueue,

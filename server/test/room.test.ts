@@ -147,7 +147,7 @@ describe('Real-Time Room Networking Tests', () => {
     expect(ninthRes.error).to.include('full');
   });
 
-  it('5. Should reassign host when the original host leaves the room', async () => {
+  it('5. Should reassign host when the original host leaves during auction', async () => {
     const host = createClient();
     await waitForConnect(host);
 
@@ -167,6 +167,11 @@ describe('Real-Time Room Networking Tests', () => {
       guest.emit('join_room', { username: 'NextInLine', roomCode }, resolve);
     });
 
+    // Start auction so match is active
+    await new Promise((resolve) => {
+      host.emit('start_auction', { roomCode }, resolve);
+    });
+
     const hostChangedPromise = new Promise<any>((resolve) => {
       guest.on('host_changed', resolve);
     });
@@ -175,8 +180,40 @@ describe('Real-Time Room Networking Tests', () => {
 
     const evt = await hostChangedPromise;
     expect(evt.newHostName).to.equal('NextInLine');
-    expect(evt.roomState.players).to.have.lengthOf(1);
-    expect(evt.roomState.players[0].isHost).to.be.true;
+    const guestPlayer = evt.roomState.players.find((p: any) => p.name === 'NextInLine');
+    expect(guestPlayer.isHost).to.be.true;
+  });
+
+  it('5b. Should terminate and disband room when host leaves during lobby', async () => {
+    const host = createClient();
+    await waitForConnect(host);
+
+    const hostRes: any = await new Promise((resolve) => {
+      host.emit(
+        'create_room',
+        { username: 'LobbyHost', category: 'cricket', itemCount: 10 },
+        resolve
+      );
+    });
+    const roomCode = hostRes.roomCode;
+
+    const guest = createClient();
+    await waitForConnect(guest);
+
+    await new Promise((resolve) => {
+      guest.emit('join_room', { username: 'WaitingGuest', roomCode }, resolve);
+    });
+
+    const disbandPromise = new Promise<any>((resolve) => {
+      guest.on('room_disbanded', resolve);
+    });
+
+    host.emit('leave_room', { roomCode });
+
+    const evt = await disbandPromise;
+    expect(evt.roomCode).to.equal(roomCode);
+    expect(evt.reason).to.include('Host left');
+    expect(roomManager.getRoom(roomCode)).to.be.undefined;
   });
 
   it('6. Should cleanup room when all participants disconnect', async () => {

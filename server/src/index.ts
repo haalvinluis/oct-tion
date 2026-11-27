@@ -87,7 +87,6 @@ app.get('/join/:roomCode', (req: Request, res: Response) => {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OCT-TION - Room Invitation ${roomCode}</title>
-  <meta http-equiv="refresh" content="0;url=octtion://room/${roomCode}">
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0B0A10; color: #FFF; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; text-align: center; }
     .card { background: #161424; border: 1.5px solid #D97706; border-radius: 20px; padding: 32px 24px; max-width: 400px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
@@ -95,13 +94,22 @@ app.get('/join/:roomCode', (req: Request, res: Response) => {
     .logo span { color: #F59E0B; }
     .tagline { font-size: 13px; color: #9CA3AF; margin-bottom: 24px; }
     .code-box { background: #0B0A10; border: 1.5px dashed #F59E0B; border-radius: 12px; padding: 16px; font-size: 26px; font-weight: 900; letter-spacing: 4px; color: #FBBF24; margin-bottom: 24px; }
-    .btn { display: block; background: linear-gradient(135deg, #F59E0B, #D97706); color: #000; text-decoration: none; font-weight: 800; font-size: 16px; padding: 14px 20px; border-radius: 12px; margin-bottom: 12px; }
+    .btn { display: block; background: linear-gradient(135deg, #F59E0B, #D97706); color: #000; text-decoration: none; font-weight: 800; font-size: 16px; padding: 14px 20px; border-radius: 12px; margin-bottom: 12px; cursor: pointer; }
     .subtext { font-size: 12px; color: #9CA3AF; line-height: 1.5; }
   </style>
   <script>
-    setTimeout(function() {
-      window.location.href = "octtion://room/${roomCode}";
-    }, 150);
+    function openApp() {
+      var intentUrl = "intent://room/${roomCode}#Intent;scheme=octtion;package=com.auctiongame.mobile;end";
+      var schemeUrl = "octtion://room/${roomCode}";
+      try {
+        window.location.href = intentUrl;
+      } catch (e) {
+        window.location.href = schemeUrl;
+      }
+    }
+    window.onload = function() {
+      setTimeout(openApp, 100);
+    };
   </script>
 </head>
 <body>
@@ -110,7 +118,7 @@ app.get('/join/:roomCode', (req: Request, res: Response) => {
     <div class="tagline">Real-Time Competitive Character Auction</div>
     <div style="font-size: 14px; margin-bottom: 8px; color: #D1D5DB;">Auction Room Invitation Code</div>
     <div class="code-box">${roomCode}</div>
-    <a href="octtion://room/${roomCode}" class="btn">🚀 Open in OCT-TION App</a>
+    <a href="intent://room/${roomCode}#Intent;scheme=octtion;package=com.auctiongame.mobile;end" class="btn" onclick="openApp(); return true;">🚀 Open in OCT-TION App</a>
     <p class="subtext">If the app doesn't open automatically, tap the button above or enter the code in your OCT-TION app.</p>
   </div>
 </body>

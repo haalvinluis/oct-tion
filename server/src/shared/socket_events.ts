@@ -11,6 +11,7 @@ export const SOCKET_EVENTS = {
   PLAYER_JOINED: 'player_joined',
   PLAYER_LEFT: 'player_left',
   HOST_CHANGED: 'host_changed',
+  ROOM_DISBANDED: 'room_disbanded',
   SERVER_ERROR: 'server_error',
 
   // Auction & Game Mode Events
@@ -194,6 +195,12 @@ export interface StandingsRecordDTO {
   itemsList: { itemName: string; price: number; powerPoints?: number }[];
   totalTeamPoints?: number;
   remainingBudget: number;
+  isConnected?: boolean;
+}
+
+export interface RoomDisbandedDTO {
+  roomCode: string;
+  reason: string;
 }
 
 export interface AuctionCompletedDTO {

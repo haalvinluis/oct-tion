@@ -286,7 +286,13 @@ export class RoomManager {
   public leaveRoom(
     socketId: string,
     roomCode: string
-  ): { roomState: RoomStateDTO | null; leftPlayerId: string; newHostId?: string } {
+  ): {
+    roomState: RoomStateDTO | null;
+    leftPlayerId: string;
+    newHostId?: string;
+    isDisbanded?: boolean;
+    disbandReason?: string;
+  } {
     const normalizedCode = roomCode.trim().toUpperCase();
     const room = this.rooms.get(normalizedCode);
 
@@ -299,38 +305,99 @@ export class RoomManager {
       return { roomState: toRoomStateDTO(room), leftPlayerId: socketId };
     }
 
-    const [removedPlayer] = room.players.splice(playerIndex, 1);
+    const player = room.players[playerIndex];
+    const isLobby = !room.auctionEngine || room.auctionEngine.phase === 'LOBBY';
+
+    // If host leaves while in lobby / room creation phase -> TERMINATE the room
+    if (isLobby && (player.isHost || room.hostId === socketId)) {
+      for (const p of room.players) {
+        if (p.id) this.socketToRoom.delete(p.id);
+        if (p.sessionToken) {
+          const timer = this.graceTimers.get(p.sessionToken);
+          if (timer) {
+            clearTimeout(timer);
+            this.graceTimers.delete(p.sessionToken);
+          }
+        }
+      }
+      if (room.auctionEngine) {
+        room.auctionEngine.destroy();
+      }
+      this.rooms.delete(normalizedCode);
+      return {
+        roomState: null,
+        leftPlayerId: player.id,
+        isDisbanded: true,
+        disbandReason: 'Host left the room. The room has been closed.',
+      };
+    }
+
+    if (isLobby) {
+      // Non-host player leaves in lobby
+      const [removedPlayer] = room.players.splice(playerIndex, 1);
+      this.socketToRoom.delete(socketId);
+      if (removedPlayer.sessionToken) {
+        const timer = this.graceTimers.get(removedPlayer.sessionToken);
+        if (timer) {
+          clearTimeout(timer);
+          this.graceTimers.delete(removedPlayer.sessionToken);
+        }
+      }
+
+      if (room.players.length === 0) {
+        if (room.auctionEngine) room.auctionEngine.destroy();
+        this.rooms.delete(normalizedCode);
+        return { roomState: null, leftPlayerId: removedPlayer.id };
+      }
+
+      return { roomState: toRoomStateDTO(room), leftPlayerId: removedPlayer.id };
+    }
+
+    // Match is in progress (NOT lobby)
+    // Mark player as disconnected/left, DO NOT delete their acquired items or points!
+    player.isConnected = false;
+    player.disconnectedAt = Date.now();
     this.socketToRoom.delete(socketId);
 
-    if (removedPlayer.sessionToken) {
-      const timer = this.graceTimers.get(removedPlayer.sessionToken);
+    if (player.sessionToken) {
+      const timer = this.graceTimers.get(player.sessionToken);
       if (timer) {
         clearTimeout(timer);
-        this.graceTimers.delete(removedPlayer.sessionToken);
+        this.graceTimers.delete(player.sessionToken);
+      }
+    }
+
+    let newHostId: string | undefined;
+    if (player.isHost || room.hostId === socketId) {
+      // Transfer host to next connected player
+      const nextHost = room.players.find((p) => p.isConnected && p.id !== socketId);
+      if (nextHost) {
+        player.isHost = false;
+        nextHost.isHost = true;
+        room.hostId = nextHost.id;
+        newHostId = nextHost.id;
       }
     }
 
     if (room.auctionEngine) {
       room.auctionEngine.handlePlayerDisconnect(socketId);
-      room.auctionEngine.updatePlayers(room.players);
-    }
-
-    if (room.players.length === 0) {
-      if (room.auctionEngine) {
-        room.auctionEngine.destroy();
+      if (newHostId) {
+        const engineHost = room.auctionEngine.players.get(newHostId);
+        if (engineHost) engineHost.isHost = true;
+        const engineOldHost = room.auctionEngine.players.get(player.id);
+        if (engineOldHost) engineOldHost.isHost = false;
       }
+    }
+
+    // If no connected players left at all
+    const hasAnyConnected = room.players.some((p) => p.isConnected);
+    if (!hasAnyConnected) {
+      if (room.auctionEngine) room.auctionEngine.destroy();
       this.rooms.delete(normalizedCode);
-      return { roomState: null, leftPlayerId: removedPlayer.id };
+      return { roomState: null, leftPlayerId: player.id };
     }
 
-    let newHostId: string | undefined;
-    if (removedPlayer.isHost) {
-      room.players[0].isHost = true;
-      room.hostId = room.players[0].id;
-      newHostId = room.players[0].id;
-    }
-
-    return { roomState: toRoomStateDTO(room), leftPlayerId: removedPlayer.id, newHostId };
+    return { roomState: toRoomStateDTO(room), leftPlayerId: player.id, newHostId };
   }
 
   public handleDisconnect(
@@ -421,6 +488,9 @@ export class RoomManager {
     player.id = socketId;
     player.isConnected = true;
     player.disconnectedAt = undefined;
+    if (player.isHost) {
+      room.hostId = socketId;
+    }
     this.socketToRoom.set(socketId, normalizedCode);
 
     if (room.auctionEngine) {
@@ -520,7 +590,7 @@ export class RoomManager {
     return toRoomStateDTO(room);
   }
 
-  public startAuction(socketId: string, roomCode: string, io: Server): AuctionEngine {
+  public startAuction(socketId: string, roomCode: string, io: Server, callerProfileId?: string): AuctionEngine {
     const normalizedCode = roomCode.trim().toUpperCase();
     const room = this.rooms.get(normalizedCode);
 
@@ -528,9 +598,27 @@ export class RoomManager {
       throw new Error(`Room code "${normalizedCode}" not found.`);
     }
 
-    if (room.hostId !== socketId) {
+    // Identify host by socketId, room.hostId, or profileId
+    const hostPlayer = room.players.find(
+      (p) => p.isHost || p.id === socketId || p.id === room.hostId || (callerProfileId && p.profileId === callerProfileId)
+    );
+
+    const isHost =
+      room.hostId === socketId ||
+      (hostPlayer && hostPlayer.isHost && (hostPlayer.id === socketId || (callerProfileId && hostPlayer.profileId === callerProfileId)));
+
+    if (!isHost) {
       throw new Error('Only the room host can start the auction.');
     }
+
+    // Always ensure current host socket ID and room.hostId match current caller socket
+    if (hostPlayer) {
+      hostPlayer.id = socketId;
+      hostPlayer.isHost = true;
+      hostPlayer.isConnected = true;
+    }
+    room.hostId = socketId;
+    this.socketToRoom.set(socketId, normalizedCode);
 
     if (!room.auctionEngine || room.auctionEngine.phase === 'COMPLETED') {
       if (room.auctionEngine) {

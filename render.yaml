@@ -35,6 +35,6 @@ services:
       - key: GOOGLE_ANDROID_CLIENT_ID
         sync: false
       - key: INVITE_BASE_URL
-        value: "https://powerbid.app/invite"
+        value: "https://powerbid-game-server.onrender.com/invite"
       - key: ALLOW_MOCK_OAUTH
         value: "false"

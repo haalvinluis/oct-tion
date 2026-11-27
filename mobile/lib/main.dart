@@ -55,14 +55,17 @@ class _AuctionGameAppState extends State<AuctionGameApp> {
       if (uri.scheme == 'octtion') {
         // octtion://room/ABCDEF or octtion://join/ABCDEF
         if (uri.pathSegments.isNotEmpty) {
-          roomCode = uri.pathSegments.first.toUpperCase();
+          roomCode = uri.pathSegments.first.toUpperCase().replaceAll('/', '');
         } else if (uri.queryParameters.containsKey('room')) {
           roomCode = uri.queryParameters['room']?.toUpperCase();
         }
       } else {
-        // https://oct-tion.onrender.com/join/ABCDEF
+        // https://powerbid-game-server.onrender.com/join/ABCDEF
         if (uri.pathSegments.isNotEmpty) {
-          roomCode = uri.pathSegments.last.toUpperCase();
+          final seg = uri.pathSegments.last.toUpperCase().replaceAll('/', '');
+          if (seg != 'JOIN' && seg != 'INVITE') {
+            roomCode = seg;
+          }
         }
       }
       if (roomCode != null && roomCode.length >= 4) {

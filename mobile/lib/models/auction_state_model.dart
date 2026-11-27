@@ -57,6 +57,7 @@ class StandingsRecordModel {
   final int totalTeamPoints;
   final List<Map<String, dynamic>> itemsList;
   final int remainingBudget;
+  final bool isConnected;
 
   const StandingsRecordModel({
     required this.rank,
@@ -66,6 +67,7 @@ class StandingsRecordModel {
     required this.totalTeamPoints,
     required this.itemsList,
     required this.remainingBudget,
+    this.isConnected = true,
   });
 
   factory StandingsRecordModel.fromJson(Map<String, dynamic> json) {
@@ -80,6 +82,7 @@ class StandingsRecordModel {
       totalTeamPoints: json['totalTeamPoints'] ?? json['totalPowerPoints'] ?? 0,
       itemsList: itemsList,
       remainingBudget: json['remainingBudget'] ?? 0,
+      isConnected: json['isConnected'] ?? true,
     );
   }
 }

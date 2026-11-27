@@ -22,6 +22,7 @@ class SocketService {
 
   final ValueNotifier<bool> isConnectedNotifier = ValueNotifier<bool>(false);
   final ValueNotifier<RoomModel?> currentRoomNotifier = ValueNotifier<RoomModel?>(null);
+  Function(String reason)? onRoomDisbanded;
   final ValueNotifier<AuctionStateModel?> auctionNotifier = ValueNotifier<AuctionStateModel?>(null);
   final ValueNotifier<String?> errorNotifier = ValueNotifier<String?>(null);
   final ValueNotifier<List<InAppNotificationModel>> notificationsNotifier =
@@ -178,6 +179,16 @@ class SocketService {
       if (data != null && data['roomState'] != null) {
         currentRoomNotifier.value = RoomModel.fromJson(data['roomState']);
       }
+    });
+
+    _socket!.on('room_disbanded', (data) {
+      debugPrint('[Socket] room_disbanded: $data');
+      currentRoomNotifier.value = null;
+      auctionNotifier.value = null;
+      final reason = (data is Map && data['reason'] != null)
+          ? data['reason'].toString()
+          : 'Host left the room. The room has been closed.';
+      onRoomDisbanded?.call(reason);
     });
 
     _socket!.on('player_left', (data) {
