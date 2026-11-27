@@ -18,7 +18,7 @@ export type SupportedMaxPlayers = (typeof SUPPORTED_MAX_PLAYERS)[number];
 export const DEFAULT_MAX_PLAYERS: SupportedMaxPlayers = 8;
 
 export function isValidItemCount(count: number): boolean {
-  if (count < 1 || count > 50 || !Number.isInteger(count)) {
+  if (count < 1 || count > 100 || !Number.isInteger(count)) {
     return false;
   }
   return true;
@@ -117,7 +117,7 @@ export class RoomManager {
         : DEFAULT_ITEM_COUNT;
 
     if (!isValidItemCount(resolvedItemCount)) {
-      throw new Error(`Match size must be an integer between 1 and 50 items.`);
+      throw new Error(`Match size must be an integer between 1 and 100 items.`);
     }
 
     const resolvedMaxPlayers =
@@ -535,7 +535,7 @@ export class RoomManager {
     if (settings.itemCount !== undefined && settings.itemCount !== null) {
       const resolvedItemCount = Number(settings.itemCount);
       if (!isValidItemCount(resolvedItemCount)) {
-        throw new Error(`Match size must be an integer between 1 and 50 items.`);
+        throw new Error(`Match size must be an integer between 1 and 100 items.`);
       }
       newItemCount = resolvedItemCount;
     }

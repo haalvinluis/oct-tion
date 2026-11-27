@@ -280,7 +280,7 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
         if (!isValidItemCount(parsedItemCount)) {
           const errResponse = {
             success: false,
-            error: `Match size must be an integer between 4 and 48 items.`,
+            error: `Match size must be an integer between 1 and 100 items.`,
           };
           if (typeof ack === 'function') ack(errResponse);
           return;
@@ -380,7 +380,7 @@ export function registerSocketHandlers(io: Server, roomManager: RoomManager) {
             if (typeof ack === 'function') {
               ack({
                 success: false,
-                error: `Match size must be an integer between 4 and 48 items.`,
+                error: `Match size must be an integer between 1 and 100 items.`,
               });
             }
             return;

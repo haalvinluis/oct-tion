@@ -46,11 +46,17 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
   static const List<int> supportedBudgets = [500, 1000, 2000, 3000, 5000, 10000];
   int _selectedStartingBudget = 1000;
 
-  // Characters quota per player: each player must buy 4 characters
+  // Characters quota per player: each player must buy 4, 5, or 6 characters
   int _itemsPerPlayer = 4;
-  // Large character pool of 50 characters rotating until all players get their squad
-  static const int totalPoolCharacters = 50;
-  int get _selectedItemCount => totalPoolCharacters;
+  // Dynamic character pool rotating until all players get their squad:
+  // 4 characters -> 50 pool
+  // 5 characters -> 60 pool
+  // 6 characters -> 70 pool
+  int get _selectedItemCount {
+    if (_itemsPerPlayer == 6) return 70;
+    if (_itemsPerPlayer == 5) return 60;
+    return 50;
+  }
 
   // Part 2: Exactly 6 selectable duration options: 10s, 15s, 20s, 30s, 45s, 60s
   static const List<int> supportedTimerDurations = [10, 15, 20, 30, 45, 60];
@@ -752,7 +758,7 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
           _buildSummaryRow(
             icon: Icons.format_list_numbered_rounded,
             label: 'Characters Pool & Quota',
-            value: '50 Pool (Must Buy $_itemsPerPlayer / Player)',
+            value: '$_selectedItemCount Pool (Must Buy $_itemsPerPlayer / Player)',
           ),
           const SizedBox(height: 8),
           _buildSummaryRow(
@@ -912,7 +918,7 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
                 border: Border.all(color: AppTheme.trueChampagneGold, width: 1.0),
               ),
               child: Text(
-                '$_itemsPerPlayer Characters / Player (50 Pool)',
+                '$_itemsPerPlayer Characters / Player ($_selectedItemCount Pool)',
                 style: const TextStyle(
                   color: AppTheme.trueChampagneGold,
                   fontWeight: FontWeight.bold,
@@ -951,8 +957,10 @@ class _CreateJoinRoomScreenState extends State<CreateJoinRoomScreen>
                     ),
                     child: Text(
                       perPlayer == 4
-                          ? 'Must Buy 4 Characters'
-                          : 'Must Buy $perPlayer Characters',
+                          ? 'Must Buy 4 Characters (50 Pool)'
+                          : perPlayer == 5
+                              ? 'Must Buy 5 Characters (60 Pool)'
+                              : 'Must Buy 6 Characters (70 Pool)',
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w900,

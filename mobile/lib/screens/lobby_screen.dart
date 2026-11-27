@@ -205,16 +205,16 @@ class _LobbyScreenState extends State<LobbyScreen> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  Text('Auction Characters (Starting 4 / Player)', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
+                  Text('Auction Characters Quota (Must Buy)', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
                     children: [4, 5, 6].map((perP) {
-                      final totalCnt = perP * maxP;
+                      final totalCnt = perP == 6 ? 70 : (perP == 5 ? 60 : 50);
                       final isSel = selectedItemCount == totalCnt;
                       return ChoiceChip(
-                        label: Text('$totalCnt Items ($perP/Player)'),
+                        label: Text('$totalCnt Pool (Must Buy $perP)'),
                         selected: isSel,
                         selectedColor: AppTheme.primary,
                         onSelected: (sel) {
@@ -249,11 +249,13 @@ class _LobbyScreenState extends State<LobbyScreen> {
                       AudioService().playSfx(SfxType.buttonClick);
                       Navigator.of(context).pop();
                       try {
+                        final resolvedCharsPerPlayer = selectedItemCount == 70 ? 6 : (selectedItemCount == 60 ? 5 : 4);
                         await SocketService.instance.updateRoomSettings(
                           roomCode: widget.roomCode,
                           category: selectedCategory,
                           itemCount: selectedItemCount,
                           timerDuration: selectedTimerDuration,
+                          charactersPerPlayer: resolvedCharsPerPlayer,
                         );
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(

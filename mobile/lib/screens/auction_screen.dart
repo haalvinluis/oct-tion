@@ -83,6 +83,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
     );
 
     SocketService.instance.auctionNotifier.addListener(_onAuctionStateChanged);
+    VoiceChatService.instance.chatMessagesNotifier.addListener(_onChatMessageReceived);
   }
 
   @override
@@ -100,7 +101,66 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
     VoiceChatService.instance.leaveVoiceChat();
     _pulseController.dispose();
     SocketService.instance.auctionNotifier.removeListener(_onAuctionStateChanged);
+    VoiceChatService.instance.chatMessagesNotifier.removeListener(_onChatMessageReceived);
     super.dispose();
+  }
+
+  void _onChatMessageReceived() {
+    if (!mounted) return;
+    final msgs = VoiceChatService.instance.chatMessagesNotifier.value;
+    if (msgs.isEmpty) return;
+    final latest = msgs.last;
+    final myId = SocketService.instance.socketId;
+    if (latest.senderId == myId) return;
+
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.hideCurrentSnackBar();
+    scaffold.showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        elevation: 8,
+        width: 320,
+        backgroundColor: const Color(0xFF1B1626),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: Color(0xFFFBBF24), width: 1.4),
+        ),
+        duration: const Duration(milliseconds: 1600),
+        content: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.chat_bubble_rounded, color: Color(0xFFFBBF24), size: 16),
+            const SizedBox(width: 8),
+            Expanded(
+              child: RichText(
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '${latest.senderName}: ',
+                      style: const TextStyle(
+                        color: Color(0xFFFBBF24),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
+                    ),
+                    TextSpan(
+                      text: latest.message,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _onAuctionStateChanged() {
@@ -342,11 +402,37 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                     onPressed: () {
                       VoiceChatService.instance.sendChatMessage(msg);
                       Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
+                      final scaffold = ScaffoldMessenger.of(context);
+                      scaffold.hideCurrentSnackBar();
+                      scaffold.showSnackBar(
                         SnackBar(
-                          content: Text('Sent: $msg'),
-                          duration: const Duration(milliseconds: 900),
-                          backgroundColor: AppTheme.selectedCard,
+                          behavior: SnackBarBehavior.floating,
+                          elevation: 8,
+                          width: 320,
+                          backgroundColor: const Color(0xFF1B1626),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            side: const BorderSide(color: Color(0xFFFBBF24), width: 1.4),
+                          ),
+                          content: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.send_rounded, color: Color(0xFFFBBF24), size: 16),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Sent: $msg',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                    letterSpacing: 0.2,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          duration: const Duration(milliseconds: 1400),
                         ),
                       );
                     },
