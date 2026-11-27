@@ -118,9 +118,9 @@ describe('Real-Time Auction Engine Integration Tests', function () {
       });
     });
 
-    // 1. First bid below base price ($300)
+    // 1. First bid below minimum increment ($25)
     const lowBidRes: any = await new Promise((resolve) => {
-      guest.emit('place_bid', { roomCode, bidAmount: 100 }, resolve);
+      guest.emit('place_bid', { roomCode, bidAmount: 10 }, resolve);
     });
     expect(lowBidRes.success).to.be.false;
     expect(lowBidRes.error).to.include('below required minimum');

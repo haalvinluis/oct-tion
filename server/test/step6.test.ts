@@ -291,7 +291,7 @@ describe('Step 6: Player Profiles, Match History, Leaderboards & Achievements Te
       client.emit('get_achievements', {}, resolve);
     });
     expect(achRes.success).to.be.true;
-    expect(achRes.achievements).to.have.lengthOf(7);
+    expect(achRes.achievements).to.have.lengthOf(18);
 
     // 4. Get Leaderboard
     const ldrRes: any = await new Promise((resolve) => {

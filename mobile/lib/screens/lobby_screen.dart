@@ -858,6 +858,8 @@ class _LobbyScreenState extends State<LobbyScreen> {
                                 valueListenable: VoiceChatService.instance.isMicMutedNotifier,
                                 builder: (context, isSelfMuted, _) {
                                   return ListView.builder(
+                                    physics: const BouncingScrollPhysics(),
+                                    cacheExtent: 500.0,
                                     itemCount: currentPlayers.length,
                                     itemBuilder: (context, index) {
                                       final player = currentPlayers[index];
@@ -866,9 +868,11 @@ class _LobbyScreenState extends State<LobbyScreen> {
                                       final isPlayerMuted = isMe ? isSelfMuted : (voiceState?.isMuted ?? true);
                                       final isSpeaking = isMe ? !isSelfMuted : (voiceState?.isSpeaking ?? false);
 
-                                      return Padding(
-                                        padding: const EdgeInsets.only(bottom: 8.0),
-                                        child: PlayerTile(
+                                      return RepaintBoundary(
+                                        key: ValueKey(player.id),
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(bottom: 8.0),
+                                          child: PlayerTile(
                                           name: player.name,
                                           isHost: player.isHost,
                                           isMe: isMe,
@@ -915,8 +919,9 @@ class _LobbyScreenState extends State<LobbyScreen> {
                                             }
                                           },
                                         ),
-                                      );
-                                    },
+                                      ),
+                                    );
+                                  },
                                   );
                                 },
                               );

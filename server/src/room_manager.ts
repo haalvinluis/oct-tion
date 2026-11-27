@@ -18,7 +18,7 @@ export type SupportedMaxPlayers = (typeof SUPPORTED_MAX_PLAYERS)[number];
 export const DEFAULT_MAX_PLAYERS: SupportedMaxPlayers = 8;
 
 export function isValidItemCount(count: number): boolean {
-  if (count < 4 || count > 50 || !Number.isInteger(count)) {
+  if (count < 1 || count > 50 || !Number.isInteger(count)) {
     return false;
   }
   return true;

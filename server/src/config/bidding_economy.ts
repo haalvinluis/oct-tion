@@ -61,7 +61,7 @@ export function getStartingBid(catalogueBasePrice?: number): number {
  */
 export function getNextValidBid(currentBid: number, catalogueBasePrice?: number): number {
   if (currentBid <= 0) {
-    return getMinBidIncrement(0); // 25
+    return getStartingBid(catalogueBasePrice);
   }
   return currentBid + getMinBidIncrement(currentBid);
 }

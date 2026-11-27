@@ -405,8 +405,10 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
             body: SafeArea(
               child: Column(
                 children: [
-                  // 1. TOP HORIZONTAL HUD BAR
-                  _buildTopHorizontalHUD(state),
+                  // 1. TOP HORIZONTAL HUD BAR (isolated repaint boundary)
+                  RepaintBoundary(
+                    child: _buildTopHorizontalHUD(state),
+                  ),
 
                   // 2. MAIN LANDSCAPE ARENA (3-Column Layout: Players | Reveal | Bidding)
                   Expanded(
@@ -418,19 +420,23 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                           // Left Column: Room Players & Live Microphone Presence
                           SizedBox(
                             width: 220,
-                            child: _buildPlayerRosterPanel(state, currentSocketId, sessionToken),
+                            child: RepaintBoundary(
+                              child: _buildPlayerRosterPanel(state, currentSocketId, sessionToken),
+                            ),
                           ),
                           const SizedBox(width: 10),
 
                           // Center Column: Cinematic Random Character Reveal Area
                           Expanded(
-                            child: _buildCenterCharacterRevealArea(
-                              state,
-                              currentItem,
-                              currentBid,
-                              leadingBidderName,
-                              isLeading,
-                              hasPassed,
+                            child: RepaintBoundary(
+                              child: _buildCenterCharacterRevealArea(
+                                state,
+                                currentItem,
+                                currentBid,
+                                leadingBidderName,
+                                isLeading,
+                                hasPassed,
+                              ),
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -438,13 +444,15 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                           // Right Column: Live Bidding Controls & Quick Increments
                           SizedBox(
                             width: 220,
-                            child: _buildBiddingControlPanel(
-                              isBiddingOpen: isBiddingOpen,
-                              hasPassed: hasPassed,
-                              isLeading: isLeading,
-                              canAffordBid: canAffordBid,
-                              myRemainingBudget: myRemainingBudget,
-                              effectiveNextBid: effectiveNextBid,
+                            child: RepaintBoundary(
+                              child: _buildBiddingControlPanel(
+                                isBiddingOpen: isBiddingOpen,
+                                hasPassed: hasPassed,
+                                isLeading: isLeading,
+                                canAffordBid: canAffordBid,
+                                myRemainingBudget: myRemainingBudget,
+                                effectiveNextBid: effectiveNextBid,
+                              ),
                             ),
                           ),
                         ],
@@ -704,6 +712,8 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
               valueListenable: VoiceChatService.instance.playerStatesNotifier,
               builder: (context, voiceStates, _) {
                 return ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  cacheExtent: 500.0,
                   itemCount: players.length,
                   itemBuilder: (context, index) {
                     final p = players[index];
@@ -714,9 +724,11 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                     final isSpeaking = voiceState?.isSpeaking == true;
                     final isMuted = voiceState?.isMuted ?? true;
 
-                    return GestureDetector(
-                      onTap: () => _showPlayerWinningDetailsModal(context, p, amHost, currentSocketId, isMuted),
-                      child: Container(
+                    return RepaintBoundary(
+                      key: ValueKey(p.id),
+                      child: GestureDetector(
+                        onTap: () => _showPlayerWinningDetailsModal(context, p, amHost, currentSocketId, isMuted),
+                        child: Container(
                         margin: const EdgeInsets.only(bottom: 6),
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                         decoration: BoxDecoration(
@@ -906,8 +918,9 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                           ],
                         ),
                       ),
-                    );
-                  },
+                    ),
+                  );
+                },
                 );
               },
             ),

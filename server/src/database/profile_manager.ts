@@ -422,16 +422,27 @@ export class ProfileManager {
 
     let username = requestedUsername ? requestedUsername.trim() : '';
     if (!username || !this.isUsernameAvailable(username, playerId)) {
-      let baseName = username ? username.replace(/[^a-zA-Z0-9_]/g, '') : '';
-      if (!baseName || baseName.length < 3 || baseName.startsWith('Guest_') || baseName.startsWith('Player_')) {
-        baseName = ProfileManager.generateRandomGamerTag();
+      if (playerId.startsWith('pb_guest_') && !requestedUsername) {
+        const cleanSub = playerId.replace('pb_guest_', '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+        const suffix = cleanSub.length >= 4 ? cleanSub.substring(cleanSub.length - 4) : '1001';
+        let candidate = `Guest_${suffix}`;
+        let count = 1;
+        while (this.usernameToIdMap.has(candidate.toLowerCase())) {
+          candidate = `Guest_${suffix}_${count++}`;
+        }
+        username = candidate;
+      } else {
+        let baseName = username ? username.replace(/[^a-zA-Z0-9_]/g, '') : '';
+        if (!baseName || baseName.length < 3 || baseName.startsWith('Guest_') || baseName.startsWith('Player_')) {
+          baseName = ProfileManager.generateRandomGamerTag();
+        }
+        let candidate = baseName;
+        let count = 1;
+        while (this.usernameToIdMap.has(candidate.toLowerCase())) {
+          candidate = `${baseName}_${count++}`;
+        }
+        username = candidate;
       }
-      let candidate = baseName;
-      let count = 1;
-      while (this.usernameToIdMap.has(candidate.toLowerCase())) {
-        candidate = `${baseName}_${count++}`;
-      }
-      username = candidate;
     }
 
     const avatarText = username.length >= 2 ? username.substring(0, 2).toUpperCase() : '⚡';

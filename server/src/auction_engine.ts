@@ -50,6 +50,7 @@ export class AuctionEngine {
   private io: Server;
   private timerHandle: NodeJS.Timeout | null = null;
   private isFinalizingSale: boolean = false;
+  private cachedAuctionQueue: CharacterItemDTO[] = [];
 
   constructor(
     io: Server,
@@ -94,6 +95,8 @@ export class AuctionEngine {
         purchasedItemsDetails: [],
       });
     });
+
+    this.cachedAuctionQueue = this.items.map((item) => this.toClientItem(item)!);
   }
 
   public get currentItem(): CharacterItemDTO | undefined {
@@ -116,7 +119,7 @@ export class AuctionEngine {
   public get minNextBid(): number {
     if (!this.currentItem) return 0;
     if (this.currentBid <= 0) {
-      return getMinBidIncrement(0); // Starting bid is $0, players initiate bidding from min increment (25)
+      return this.currentItem.basePrice > 0 ? this.currentItem.basePrice : getMinBidIncrement(0);
     }
     return getNextValidBid(this.currentBid, this.currentItem.basePrice);
   }
@@ -597,7 +600,7 @@ export class AuctionEngine {
         profileId: p.profileId,
         winStreak: (p as any).winStreak ?? (p.profileId ? (ProfileManager.getInstance().getProfileById(p.profileId)?.winStreak ?? 0) : 0),
       })),
-      auctionQueue: this.items.map((item) => this.toClientItem(item)!),
+      auctionQueue: this.cachedAuctionQueue,
     };
   }
 
