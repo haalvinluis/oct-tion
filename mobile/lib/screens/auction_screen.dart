@@ -294,19 +294,57 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
     try {
       await SocketService.instance.passItem();
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
+      final messenger = ScaffoldMessenger.of(context);
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
         SnackBar(
-          content: Text('You passed on this item.'),
-          backgroundColor: AppTheme.selectedCard,
-          duration: Duration(seconds: 1),
+          behavior: SnackBarBehavior.floating,
+          elevation: 8,
+          margin: const EdgeInsets.only(bottom: 24, left: 32, right: 32),
+          backgroundColor: const Color(0xFF1B1626),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Color(0xFFEF4444), width: 1.4),
+          ),
+          content: const Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.pan_tool_rounded, color: Color(0xFFEF4444), size: 16),
+              SizedBox(width: 8),
+              Text(
+                'You passed on this item',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          ),
+          duration: const Duration(milliseconds: 1400),
         ),
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
+      final messenger = ScaffoldMessenger.of(context);
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
         SnackBar(
-          content: Text(e.toString().replaceAll('Exception: ', '')),
-          backgroundColor: AppTheme.error,
+          behavior: SnackBarBehavior.floating,
+          elevation: 8,
+          margin: const EdgeInsets.only(bottom: 24, left: 32, right: 32),
+          backgroundColor: const Color(0xFF1B1626),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Color(0xFFEF4444), width: 1.4),
+          ),
+          content: Text(
+            e.toString().replaceAll('Exception: ', ''),
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+          ),
+          duration: const Duration(milliseconds: 1400),
         ),
       );
     } finally {
@@ -1514,19 +1552,23 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                 : () => _placeBid(effectiveNextBid),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 150),
-              height: 50,
+              height: 48,
               decoration: BoxDecoration(
                 gradient: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid || isTeamFull)
                     ? null
                     : AppTheme.goldButtonGradient,
                 color: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid || isTeamFull)
-                    ? AppTheme.secondaryBackground
+                    ? (hasPassed
+                        ? const Color(0xFFEF4444).withValues(alpha: 0.15)
+                        : AppTheme.secondaryBackground)
                     : null,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid || isTeamFull)
-                      ? AppTheme.surfaceBorder
-                      : const Color(0x40FFFFFF),
+                  color: hasPassed
+                      ? const Color(0xFFEF4444).withValues(alpha: 0.6)
+                      : ((!isBiddingOpen || isLeading || !canAffordBid || isTeamFull)
+                          ? AppTheme.surfaceBorder
+                          : const Color(0x40FFFFFF)),
                   width: 1.2,
                 ),
                 boxShadow: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid || isTeamFull)
@@ -1564,9 +1606,11 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                           fontSize: isTeamFull ? 12 : 14,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 0.5,
-                          color: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid || isTeamFull)
-                              ? AppTheme.mutedText
-                              : Colors.white,
+                          color: hasPassed
+                              ? const Color(0xFFEF4444)
+                              : ((!isBiddingOpen || isLeading || !canAffordBid || isTeamFull)
+                                  ? AppTheme.mutedText
+                                  : Colors.white),
                           shadows: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid || isTeamFull)
                               ? null
                               : const [
@@ -1585,22 +1629,38 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
 
           // Secondary Pass Round Button
           SizedBox(
-            height: 38,
+            height: 44,
             child: OutlinedButton(
               onPressed: (!isBiddingOpen || hasPassed || isLeading || _isActionBusy)
                   ? null
                   : _passItem,
               style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                alignment: Alignment.center,
                 foregroundColor: AppTheme.arcadeRed,
+                disabledForegroundColor: AppTheme.mutedText.withValues(alpha: 0.4),
                 side: BorderSide(
-                  color: (hasPassed || !isBiddingOpen) ? AppTheme.surfaceBorder : AppTheme.arcadeRed.withValues(alpha: 0.6),
-                  width: 1.2,
+                  color: (hasPassed || !isBiddingOpen)
+                      ? AppTheme.surfaceBorder
+                      : AppTheme.arcadeRed.withValues(alpha: 0.8),
+                  width: 1.4,
                 ),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text('PASS ROUND', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              child: Center(
+                child: Text(
+                  hasPassed ? 'PASSED THIS ROUND' : 'PASS ROUND',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5,
+                    color: hasPassed ? AppTheme.mutedText : AppTheme.arcadeRed,
+                  ),
+                ),
+              ),
             ),
           ),
+          const SizedBox(height: 6),
         ],
       ),
     );

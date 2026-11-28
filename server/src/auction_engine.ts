@@ -183,14 +183,17 @@ export class AuctionEngine {
     this.leadingBidderId = undefined;
     this.leadingBidderName = undefined;
 
-    // Automatically mark players whose team is already full as passed
+    // Automatically mark disconnected players or players whose team is already full as passed
     for (const player of this.players.values()) {
-      if (player.acquiredItems.length >= this.charactersPerPlayer) {
+      if (!player.isConnected || player.acquiredItems.length >= this.charactersPerPlayer) {
         this.passedPlayerIds.add(player.id);
       }
     }
 
     this.broadcastAuctionState();
+
+    // Check if all eligible players are already passed or unable to bid
+    this.checkAutoFinalize();
 
     if (this.gameMode === 'POWER_COMPARISON') {
       // In Mode A (Power Comparison), immediately compare character power after 3 seconds
@@ -329,8 +332,10 @@ export class AuctionEngine {
   }
 
   private checkAutoFinalize(): void {
-    const activePlayers = Array.from(this.players.values());
-    const unpassedCount = activePlayers.filter((p) => !this.passedPlayerIds.has(p.id)).length;
+    const activeConnectedEligible = Array.from(this.players.values()).filter(
+      (p) => p.isConnected && p.acquiredItems.length < this.charactersPerPlayer
+    );
+    const unpassedCount = activeConnectedEligible.filter((p) => !this.passedPlayerIds.has(p.id)).length;
 
     if (unpassedCount === 0 || (this.leadingBidderId && unpassedCount <= 1)) {
       this.stopTimer();
@@ -373,6 +378,7 @@ export class AuctionEngine {
     if (this.isFinalizingSale) return;
     this.isFinalizingSale = true;
     this.stopTimer();
+    this.timerSecondsRemaining = 0;
 
     const item = this.currentItem;
     if (!item) return;
@@ -402,6 +408,10 @@ export class AuctionEngine {
         price: this.currentBid,
         roomState: this.getAuctionStateDTO(),
       });
+
+      setTimeout(() => {
+        this.advanceToNextItem();
+      }, 2000);
     } else {
       this.phase = 'UNSOLD';
       console.log(`[Item UNSOLD] ${item.displayName} received no bids - rotating to back of auction queue`);
@@ -419,11 +429,12 @@ export class AuctionEngine {
         item: clientItem,
         roomState: this.getAuctionStateDTO(),
       });
-    }
 
-    setTimeout(() => {
-      this.advanceToNextItem();
-    }, 2500);
+      // Advance immediately (1 second transition) after unanimous pass
+      setTimeout(() => {
+        this.advanceToNextItem();
+      }, 1000);
+    }
   }
 
   private advanceToNextItem(): void {
@@ -449,7 +460,7 @@ export class AuctionEngine {
       this.passedPlayerIds.clear();
 
       for (const p of this.players.values()) {
-        if (p.acquiredItems.length >= this.charactersPerPlayer) {
+        if (!p.isConnected || p.acquiredItems.length >= this.charactersPerPlayer) {
           this.passedPlayerIds.add(p.id);
         }
       }
@@ -613,9 +624,12 @@ export class AuctionEngine {
   }
 
   public handlePlayerDisconnect(socketId: string): void {
-    this.passedPlayerIds.add(socketId);
-    if (this.phase === 'BIDDING') {
-      this.checkAutoFinalize();
+    const anyOtherConnected = Array.from(this.players.values()).some((p) => p.isConnected && p.id !== socketId);
+    if (anyOtherConnected) {
+      this.passedPlayerIds.add(socketId);
+      if (this.phase === 'BIDDING') {
+        this.checkAutoFinalize();
+      }
     }
   }
 
