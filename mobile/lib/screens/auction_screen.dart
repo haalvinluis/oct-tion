@@ -67,8 +67,8 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
   void initState() {
     super.initState();
 
-    // 1. Force native LANDSCAPE mode exclusively for the Live Auction Game
-    PlatformHelper.forceLandscape();
+    // Force native PORTRAIT mode for vertical handheld auction gameplay
+    PlatformHelper.forcePortrait();
 
     // 2. Initialize in-game voice chat signaling
     VoiceChatService.instance.init(SocketService.instance.currentRoomCode);
@@ -89,12 +89,12 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    PlatformHelper.forceLandscape();
+    PlatformHelper.forcePortrait();
   }
 
   @override
   void dispose() {
-    // RESTORE PORTRAIT mode immediately when leaving the live game
+    // Keep portrait mode active when leaving
     PlatformHelper.forcePortrait();
 
     AudioService().stopAllSounds();
@@ -490,62 +490,47 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
             backgroundColor: AppTheme.mainBackground,
             body: SafeArea(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // 1. TOP HORIZONTAL HUD BAR (isolated repaint boundary)
                   RepaintBoundary(
                     child: _buildTopHorizontalHUD(state),
                   ),
 
-                  // 2. MAIN LANDSCAPE ARENA (3-Column Layout: Players | Reveal | Bidding)
+                  // 2. HORIZONTAL PLAYER ROSTER STRIP (compact, scrollable, speaking indicator)
+                  RepaintBoundary(
+                    child: _buildPlayerRosterStrip(state, currentSocketId, sessionToken),
+                  ),
+
+                  // 3. CENTER STAGE: CHARACTER AUCTION CARD
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // Left Column: Room Players & Live Microphone Presence
-                          SizedBox(
-                            width: 220,
-                            child: RepaintBoundary(
-                              child: _buildPlayerRosterPanel(state, currentSocketId, sessionToken),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-
-                          // Center Column: Cinematic Random Character Reveal Area
-                          Expanded(
-                            child: RepaintBoundary(
-                              child: _buildCenterCharacterRevealArea(
-                                state,
-                                currentItem,
-                                currentBid,
-                                leadingBidderName,
-                                isLeading,
-                                hasPassed,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-
-                          // Right Column: Live Bidding Controls & Quick Increments
-                          SizedBox(
-                            width: 220,
-                            child: RepaintBoundary(
-                              child: _buildBiddingControlPanel(
-                                isBiddingOpen: isBiddingOpen,
-                                hasPassed: hasPassed,
-                                isLeading: isLeading,
-                                canAffordBid: canAffordBid,
-                                myRemainingBudget: myRemainingBudget,
-                                effectiveNextBid: effectiveNextBid,
-                                isTeamFull: (myPlayer?.acquiredItems.length ?? 0) >= (state?.charactersPerPlayer ?? 4),
-                                myAcquiredCount: myPlayer?.acquiredItems.length ?? 0,
-                                charactersPerPlayer: state?.charactersPerPlayer ?? 4,
-                              ),
-                            ),
-                          ),
-                        ],
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+                      child: RepaintBoundary(
+                        child: _buildCenterCharacterRevealArea(
+                          state,
+                          currentItem,
+                          currentBid,
+                          leadingBidderName,
+                          isLeading,
+                          hasPassed,
+                        ),
                       ),
+                    ),
+                  ),
+
+                  // 4. BOTTOM LIVE BIDDING CONSOLE
+                  RepaintBoundary(
+                    child: _buildBiddingControlPanel(
+                      isBiddingOpen: isBiddingOpen,
+                      hasPassed: hasPassed,
+                      isLeading: isLeading,
+                      canAffordBid: canAffordBid,
+                      myRemainingBudget: myRemainingBudget,
+                      effectiveNextBid: effectiveNextBid,
+                      isTeamFull: (myPlayer?.acquiredItems.length ?? 0) >= (state?.charactersPerPlayer ?? 4),
+                      myAcquiredCount: myPlayer?.acquiredItems.length ?? 0,
+                      charactersPerPlayer: state?.charactersPerPlayer ?? 4,
                     ),
                   ),
                 ],
@@ -563,8 +548,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
     final isUrgent = timerSeconds <= 5 && (state?.phase == 'BIDDING');
 
     return Container(
-      height: 48,
-      padding: const EdgeInsets.symmetric(horizontal: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: AppTheme.secondaryBackground,
         border: Border(bottom: BorderSide(color: AppTheme.surfaceBorder, width: 1)),
@@ -579,61 +563,37 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
             },
             borderRadius: BorderRadius.circular(8),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
               decoration: BoxDecoration(
                 color: AppTheme.error.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: AppTheme.error.withValues(alpha: 0.4)),
               ),
               child: const Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.exit_to_app_rounded, color: AppTheme.error, size: 14),
-                  SizedBox(width: 4),
+                  Icon(Icons.arrow_back_rounded, color: AppTheme.error, size: 14),
+                  SizedBox(width: 3),
                   Text('Leave', style: TextStyle(color: AppTheme.error, fontSize: 11, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 6),
 
-          // OCT-TION Arena Title Badge
+          // Round & Catalogue Badge (Item X/Y)
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: AppTheme.cardBackground,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: AppTheme.goldBorder),
-            ),
-            child: const Row(
-              children: [
-                Icon(Icons.gavel_rounded, color: AppTheme.champagneGold, size: 14),
-                SizedBox(width: 5),
-                Text(
-                  'OCT-TION Arena',
-                  style: TextStyle(
-                    fontFamily: AppTheme.fontFamily,
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.champagneGold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-
-          // Round & Catalogue Badge
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
             decoration: BoxDecoration(
               color: AppTheme.cardBackground,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: AppTheme.goldBorder),
             ),
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.casino_rounded, color: AppTheme.champagneGold, size: 14),
-                const SizedBox(width: 6),
+                const Icon(Icons.casino_rounded, color: AppTheme.champagneGold, size: 13),
+                const SizedBox(width: 4),
                 Text(
                   'Item ${(state?.currentItemIndex ?? 0) + 1}/${state?.totalItems ?? 10}',
                   style: const TextStyle(
@@ -655,28 +615,29 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
               return Transform.scale(
                 scale: isUrgent ? _pulseAnimation.value : 1.0,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: isUrgent ? AppTheme.error.withValues(alpha: 0.25) : AppTheme.cardBackground,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: isUrgent ? AppTheme.error : AppTheme.champagneGold,
-                      width: isUrgent ? 2 : 1,
+                      width: isUrgent ? 1.8 : 1,
                     ),
                   ),
                   child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
                         Icons.timer_rounded,
                         color: isUrgent ? AppTheme.error : AppTheme.champagneGold,
-                        size: 16,
+                        size: 15,
                       ),
-                      const SizedBox(width: 6),
+                      const SizedBox(width: 4),
                       Text(
                         '${timerSeconds}s',
                         style: TextStyle(
                           fontFamily: AppTheme.fontFamily,
-                          fontSize: 14,
+                          fontSize: 13,
                           fontWeight: FontWeight.w900,
                           color: isUrgent ? Colors.redAccent : AppTheme.warmCream,
                         ),
@@ -687,13 +648,21 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
               );
             },
           ),
-          const Spacer(),
+          const SizedBox(width: 6),
 
           // Quick Chat / Reaction Button
-          IconButton(
-            icon: const Icon(Icons.chat_bubble_outline_rounded, color: AppTheme.champagneGold, size: 20),
-            tooltip: 'Quick Chat Reactions',
-            onPressed: _showQuickChatDialog,
+          InkWell(
+            onTap: _showQuickChatDialog,
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: AppTheme.cardBackground,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: AppTheme.goldBorder),
+              ),
+              child: const Icon(Icons.chat_bubble_outline_rounded, color: AppTheme.champagneGold, size: 16),
+            ),
           ),
           const SizedBox(width: 6),
 
@@ -729,25 +698,26 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                   }
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                   decoration: BoxDecoration(
                     color: isMuted ? AppTheme.cardBackground : Colors.green.shade900.withValues(alpha: 0.4),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: isMuted ? AppTheme.surfaceBorder : Colors.greenAccent,
                       width: 1.2,
                     ),
                   ),
                   child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
                         isMuted ? Icons.mic_off_rounded : Icons.mic_rounded,
                         color: isMuted ? AppTheme.mutedText : Colors.greenAccent,
-                        size: 16,
+                        size: 14,
                       ),
-                      const SizedBox(width: 5),
+                      const SizedBox(width: 4),
                       Text(
-                        isMuted ? 'Muted' : 'Mic Live',
+                        isMuted ? 'Mute' : 'Live',
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
@@ -765,20 +735,17 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
     );
   }
 
-  // ==================== Left Column: Player Roster & Voice Status ====================
-  Widget _buildPlayerRosterPanel(AuctionStateModel? state, String? currentSocketId, String? sessionToken) {
+  // ==================== Horizontal Player Roster Strip ====================
+  Widget _buildPlayerRosterStrip(AuctionStateModel? state, String? currentSocketId, String? sessionToken) {
     final players = state?.players ?? [];
     final amHost = players.any((p) => p.isHost && ((sessionToken != null && p.sessionToken == sessionToken) || p.id == currentSocketId));
 
     return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: AppTheme.cardBackground,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppTheme.surfaceBorder),
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      color: AppTheme.secondaryBackground.withValues(alpha: 0.5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -786,23 +753,27 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
               Text(
                 'PLAYERS (${players.length}/${SocketService.instance.currentRoomNotifier.value?.maxPlayers ?? 2})',
                 style: const TextStyle(
-                  fontSize: 11,
+                  fontSize: 10.5,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.5,
                   color: AppTheme.champagneGold,
                 ),
               ),
-              const Icon(Icons.groups_rounded, color: AppTheme.champagneGold, size: 16),
+              Text(
+                'Tap player to inspect squad',
+                style: TextStyle(fontSize: 9.5, color: AppTheme.mutedText),
+              ),
             ],
           ),
-          const SizedBox(height: 8),
-          Expanded(
+          const SizedBox(height: 6),
+          SizedBox(
+            height: 62,
             child: ValueListenableBuilder<Map<String, PlayerVoiceState>>(
               valueListenable: VoiceChatService.instance.playerStatesNotifier,
               builder: (context, voiceStates, _) {
                 return ListView.builder(
+                  scrollDirection: Axis.horizontal,
                   physics: const BouncingScrollPhysics(),
-                  cacheExtent: 500.0,
                   itemCount: players.length,
                   itemBuilder: (context, index) {
                     final p = players[index];
@@ -814,25 +785,24 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                     final isMuted = isMe ? isSelfMuted : (voiceState?.isMuted ?? true);
                     final isSpeaking = !isMuted && (voiceState?.isSpeaking == true);
 
-                    return RepaintBoundary(
-                      key: ValueKey(p.id),
-                      child: GestureDetector(
-                        onTap: () => _showPlayerWinningDetailsModal(context, p, amHost, currentSocketId, isMuted),
-                        child: Container(
-                        margin: const EdgeInsets.only(bottom: 6),
+                    return GestureDetector(
+                      onTap: () => _showPlayerWinningDetailsModal(context, p, amHost, currentSocketId, isMuted),
+                      child: Container(
+                        width: 148,
+                        margin: const EdgeInsets.only(right: 8),
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                         decoration: BoxDecoration(
                           color: isLeadingThisPlayer
                               ? AppTheme.selectedCard
-                              : (isMe ? AppTheme.mainBackground : AppTheme.secondaryBackground),
-                          borderRadius: BorderRadius.circular(8),
+                              : (isMe ? AppTheme.mainBackground : AppTheme.cardBackground),
+                          borderRadius: BorderRadius.circular(10),
                           border: Border.all(
                             color: isSpeaking
                                 ? const Color(0xFFEF4444)
                                 : (isLeadingThisPlayer
                                     ? AppTheme.champagneGold
                                     : (isMe ? AppTheme.goldBorder : AppTheme.surfaceBorder)),
-                            width: isSpeaking ? 2.2 : (isLeadingThisPlayer ? 1.5 : 0.8),
+                            width: isSpeaking ? 2.0 : (isLeadingThisPlayer ? 1.5 : 0.8),
                           ),
                           boxShadow: isSpeaking
                               ? [
@@ -844,219 +814,117 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                                 ]
                               : null,
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
+                        child: Row(
                           children: [
-                            Row(
-                              children: [
-                                // Small Player Medallion with Speaking Red Ring
-                                Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: isSpeaking ? const Color(0xFFEF4444) : Colors.transparent,
-                                      width: isSpeaking ? 2.0 : 0.0,
-                                    ),
-                                  ),
-                                  child: CircleAvatar(
-                                    radius: 12,
-                                    backgroundColor: isLeadingThisPlayer ? AppTheme.champagneGold : AppTheme.secondaryBackground,
-                                    child: Text(
-                                      p.name.isNotEmpty ? p.name[0].toUpperCase() : '?',
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                        color: isLeadingThisPlayer ? AppTheme.mainBackground : AppTheme.warmCream,
-                                      ),
-                                    ),
+                            // Medallion with Speaking halo
+                            Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: isSpeaking ? const Color(0xFFEF4444) : Colors.transparent,
+                                  width: isSpeaking ? 2.0 : 0.0,
+                                ),
+                              ),
+                              child: CircleAvatar(
+                                radius: 14,
+                                backgroundColor: isLeadingThisPlayer ? AppTheme.champagneGold : AppTheme.secondaryBackground,
+                                child: Text(
+                                  p.name.isNotEmpty ? p.name[0].toUpperCase() : '?',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: isLeadingThisPlayer ? AppTheme.mainBackground : AppTheme.warmCream,
                                   ),
                                 ),
-                                const SizedBox(width: 6),
+                              ),
+                            ),
+                            const SizedBox(width: 7),
 
-                                // Name, Win Streak, and Budget
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                            // Player Name, Budget, Streak
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Row(
                                     children: [
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Flexible(
-                                                  child: Text(
-                                                    isMe ? '${p.name} (You)' : p.name,
-                                                    maxLines: 1,
-                                                    overflow: TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      fontSize: 11,
-                                                      fontWeight: isMe || isLeadingThisPlayer ? FontWeight.bold : FontWeight.normal,
-                                                      color: isLeadingThisPlayer ? AppTheme.champagneGold : AppTheme.warmCream,
-                                                    ),
-                                                  ),
-                                                ),
-                                                if (!p.isConnected) ...[
-                                                  const SizedBox(width: 4),
-                                                  Container(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.redAccent.withValues(alpha: 0.25),
-                                                      borderRadius: BorderRadius.circular(3),
-                                                      border: Border.all(color: Colors.redAccent, width: 0.7),
-                                                    ),
-                                                    child: const Text(
-                                                      'LEFT',
-                                                      style: TextStyle(
-                                                        fontSize: 8,
-                                                        fontWeight: FontWeight.bold,
-                                                        color: Colors.redAccent,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ],
-                                            ),
+                                      Expanded(
+                                        child: Text(
+                                          isMe ? '${p.name} (You)' : p.name,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            fontWeight: isMe || isLeadingThisPlayer ? FontWeight.bold : FontWeight.w600,
+                                            color: isLeadingThisPlayer ? AppTheme.champagneGold : AppTheme.warmCream,
                                           ),
-                                          // Win Streak Badge
-                                          Container(
-                                            margin: const EdgeInsets.only(left: 3),
-                                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                                            decoration: BoxDecoration(
-                                              color: p.winStreak > 0
-                                                  ? const Color(0xFFF97316).withValues(alpha: 0.25)
-                                                  : AppTheme.secondaryBackground,
-                                              borderRadius: BorderRadius.circular(4),
-                                              border: Border.all(
-                                                color: p.winStreak > 0 ? const Color(0xFFF97316) : AppTheme.surfaceBorder,
-                                                width: 0.6,
-                                              ),
-                                            ),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                const Text('🔥', style: TextStyle(fontSize: 8)),
-                                                const SizedBox(width: 2),
-                                                Text(
-                                                  '${p.winStreak}',
-                                                  style: TextStyle(
-                                                    fontSize: 8.5,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: p.winStreak > 0 ? const Color(0xFFF97316) : AppTheme.mutedText,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          if (hasPassedThisPlayer)
-                                            const Padding(
-                                              padding: EdgeInsets.only(left: 4),
-                                              child: Text(
-                                                'PASS',
-                                                style: TextStyle(color: Colors.redAccent, fontSize: 8, fontWeight: FontWeight.bold),
-                                              ),
-                                            ),
-                                        ],
+                                        ),
                                       ),
-                                      const SizedBox(height: 2),
+                                      if (p.winStreak > 0) ...[
+                                        const SizedBox(width: 2),
+                                        Text('🔥${p.winStreak}', style: const TextStyle(fontSize: 8.5, color: Color(0xFFF97316))),
+                                      ],
+                                      if (!p.isConnected) ...[
+                                        const SizedBox(width: 2),
+                                        const Text('LEFT', style: TextStyle(fontSize: 8, color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                                      ],
+                                    ],
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Row(
+                                    children: [
                                       Text(
                                         '₹${p.budget} • ${p.acquiredItems.length} Won',
                                         style: TextStyle(
-                                          fontSize: 9,
+                                          fontSize: 9.5,
                                           fontWeight: FontWeight.w600,
                                           color: AppTheme.mutedText,
                                         ),
                                       ),
+                                      if (hasPassedThisPlayer)
+                                        const Padding(
+                                          padding: EdgeInsets.only(left: 3),
+                                          child: Text('PASS', style: TextStyle(color: Colors.redAccent, fontSize: 8, fontWeight: FontWeight.bold)),
+                                        ),
                                     ],
                                   ),
-                                ),
-
-                                // In-Game Voice Status for this player (Host Mute Moderation / Local Mute Toggle)
-                                if (!isMe)
-                                  GestureDetector(
-                                    onTap: () {
-                                      if (amHost) {
-                                        final newMuted = !isMuted;
-                                        VoiceChatService.instance.hostMutePlayer(p.id, newMuted);
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text(newMuted ? 'Host muted ${p.name}' : 'Host unmuted ${p.name}'),
-                                            duration: const Duration(milliseconds: 900),
-                                          ),
-                                        );
-                                      } else {
-                                        VoiceChatService.instance.toggleMuteOtherPlayer(p.id);
-                                      }
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left: 4),
-                                      child: Icon(
-                                        isMuted ? Icons.mic_off_rounded : (isSpeaking ? Icons.graphic_eq_rounded : Icons.mic_rounded),
-                                        size: 13,
-                                        color: isMuted
-                                            ? Colors.redAccent
-                                            : (isSpeaking ? Colors.greenAccent : AppTheme.champagneGold),
-                                      ),
-                                    ),
-                                  ),
-                              ],
+                                ],
+                              ),
                             ),
 
-                            // Characters Brought / Won (Short and shown in left side)
-                            if (p.acquiredItems.isNotEmpty) ...[
-                              const SizedBox(height: 5),
-                              Wrap(
-                                spacing: 3,
-                                runSpacing: 2.5,
-                                children: p.acquiredItems.map((itemName) {
-                                  final isSports = _isSportsCategory(state);
-                                  final parts = ItemNameWithFlag.parse(itemName);
-                                  return Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                                    decoration: BoxDecoration(
-                                      color: isMe ? const Color(0xFFFFF7ED) : const Color(0xFFF8FAFC),
-                                      borderRadius: BorderRadius.circular(5),
-                                      border: Border.all(
-                                        color: isMe ? const Color(0xFFF97316) : const Color(0xFFCBD5E1),
-                                        width: 0.8,
+                            // Mic / Host moderation icon
+                            if (!isMe)
+                              GestureDetector(
+                                onTap: () {
+                                  if (amHost) {
+                                    final newMuted = !isMuted;
+                                    VoiceChatService.instance.hostMutePlayer(p.id, newMuted);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(newMuted ? 'Host muted ${p.name}' : 'Host unmuted ${p.name}'),
+                                        duration: const Duration(milliseconds: 900),
                                       ),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          parts.baseName,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 9,
-                                            fontWeight: FontWeight.bold,
-                                            color: isMe ? const Color(0xFFC2410C) : const Color(0xFF0F172A),
-                                          ),
-                                        ),
-                                        if (isSports && parts.flag != null && parts.flag!.isNotEmpty) ...[
-                                          const SizedBox(width: 3),
-                                          Text(
-                                            parts.flag!,
-                                            style: const TextStyle(
-                                              fontSize: 8,
-                                              height: 1.0,
-                                            ),
-                                          ),
-                                        ],
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
+                                    );
+                                  } else {
+                                    VoiceChatService.instance.toggleMuteOtherPlayer(p.id);
+                                  }
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 2),
+                                  child: Icon(
+                                    isMuted ? Icons.mic_off_rounded : (isSpeaking ? Icons.graphic_eq_rounded : Icons.mic_rounded),
+                                    size: 13,
+                                    color: isMuted
+                                        ? Colors.redAccent
+                                        : (isSpeaking ? Colors.greenAccent : AppTheme.champagneGold),
+                                  ),
+                                ),
                               ),
-                            ],
                           ],
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
                 );
               },
             ),
@@ -1350,7 +1218,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
 );
 }
 
-  // ==================== Center Column: Random Character Reveal ====================
+  // ==================== Center Hero Stage: Character Auction Card ====================
   Widget _buildCenterCharacterRevealArea(
     AuctionStateModel? state,
     dynamic currentItem,
@@ -1371,10 +1239,10 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
     final phase = state?.phase ?? 'BIDDING';
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: AppTheme.cardBackground,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(color: AppTheme.goldBorder, width: 1.2),
         boxShadow: [
           BoxShadow(
@@ -1385,136 +1253,138 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
         ],
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Reveal Card: Name and Status (Medallion removed per requirement)
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 4,
-                  alignment: WrapAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: AppTheme.mainBackground,
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: AppTheme.goldBorder, width: 0.8),
-                      ),
-                      child: Text(
-                        'ITEM ${(state?.currentItemIndex ?? 0) + 1}',
-                        style: const TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFFB45309),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: AppTheme.selectedCard,
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: AppTheme.goldBorder, width: 0.8),
-                      ),
-                      child: Text(
-                        phase == 'SOLD' ? 'SOLD' : (phase == 'UNSOLD' ? 'UNSOLD' : 'LIVE AUCTION'),
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: phase == 'SOLD'
-                              ? const Color(0xFF16A34A)
-                              : (phase == 'UNSOLD' ? const Color(0xFFDC2626) : const Color(0xFF0F172A)),
-                        ),
-                      ),
-                    ),
-                  ],
+          // Top Chips Row: Item Number & Auction Phase
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppTheme.mainBackground,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppTheme.goldBorder, width: 0.8),
                 ),
-                const SizedBox(height: 12),
-                ItemNameWithFlag(
-                  itemName: itemName,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w900,
-                  color: AppTheme.primaryText,
-                  isSports: isSports,
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Starting Bid: ₹0 • Players Start Bidding',
-                  maxLines: 1,
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: AppTheme.textSecondary,
+                child: Text(
+                  'ITEM ${(state?.currentItemIndex ?? 0) + 1}',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFFB45309),
                   ),
                 ),
-              ],
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: phase == 'SOLD'
+                      ? Colors.green.shade900.withValues(alpha: 0.4)
+                      : (phase == 'UNSOLD'
+                          ? Colors.red.shade900.withValues(alpha: 0.4)
+                          : AppTheme.selectedCard),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: phase == 'SOLD'
+                        ? Colors.greenAccent
+                        : (phase == 'UNSOLD' ? Colors.redAccent : AppTheme.goldBorder),
+                    width: 0.8,
+                  ),
+                ),
+                child: Text(
+                  phase == 'SOLD' ? 'SOLD' : (phase == 'UNSOLD' ? 'UNSOLD' : 'LIVE AUCTION'),
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: phase == 'SOLD'
+                        ? Colors.greenAccent
+                        : (phase == 'UNSOLD' ? Colors.redAccent : AppTheme.warmCream),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const Spacer(),
+
+          // Character Name with Flag
+          ItemNameWithFlag(
+            itemName: itemName,
+            fontSize: 26,
+            fontWeight: FontWeight.w900,
+            color: AppTheme.primaryText,
+            isSports: isSports,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Starting Bid: ₹0 • All Players Can Bid',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: AppTheme.textSecondary,
             ),
           ),
+          const Spacer(),
 
-          // Highest Bid Banner
+          // Highest Bid & Leading Bidder Hero Container
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: BoxDecoration(
               color: isLeading ? AppTheme.selectedCard : AppTheme.mainBackground,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: isLeading ? AppTheme.champagneGold : AppTheme.surfaceBorder,
-                width: isLeading ? 1.5 : 1,
+                width: isLeading ? 1.6 : 1,
               ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'HIGHEST BID',
-                        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppTheme.mutedText),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'HIGHEST BID',
+                      style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppTheme.mutedText),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '₹$currentBid',
+                      style: const TextStyle(
+                        fontFamily: AppTheme.fontFamily,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w900,
+                        color: AppTheme.champagneGold,
                       ),
-                      Text(
-                        '₹$currentBid',
-                        style: TextStyle(
-                          fontFamily: AppTheme.fontFamily,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w900,
-                          color: AppTheme.champagneGold,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        'LEADING BIDDER',
-                        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppTheme.mutedText),
-                      ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      'LEADING BIDDER',
+                      style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppTheme.mutedText),
+                    ),
+                    const SizedBox(height: 2),
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         if (isLeading)
                           const Padding(
                             padding: EdgeInsets.only(right: 4),
-                            child: Icon(Icons.star_rounded, color: AppTheme.champagneGold, size: 14),
+                            child: Icon(Icons.star_rounded, color: AppTheme.champagneGold, size: 16),
                           ),
                         ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 120),
+                          constraints: const BoxConstraints(maxWidth: 150),
                           child: Text(
                             isLeading ? 'You (Leading)' : leadingBidderName,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontFamily: AppTheme.fontFamily,
-                              fontSize: 13,
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
                               color: isLeading ? AppTheme.champagneGold : AppTheme.warmCream,
                             ),
@@ -1524,7 +1394,6 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                     ),
                   ],
                 ),
-              ),
               ],
             ),
           ),
@@ -1533,7 +1402,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
     );
   }
 
-  // ==================== Right Column: Live Bidding Controls ====================
+  // ==================== Bottom Live Bidding Console ====================
   Widget _buildBiddingControlPanel({
     required bool isBiddingOpen,
     required bool hasPassed,
@@ -1546,53 +1415,25 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
     required int charactersPerPlayer,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: AppTheme.cardBackground,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppTheme.surfaceBorder),
+        border: Border(top: BorderSide(color: AppTheme.surfaceBorder, width: 1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Remaining Budget & Squad Quota Header
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppTheme.mainBackground,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: AppTheme.goldBorder),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Your Budget',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: AppTheme.mutedText, fontSize: 10),
-                      ),
-                      Text(
-                        'Team: $myAcquiredCount/$charactersPerPlayer',
-                        maxLines: 1,
-                        style: TextStyle(
-                          color: isTeamFull ? Colors.greenAccent : AppTheme.trueChampagneGold,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Flexible(
-                  child: Text(
+          // Remaining Budget & Squad Quota Row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Your Budget: ', style: TextStyle(color: AppTheme.mutedText, fontSize: 12)),
+                  Text(
                     '₹$myRemainingBudget',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontFamily: AppTheme.fontFamily,
                       fontSize: 14,
@@ -1600,15 +1441,36 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                       color: AppTheme.champagneGold,
                     ),
                   ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: isTeamFull
+                      ? Colors.green.shade900.withValues(alpha: 0.3)
+                      : AppTheme.secondaryBackground,
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(
+                    color: isTeamFull ? Colors.greenAccent : AppTheme.goldBorder,
+                    width: 0.8,
+                  ),
                 ),
-              ],
-            ),
+                child: Text(
+                  'Squad: $myAcquiredCount/$charactersPerPlayer',
+                  style: TextStyle(
+                    color: isTeamFull ? Colors.greenAccent : AppTheme.champagneGold,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 8),
 
-          // Quick Increment Selectors (+₹25, +₹50, +₹100)
+          // Increment Selectors (+₹25, +₹50, +₹100, +₹250)
           Row(
-            children: [25, 50, 100].map((inc) {
+            children: [25, 50, 100, 250].map((inc) {
               final isSelected = _selectedBidIncrement == inc;
               return Expanded(
                 child: GestureDetector(
@@ -1618,21 +1480,21 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                     });
                   },
                   child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 2),
-                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    padding: const EdgeInsets.symmetric(vertical: 7),
                     decoration: BoxDecoration(
                       color: isSelected ? AppTheme.selectedCard : AppTheme.secondaryBackground,
-                      borderRadius: BorderRadius.circular(6),
+                      borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: isSelected ? AppTheme.champagneGold : AppTheme.surfaceBorder,
-                        width: isSelected ? 1.5 : 1,
+                        width: isSelected ? 1.6 : 1,
                       ),
                     ),
                     child: Center(
                       child: Text(
                         '+₹$inc',
                         style: TextStyle(
-                          fontSize: 11,
+                          fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: isSelected ? AppTheme.champagneGold : AppTheme.warmCream,
                         ),
@@ -1643,16 +1505,16 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
               );
             }).toList(),
           ),
-          const Spacer(),
+          const SizedBox(height: 10),
 
-          // Place Bid Button (Gold Gradient)
+          // Primary Bid Button (Gold Arcade Gradient)
           GestureDetector(
             onTap: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid || isTeamFull || _isActionBusy)
                 ? null
                 : () => _placeBid(effectiveNextBid),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 150),
-              height: 48,
+              height: 50,
               decoration: BoxDecoration(
                 gradient: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid || isTeamFull)
                     ? null
@@ -1660,7 +1522,7 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
                 color: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid || isTeamFull)
                     ? AppTheme.secondaryBackground
                     : null,
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid || isTeamFull)
                       ? AppTheme.surfaceBorder
@@ -1685,19 +1547,21 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
               child: Center(
                 child: _isActionBusy
                     ? const SizedBox(
-                        width: 18,
-                        height: 18,
+                        width: 20,
+                        height: 20,
                         child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                       )
                     : Text(
                         isTeamFull
-                            ? 'TEAM FULL ($myAcquiredCount/$charactersPerPlayer)'
+                            ? 'SQUAD COMPLETED ($myAcquiredCount/$charactersPerPlayer)'
                             : (isLeading
-                                ? 'HIGHEST BIDDER'
-                                : (hasPassed ? 'PASSED' : 'BID ₹$effectiveNextBid')),
+                                ? 'HIGHEST BIDDER (Leading)'
+                                : (hasPassed
+                                    ? 'PASSED THIS ROUND'
+                                    : (!canAffordBid ? 'INSUFFICIENT BUDGET' : 'BID ₹$effectiveNextBid'))),
                         style: TextStyle(
                           fontFamily: AppTheme.fontFamily,
-                          fontSize: isTeamFull ? 10.5 : 13,
+                          fontSize: isTeamFull ? 12 : 14,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 0.5,
                           color: (!isBiddingOpen || hasPassed || isLeading || !canAffordBid || isTeamFull)
@@ -1717,23 +1581,25 @@ class _AuctionScreenState extends State<AuctionScreen> with SingleTickerProvider
               ),
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 8),
 
-          // Pass Button
-          OutlinedButton(
-            onPressed: (!isBiddingOpen || hasPassed || isLeading || _isActionBusy)
-                ? null
-                : _passItem,
-            style: OutlinedButton.styleFrom(
-              foregroundColor: AppTheme.arcadeRed,
-              side: BorderSide(
-                color: (hasPassed || !isBiddingOpen) ? AppTheme.surfaceBorder : AppTheme.arcadeRed.withValues(alpha: 0.6),
-                width: 1.2,
+          // Secondary Pass Round Button
+          SizedBox(
+            height: 38,
+            child: OutlinedButton(
+              onPressed: (!isBiddingOpen || hasPassed || isLeading || _isActionBusy)
+                  ? null
+                  : _passItem,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppTheme.arcadeRed,
+                side: BorderSide(
+                  color: (hasPassed || !isBiddingOpen) ? AppTheme.surfaceBorder : AppTheme.arcadeRed.withValues(alpha: 0.6),
+                  width: 1.2,
+                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              child: const Text('PASS ROUND', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
             ),
-            child: const Text('PASS ROUND', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
